@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluxo de Caixa | Sistema Seguro</title>
+    <title>FluxoCash | Gestão Pai Rico</title>
     
     <!-- Bibliotecas Externas -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,237 +14,317 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; overflow: hidden; }
         
-        /* Auth Screen - Garantir visibilidade */
+        /* TELA DE LOGIN */
         #auth-screen {
-            background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
-            display: flex;
-            opacity: 1;
-            transition: opacity 0.5s ease;
+            background: linear-gradient(135deg, #047857 0%, #064e3b 100%);
+            z-index: 1000;
         }
-        
-        .glass-card {
-            background: rgba(255, 255, 255, 0.98);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
+        /* NAVEGAÇÃO SUPERIOR */
+        .tab-btn {
+            border-bottom: 3px solid transparent;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+        .tab-btn:hover { color: #059669; }
         .tab-btn.active {
-            border-bottom: 3px solid #059669;
+            border-bottom-color: #059669;
             color: #059669;
             font-weight: 700;
         }
 
+        /* NAVEGAÇÃO MOBILE */
+        .mobile-btn { color: #94a3b8; transition: color 0.3s; }
+        .mobile-btn.active-mobile { color: #059669; font-weight: bold; }
+        .mobile-btn.active-mobile i { transform: translateY(-2px); }
+
+        /* UTILITÁRIOS */
         .hidden { display: none !important; }
-        .loading-btn { opacity: 0.7; cursor: not-allowed; }
+        .loading { opacity: 0.5; pointer-events: none; }
+        
+        /* SCROLLBAR PERSONALIZADA */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     </style>
 </head>
-<body class="text-slate-800 h-screen flex flex-col">
+<body class="h-screen flex flex-col text-slate-800">
 
-    <!-- 🔒 TELA DE LOGIN E REGISTRO -->
-    <div id="auth-screen" class="fixed inset-0 z-[100] items-center justify-center p-4">
-        <div class="glass-card p-8 rounded-2xl max-w-md w-full space-y-6 relative">
+    <!-- 🔐 TELA DE LOGIN (Inicia visível) -->
+    <div id="auth-screen" class="fixed inset-0 flex items-center justify-center p-4 transition-opacity duration-500">
+        <div class="glass-panel w-full max-w-md p-8 rounded-2xl relative">
             
-            <!-- Logo -->
-            <div class="text-center">
-                <div class="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i class="fa-solid fa-vault text-emerald-600 text-3xl"></i>
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-coins text-3xl text-emerald-600"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-slate-800">FluxoCash</h1>
-                <p class="text-sm text-slate-500">Gestão Financeira Método Pai Rico</p>
+                <p class="text-sm text-slate-500">Gestão Profissional (Método Pai Rico)</p>
             </div>
 
-            <!-- Área de Erros Globais -->
-            <div id="global-error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-sm text-center"></div>
-
-            <!-- Formulário de Login -->
-            <div id="login-block">
+            <!-- Login Form -->
+            <div id="login-view">
                 <form id="form-login" class="space-y-4">
-                    <input type="email" id="login-email" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="seu@email.com" required>
-                    <input type="password" id="login-pass" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Senha" required>
-                    <button type="submit" id="btn-login-submit" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg hover:bg-slate-900 transition">Entrar</button>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase">E-mail</label>
+                        <input type="email" id="login-email" class="w-full p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="seu@email.com" required>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase">Senha</label>
+                        <input type="password" id="login-pass" class="w-full p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="******" required>
+                    </div>
+                    <button type="submit" id="btn-login" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-lg transition shadow-lg">Entrar</button>
                 </form>
                 <div class="mt-4 text-center text-sm">
-                    <span class="text-slate-500">Novo por aqui?</span>
-                    <button type="button" id="btn-go-register" class="text-emerald-600 font-bold hover:underline ml-1">Criar conta</button>
+                    <span class="text-slate-400">Novo usuário?</span>
+                    <button id="go-register" class="text-emerald-600 font-bold hover:underline">Criar conta</button>
                 </div>
             </div>
 
-            <!-- Formulário de Registro -->
-            <div id="register-block" class="hidden">
+            <!-- Register Form -->
+            <div id="register-view" class="hidden">
                 <form id="form-register" class="space-y-4">
-                    <input type="email" id="reg-email" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg outline-none" placeholder="seu@email.com" required>
-                    <input type="password" id="reg-pass" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg outline-none" placeholder="Senha (min 6 digitos)" required minlength="6">
-                    <input type="password" id="reg-confirm" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg outline-none" placeholder="Confirmar Senha" required>
-                    <button type="submit" id="btn-reg-submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition">Cadastrar e Entrar</button>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase">E-mail</label>
+                        <input type="email" id="reg-email" class="w-full p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none" required>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase">Senha (min 6)</label>
+                        <input type="password" id="reg-pass" class="w-full p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none" minlength="6" required>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase">Confirmar Senha</label>
+                        <input type="password" id="reg-confirm" class="w-full p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-emerald-500 outline-none" required>
+                    </div>
+                    <button type="submit" id="btn-reg" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg transition shadow-lg">Cadastrar</button>
                 </form>
                 <div class="mt-4 text-center text-sm">
-                    <span class="text-slate-500">Já tem conta?</span>
-                    <button type="button" id="btn-go-login" class="text-emerald-600 font-bold hover:underline ml-1">Fazer Login</button>
+                    <span class="text-slate-400">Já possui conta?</span>
+                    <button id="go-login" class="text-emerald-600 font-bold hover:underline">Fazer Login</button>
                 </div>
             </div>
 
-            <div class="border-t border-slate-200 my-4 pt-4">
-                 <button type="button" id="btn-guest" class="w-full border border-slate-300 text-slate-600 py-2 rounded-lg text-sm hover:bg-slate-50 font-medium">
-                    Entrar como Convidado
-                 </button>
+            <div class="mt-6 pt-4 border-t border-slate-200">
+                <button id="btn-guest" class="w-full text-slate-500 text-sm hover:text-slate-700">Entrar como Convidado (Sem salvar)</button>
             </div>
             
-            <div id="auth-status" class="text-center text-xs text-red-500 font-bold h-4 mt-2"></div>
+            <p id="auth-msg" class="text-center text-xs text-red-500 font-bold mt-4 h-4"></p>
         </div>
     </div>
 
-    <!-- 📱 APLICATIVO PRINCIPAL -->
-    <div id="app-screen" class="hidden flex-col h-full overflow-hidden w-full">
-        <!-- Header -->
-        <header class="bg-white shadow-sm sticky top-0 z-50 flex-none">
-            <div class="max-w-4xl mx-auto px-4">
-                <div class="flex justify-between items-center h-16">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-chart-line text-emerald-600 text-xl"></i>
-                        <h1 class="font-bold text-lg">FluxoCash</h1>
-                    </div>
-                    
-                    <nav class="hidden md:flex space-x-6">
-                        <button onclick="switchTab('dashboard')" class="tab-btn active py-5 text-sm font-medium hover:text-emerald-600" id="btn-dashboard">Visão Geral</button>
-                        <button onclick="switchTab('fixed')" class="tab-btn py-5 text-sm font-medium hover:text-emerald-600" id="btn-fixed">Fixas</button>
-                        <button onclick="switchTab('variable')" class="tab-btn py-5 text-sm font-medium hover:text-emerald-600" id="btn-variable">Variáveis</button>
-                        <button onclick="switchTab('debts')" class="tab-btn py-5 text-sm font-medium hover:text-emerald-600" id="btn-debts">Dívidas</button>
-                        <button onclick="switchTab('goals')" class="tab-btn py-5 text-sm font-medium hover:text-emerald-600" id="btn-goals">Reserva</button>
-                    </nav>
+    <!-- 📱 APP PRINCIPAL (Escondido até login) -->
+    <div id="app-screen" class="hidden flex-col h-full w-full bg-slate-50">
+        
+        <!-- HEADER FIXO -->
+        <header class="bg-white shadow-sm z-30 flex-none h-16">
+            <div class="max-w-5xl mx-auto px-4 h-full flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-chart-simple text-emerald-600 text-xl"></i>
+                    <h1 class="font-bold text-lg tracking-tight">FluxoCash</h1>
+                </div>
+                
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex space-x-8 h-full">
+                    <button onclick="switchTab('dashboard')" class="tab-btn active h-full flex items-center px-1" id="d-dashboard">Visão Geral</button>
+                    <button onclick="switchTab('fixed')" class="tab-btn h-full flex items-center px-1" id="d-fixed">Fixas</button>
+                    <button onclick="switchTab('variable')" class="tab-btn h-full flex items-center px-1" id="d-variable">Variáveis</button>
+                    <button onclick="switchTab('debts')" class="tab-btn h-full flex items-center px-1" id="d-debts">Dívidas</button>
+                    <button onclick="switchTab('goals')" class="tab-btn h-full flex items-center px-1" id="d-goals">Metas</button>
+                </nav>
 
-                    <div class="flex items-center gap-3">
-                        <span id="user-display" class="text-xs text-slate-400 hidden sm:block">...</span>
-                        <button id="btn-logout" class="text-xs text-red-500 border border-red-200 px-2 py-1 rounded hover:bg-red-50">Sair</button>
-                    </div>
+                <div class="flex items-center gap-3">
+                    <div id="user-display" class="text-xs text-slate-400 hidden sm:block">...</div>
+                    <button id="btn-logout" class="text-xs text-red-500 hover:bg-red-50 border border-red-200 rounded px-3 py-1.5 transition">Sair</button>
                 </div>
             </div>
         </header>
 
-        <!-- Main Content -->
-        <main class="flex-grow overflow-y-auto bg-slate-50 w-full">
-            <div class="max-w-4xl mx-auto px-4 py-6 pb-24">
-                
-                <!-- DASHBOARD TAB -->
-                <div id="tab-dashboard" class="block animate-fade-in">
-                    <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-slate-100">
-                        <div class="flex justify-between mb-4">
-                            <h2 class="text-xl font-bold">Visão Geral</h2>
-                            <button onclick="resetData()" class="text-xs text-red-300 underline">Resetar</button>
+        <!-- ÁREA DE CONTEÚDO (Scrollável) -->
+        <main class="flex-grow overflow-y-auto p-4 pb-24">
+            <div class="max-w-5xl mx-auto">
+
+                <!-- 1. DASHBOARD -->
+                <div id="view-dashboard" class="space-y-6 animate-fade-in">
+                    <!-- Resumo Principal -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-slate-800">Painel de Controle</h2>
+                            <button onclick="resetData()" class="text-xs text-red-400 hover:underline">Resetar Dados</button>
                         </div>
-                        <div class="mb-6">
-                            <label class="text-xs font-bold uppercase text-slate-500">Renda Mensal</label>
-                            <input type="number" id="inp-income" class="w-full p-3 text-lg font-bold border rounded bg-slate-50 focus:ring-emerald-500 outline-none" placeholder="0.00">
+                        
+                        <div class="mb-8">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sua Renda Mensal</label>
+                            <div class="flex items-center mt-1">
+                                <span class="text-2xl text-slate-400 mr-2">R$</span>
+                                <input type="number" id="inp-income" class="text-3xl font-bold text-slate-800 bg-transparent border-b-2 border-slate-200 focus:border-emerald-500 outline-none w-full placeholder-slate-300" placeholder="0.00">
+                            </div>
                         </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                            <div class="p-3 bg-slate-50 border rounded"><p class="text-xs text-slate-500">Fixas</p><p id="d-fix" class="font-bold">R$ 0</p></div>
-                            <div class="p-3 bg-slate-50 border rounded"><p class="text-xs text-slate-500">Variáveis</p><p id="d-var" class="font-bold text-orange-600">R$ 0</p></div>
-                            <div class="p-3 bg-slate-50 border rounded"><p class="text-xs text-slate-500">Dívidas</p><p id="d-debt" class="font-bold text-red-600">R$ 0</p></div>
-                            <div class="p-3 bg-emerald-50 border rounded"><p class="text-xs text-emerald-700">Investimentos</p><p id="d-goal" class="font-bold text-emerald-700">R$ 0</p></div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                            <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
+                                <span class="text-xs text-slate-500 uppercase font-bold">Fixas</span>
+                                <div id="sum-fixed" class="text-lg font-bold text-slate-700 mt-1">R$ 0</div>
+                            </div>
+                            <div class="p-4 bg-orange-50 rounded-lg border border-orange-100">
+                                <span class="text-xs text-orange-600 uppercase font-bold">Variáveis</span>
+                                <div id="sum-variable" class="text-lg font-bold text-orange-700 mt-1">R$ 0</div>
+                            </div>
+                            <div class="p-4 bg-red-50 rounded-lg border border-red-100">
+                                <span class="text-xs text-red-600 uppercase font-bold">Dívidas</span>
+                                <div id="sum-debts" class="text-lg font-bold text-red-700 mt-1">R$ 0</div>
+                            </div>
+                            <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-100">
+                                <span class="text-xs text-emerald-600 uppercase font-bold">Investido</span>
+                                <div id="sum-goals" class="text-lg font-bold text-emerald-700 mt-1">R$ 0</div>
+                            </div>
                         </div>
-                        <div class="border-t pt-4 text-center">
-                            <p class="text-xs uppercase text-slate-400">Fluxo de Caixa Livre</p>
-                            <div id="final-balance" class="text-4xl font-extrabold text-slate-300">R$ 0,00</div>
-                            <p id="balance-msg" class="text-sm text-slate-500 mt-2">...</p>
+
+                        <div class="text-center pt-6 border-t border-slate-100">
+                            <span class="text-sm text-slate-400 uppercase font-bold tracking-widest">Fluxo de Caixa Livre</span>
+                            <div id="final-balance" class="text-5xl font-extrabold text-slate-300 my-2 transition-colors duration-500">R$ 0,00</div>
+                            <p id="balance-msg" class="text-sm font-medium text-slate-500">Insira sua renda para começar.</p>
                         </div>
                     </div>
-                    
-                    <button onclick="askAI('general')" class="w-full mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 rounded-xl shadow-md flex justify-center gap-2 items-center hover:scale-[1.01] transition">
-                        <i class="fa-solid fa-robot"></i> <span>Análise do Pai Rico</span>
+
+                    <!-- Botão IA -->
+                    <button onclick="askAI('general')" class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-4 rounded-xl shadow-lg flex items-center justify-center gap-3 hover:scale-[1.01] transition transform">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span class="font-bold">Análise Inteligente do Pai Rico</span>
                     </button>
 
-                    <div class="bg-white p-4 rounded-xl shadow-sm border h-[300px]">
-                        <canvas id="mainChart"></canvas>
+                    <!-- Gráfico -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 h-80">
+                        <h3 class="font-bold text-slate-700 mb-4">Distribuição</h3>
+                        <div class="relative h-full w-full">
+                            <canvas id="mainChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
-                <!-- FIXED TAB -->
-                <div id="tab-fixed" class="hidden">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <h2 class="font-bold mb-4">Despesas Fixas</h2>
-                        <form onsubmit="addFixed(event)" class="flex gap-2 mb-4">
-                            <input id="fix-name" type="text" placeholder="Nome" class="flex-grow p-2 border rounded" required>
-                            <input id="fix-val" type="number" placeholder="Valor" class="w-24 p-2 border rounded" required step="0.01">
-                            <button class="bg-slate-800 text-white px-4 rounded"><i class="fa-solid fa-plus"></i></button>
+                <!-- 2. FIXAS -->
+                <div id="view-fixed" class="hidden space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <h2 class="text-lg font-bold mb-1">Despesas Fixas</h2>
+                        <p class="text-xs text-slate-500 mb-6">Contas recorrentes (Aluguel, Luz, Internet).</p>
+                        
+                        <form onsubmit="addFixed(event)" class="flex gap-3 mb-6">
+                            <input id="fix-name" type="text" placeholder="Nome (Ex: Aluguel)" class="flex-grow p-3 bg-slate-50 border rounded-lg outline-none focus:border-slate-400" required>
+                            <input id="fix-val" type="number" placeholder="R$" class="w-28 p-3 bg-slate-50 border rounded-lg outline-none focus:border-slate-400" step="0.01" required>
+                            <button class="bg-slate-800 text-white px-5 rounded-lg hover:bg-slate-700"><i class="fa-solid fa-plus"></i></button>
                         </form>
-                        <table class="w-full text-sm"><tbody id="list-fixed"></tbody></table>
+
+                        <div class="overflow-hidden rounded-lg border border-slate-200">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-xs">
+                                    <tr><th class="p-3">Item</th><th class="p-3 text-right">Valor</th><th class="p-3 w-10"></th></tr>
+                                </thead>
+                                <tbody id="list-fixed" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
-                <!-- VARIABLE TAB -->
-                <div id="tab-variable" class="hidden">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <h2 class="font-bold mb-4">Despesas Variáveis</h2>
-                        <form onsubmit="addVar(event)" class="grid grid-cols-2 gap-2 mb-4">
-                            <select id="var-cat" class="p-2 border rounded"><option>Alimentação</option><option>Lazer</option><option>Mercado</option><option>Transporte</option><option>Outros</option></select>
-                            <input id="var-val" type="number" placeholder="Valor" class="p-2 border rounded" required step="0.01">
-                            <input id="var-date" type="date" class="p-2 border rounded col-span-2">
-                            <button class="col-span-2 bg-orange-500 text-white p-2 rounded font-bold">Adicionar</button>
+                <!-- 3. VARIÁVEIS -->
+                <div id="view-variable" class="hidden space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-center mb-1">
+                            <h2 class="text-lg font-bold">Despesas Variáveis</h2>
+                            <span class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded font-bold">Controle Semanal</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-6">Onde o dinheiro costuma "sumir".</p>
+                        
+                        <form onsubmit="addVar(event)" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <select id="var-cat" class="p-3 bg-white border rounded-lg outline-none">
+                                <option>Alimentação</option><option>Lazer</option><option>Mercado</option><option>Transporte</option><option>Delivery</option><option>Outros</option>
+                            </select>
+                            <input id="var-val" type="number" placeholder="Valor" class="p-3 bg-white border rounded-lg outline-none" step="0.01" required>
+                            <input id="var-date" type="date" class="p-3 bg-white border rounded-lg outline-none text-slate-500 md:col-span-1 col-span-2">
+                            <button class="bg-orange-500 text-white font-bold p-3 rounded-lg hover:bg-orange-600 md:col-span-1 col-span-2">Lançar</button>
                         </form>
-                        <ul id="list-var" class="divide-y text-sm"></ul>
+
+                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-3">Últimos Lançamentos</h3>
+                        <ul id="list-variable" class="space-y-3"></ul>
                     </div>
                 </div>
 
-                <!-- DEBTS TAB -->
-                <div id="tab-debts" class="hidden">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <div class="flex justify-between mb-4"><h2 class="font-bold">Dívidas</h2><button onclick="askAI('debts')" class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">IA</button></div>
-                        <form onsubmit="addDebt(event)" class="grid grid-cols-2 gap-2 mb-4">
-                            <input id="debt-name" type="text" placeholder="Nome" class="col-span-2 p-2 border rounded" required>
-                            <input id="debt-tot" type="number" placeholder="Total Devido" class="p-2 border rounded" step="0.01">
-                            <input id="debt-par" type="number" placeholder="Parcela Mensal" class="p-2 border rounded" required step="0.01">
-                            <button class="col-span-2 bg-red-500 text-white p-2 rounded font-bold">Adicionar</button>
+                <!-- 4. DÍVIDAS -->
+                <div id="view-debts" class="hidden space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold">Dívidas</h2>
+                            <button onclick="askAI('debts')" class="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-bold hover:bg-purple-200 border border-purple-200 flex gap-1 items-center"><i class="fa-solid fa-brain"></i> Estratégia IA</button>
+                        </div>
+                        
+                        <form onsubmit="addDebt(event)" class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 p-4 bg-red-50 rounded-xl border border-red-100">
+                            <input id="debt-name" type="text" placeholder="Nome (Ex: Cartão)" class="p-3 border border-red-200 rounded-lg col-span-2 md:col-span-1 outline-none" required>
+                            <input id="debt-tot" type="number" placeholder="Total Devido (Opcional)" class="p-3 border border-red-200 rounded-lg outline-none" step="0.01">
+                            <input id="debt-par" type="number" placeholder="Parcela Mensal" class="p-3 border border-red-200 rounded-lg outline-none font-bold text-red-600" step="0.01" required>
+                            <button class="bg-red-500 text-white font-bold p-3 rounded-lg hover:bg-red-600 col-span-2 md:col-span-3">Adicionar Dívida</button>
                         </form>
-                        <div id="list-debt" class="space-y-2"></div>
+
+                        <div id="list-debts" class="grid gap-3"></div>
                     </div>
                 </div>
 
-                <!-- GOALS TAB -->
-                <div id="tab-goals" class="hidden">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <div class="flex justify-between mb-4"><h2 class="font-bold">Investimentos</h2><button onclick="askAI('goals')" class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded">IA</button></div>
-                        <form onsubmit="addGoal(event)" class="flex gap-2 mb-4">
-                            <input id="goal-name" type="text" placeholder="Objetivo" class="flex-grow p-2 border rounded" required>
-                            <input id="goal-val" type="number" placeholder="Aporte" class="w-24 p-2 border rounded" required step="0.01">
-                            <button class="bg-emerald-600 text-white px-4 rounded"><i class="fa-solid fa-plus"></i></button>
+                <!-- 5. METAS (RESERVA) -->
+                <div id="view-goals" class="hidden space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold">Pague-se Primeiro</h2>
+                            <button onclick="askAI('goals')" class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-bold hover:bg-emerald-200 border border-emerald-200 flex gap-1 items-center"><i class="fa-solid fa-lightbulb"></i> Dica IA</button>
+                        </div>
+                        
+                        <form onsubmit="addGoal(event)" class="flex gap-3 mb-6">
+                            <input id="goal-name" type="text" placeholder="Objetivo (Ex: Ações, FIIs)" class="flex-grow p-3 bg-emerald-50 border border-emerald-200 rounded-lg outline-none text-emerald-900 placeholder-emerald-400" required>
+                            <input id="goal-val" type="number" placeholder="Aporte Mensal" class="w-32 p-3 bg-emerald-50 border border-emerald-200 rounded-lg outline-none font-bold text-emerald-700 placeholder-emerald-400" step="0.01" required>
+                            <button class="bg-emerald-600 text-white px-5 rounded-lg hover:bg-emerald-700"><i class="fa-solid fa-plus"></i></button>
                         </form>
-                        <div id="list-goal" class="grid grid-cols-1 gap-2"></div>
+
+                        <div id="list-goals" class="grid md:grid-cols-2 gap-4"></div>
                     </div>
                 </div>
+
             </div>
         </main>
 
-        <!-- AI Modal -->
-        <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[200] hidden flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
-                <div class="p-4 border-b flex justify-between bg-slate-50 rounded-t-xl">
-                    <span class="font-bold text-indigo-600"><i class="fa-solid fa-robot mr-2"></i>Consultor IA</span>
-                    <button onclick="document.getElementById('ai-modal').classList.add('hidden')"><i class="fa-solid fa-times"></i></button>
-                </div>
-                <div id="ai-res" class="p-6 overflow-y-auto prose prose-sm"></div>
-            </div>
-        </div>
-
-        <!-- Mobile Nav -->
-        <nav class="md:hidden fixed bottom-0 w-full bg-white border-t flex justify-around py-3 z-50">
-            <button onclick="switchTab('dashboard')" class="flex flex-col items-center text-slate-400 tab-icon active-mobile" id="mob-dashboard"><i class="fa-solid fa-chart-pie"></i><span class="text-[10px]">Visão</span></button>
-            <button onclick="switchTab('fixed')" class="flex flex-col items-center text-slate-400 tab-icon" id="mob-fixed"><i class="fa-solid fa-house"></i><span class="text-[10px]">Fixas</span></button>
-            <button onclick="switchTab('variable')" class="flex flex-col items-center text-slate-400 tab-icon" id="mob-variable"><i class="fa-solid fa-cart-shopping"></i><span class="text-[10px]">Variáveis</span></button>
-            <button onclick="switchTab('debts')" class="flex flex-col items-center text-slate-400 tab-icon" id="mob-debts"><i class="fa-solid fa-credit-card"></i><span class="text-[10px]">Dívidas</span></button>
-            <button onclick="switchTab('goals')" class="flex flex-col items-center text-slate-400 tab-icon" id="mob-goals"><i class="fa-solid fa-piggy-bank"></i><span class="text-[10px]">Reserva</span></button>
+        <!-- FOOTER NAV MOBILE -->
+        <nav class="md:hidden flex-none bg-white border-t border-slate-200 flex justify-around py-3 z-50">
+            <button onclick="switchTab('dashboard')" class="mobile-btn active-mobile flex flex-col items-center" id="m-dashboard"><i class="fa-solid fa-chart-pie text-xl mb-1"></i><span class="text-[10px]">Visão</span></button>
+            <button onclick="switchTab('fixed')" class="mobile-btn flex flex-col items-center" id="m-fixed"><i class="fa-solid fa-house text-xl mb-1"></i><span class="text-[10px]">Fixas</span></button>
+            <button onclick="switchTab('variable')" class="mobile-btn flex flex-col items-center" id="m-variable"><i class="fa-solid fa-cart-shopping text-xl mb-1"></i><span class="text-[10px]">Variáveis</span></button>
+            <button onclick="switchTab('debts')" class="mobile-btn flex flex-col items-center" id="m-debts"><i class="fa-solid fa-credit-card text-xl mb-1"></i><span class="text-[10px]">Dívidas</span></button>
+            <button onclick="switchTab('goals')" class="mobile-btn flex flex-col items-center" id="m-goals"><i class="fa-solid fa-piggy-bank text-xl mb-1"></i><span class="text-[10px]">Metas</span></button>
         </nav>
     </div>
 
-    <!-- MAIN LOGIC -->
+    <!-- AI MODAL -->
+    <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-60 z-[200] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
+                <div class="flex items-center gap-2 font-bold text-indigo-600">
+                    <i class="fa-solid fa-robot"></i> Consultor Virtual
+                </div>
+                <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-times text-xl"></i></button>
+            </div>
+            <div id="ai-content" class="p-6 overflow-y-auto prose prose-sm text-slate-700"></div>
+        </div>
+    </div>
+
+    <!-- LOGIC MODULE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- 1. CONFIGURAÇÃO CORRETA E SEGURA ---
-        
-        // Dados do seu Firebase (colados aqui corretamente)
+        // --- 1. CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU",
             authDomain: "fluxocash-b81f6.firebaseapp.com",
@@ -253,159 +333,129 @@
             messagingSenderId: "1021395240266",
             appId: "1:1021395240266:web:e44282819a1ab0c2feadb3"
         };
+        const geminiApiKey = "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU";
         
-        // Nome da coleção do Firestore
-        const firestoreAppId = "fluxocash-app"; 
-
-        // Inicializa o Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // API Key para a IA (usando a mesma do Firebase)
-        const geminiApiKey = "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU";
-
-        // --- 2. LOGICA DE AUTENTICAÇÃO ---
-
-        const setStatus = (msg) => document.getElementById('auth-status').innerText = msg;
-        const setBtnLoading = (btnId, isLoading, text) => {
-            const btn = document.getElementById(btnId);
-            if(isLoading) {
-                btn.disabled = true;
-                btn.innerText = "Processando...";
-                btn.classList.add('loading-btn');
-            } else {
-                btn.disabled = false;
-                btn.innerText = text;
-                btn.classList.remove('loading-btn');
+        // --- 2. AUTH UI HANDLERS ---
+        const ui = {
+            screenAuth: document.getElementById('auth-screen'),
+            screenApp: document.getElementById('app-screen'),
+            loginView: document.getElementById('login-view'),
+            regView: document.getElementById('register-view'),
+            msg: document.getElementById('auth-msg'),
+            
+            toggleAuth: (view) => {
+                ui.msg.innerText = "";
+                if(view === 'register') {
+                    ui.loginView.classList.add('hidden');
+                    ui.regView.classList.remove('hidden');
+                } else {
+                    ui.regView.classList.add('hidden');
+                    ui.loginView.classList.remove('hidden');
+                }
+            },
+            
+            setLoading: (btnId, active) => {
+                const btn = document.getElementById(btnId);
+                if(active) {
+                    btn.dataset.text = btn.innerText;
+                    btn.innerText = "Carregando...";
+                    btn.classList.add('loading');
+                } else {
+                    btn.innerText = btn.dataset.text;
+                    btn.classList.remove('loading');
+                }
             }
         };
 
-        // Trocar entre Login e Registro
-        document.getElementById('btn-go-register').addEventListener('click', () => {
-            document.getElementById('login-block').classList.add('hidden');
-            document.getElementById('register-block').classList.remove('hidden');
-        });
-        document.getElementById('btn-go-login').addEventListener('click', () => {
-            document.getElementById('register-block').classList.add('hidden');
-            document.getElementById('login-block').classList.remove('hidden');
-        });
+        // Auth Buttons
+        document.getElementById('go-register').onclick = (e) => { e.preventDefault(); ui.toggleAuth('register'); };
+        document.getElementById('go-login').onclick = (e) => { e.preventDefault(); ui.toggleAuth('login'); };
 
-        // Login
-        document.getElementById('form-login').addEventListener('submit', async (e) => {
+        document.getElementById('form-login').onsubmit = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-pass').value;
-            
-            setBtnLoading('btn-login-submit', true, 'Entrar');
-            setStatus("");
+            ui.setLoading('btn-login', true);
+            ui.msg.innerText = "";
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (error) {
-                console.error(error);
-                setBtnLoading('btn-login-submit', false, 'Entrar');
-                if(error.code === 'auth/invalid-credential') setStatus("E-mail ou senha incorretos.");
-                else setStatus("Erro ao entrar: " + error.code);
+                await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-pass').value);
+            } catch(err) {
+                ui.setLoading('btn-login', false);
+                ui.msg.innerText = err.code === 'auth/invalid-credential' ? "Credenciais inválidas." : "Erro no login.";
             }
-        });
+        };
 
-        // Registro
-        document.getElementById('form-register').addEventListener('submit', async (e) => {
+        document.getElementById('form-register').onsubmit = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-pass').value;
-            const confirm = document.getElementById('reg-confirm').value;
-
-            if(pass !== confirm) { setStatus("Senhas não conferem."); return; }
+            const p1 = document.getElementById('reg-pass').value;
+            const p2 = document.getElementById('reg-confirm').value;
+            if(p1 !== p2) { ui.msg.innerText = "Senhas não conferem."; return; }
             
-            setBtnLoading('btn-reg-submit', true, 'Cadastrar');
-            setStatus("");
+            ui.setLoading('btn-reg', true);
+            ui.msg.innerText = "";
             try {
-                await createUserWithEmailAndPassword(auth, email, pass);
-            } catch (error) {
-                setBtnLoading('btn-reg-submit', false, 'Cadastrar');
-                if(error.code === 'auth/email-already-in-use') setStatus("E-mail já cadastrado.");
-                else if(error.code === 'auth/weak-password') setStatus("Senha fraca (min 6 digitos).");
-                else setStatus("Erro: " + error.code);
+                await createUserWithEmailAndPassword(auth, document.getElementById('reg-email').value, p1);
+            } catch(err) {
+                ui.setLoading('btn-reg', false);
+                ui.msg.innerText = err.code === 'auth/email-already-in-use' ? "Email já existe." : "Erro no cadastro.";
             }
-        });
+        };
 
-        // Convidado
-        document.getElementById('btn-guest').addEventListener('click', async () => {
-            setBtnLoading('btn-guest', true, 'Entrar como Convidado');
-            setStatus("");
-            try {
-                await signInAnonymously(auth);
-            } catch (e) {
-                setBtnLoading('btn-guest', false, 'Entrar como Convidado');
-                setStatus("Erro convidado: " + e.code);
-            }
-        });
+        document.getElementById('btn-guest').onclick = async () => {
+            try { await signInAnonymously(auth); } catch(e) { ui.msg.innerText = "Erro convidado."; }
+        };
 
-        // Logout
-        document.getElementById('btn-logout').addEventListener('click', () => {
-            if(confirm("Sair da conta?")) signOut(auth).then(() => location.reload());
-        });
+        document.getElementById('btn-logout').onclick = () => {
+            if(confirm("Sair?")) signOut(auth).then(()=>location.reload());
+        };
 
-        // --- 3. ESTADO GLOBAL E FIRESTORE ---
+        // --- 3. APP LOGIC ---
         let currentUser = null;
         let appData = { income: 0, fixed: [], variable: [], debts: [], goals: [] };
         let chartInstance = null;
 
-        // Monitorar Autenticação
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                // Esconder Auth / Mostrar App
-                document.getElementById('auth-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('app-screen').classList.remove('hidden');
-                    document.getElementById('app-screen').classList.add('flex');
-                }, 500);
+        // Auth Listener
+        const initAuth = async () => { if(typeof __initial_auth_token !== 'undefined') try{await signInWithCustomToken(auth,__initial_auth_token)}catch(e){} };
+        initAuth();
 
+        onAuthStateChanged(auth, (user) => {
+            if(user) {
+                currentUser = user;
+                ui.screenAuth.style.opacity = '0';
+                setTimeout(() => {
+                    ui.screenAuth.classList.add('hidden');
+                    ui.screenApp.classList.remove('hidden');
+                    ui.screenApp.classList.add('flex');
+                }, 500);
                 document.getElementById('user-display').innerText = user.isAnonymous ? "Convidado" : user.email;
 
-                // Conectar ao Banco de Dados (Tempo Real)
-                const docRef = doc(db, 'artifacts', firestoreAppId, 'users', user.uid, 'app_data', 'main');
+                // Listen DB
+                const docRef = doc(db, 'artifacts', 'fluxocash-app', 'users', user.uid, 'app_data', 'main');
                 onSnapshot(docRef, (snap) => {
-                    if (snap.exists()) {
-                        appData = snap.data();
-                    } else {
-                        // Novo usuário, cria dados padrão
-                        appData = { income: 0, fixed: [], variable: [], debts: [], goals: [] };
-                        saveData();
-                    }
-                    renderUI();
+                    if(snap.exists()) appData = snap.data();
+                    else { appData = { income: 0, fixed: [], variable: [], debts: [], goals: [] }; saveData(); }
+                    render();
                 });
             } else {
-                currentUser = null;
-                // Mostrar Auth
-                document.getElementById('auth-screen').classList.remove('hidden');
-                document.getElementById('auth-screen').style.opacity = '1';
-                document.getElementById('app-screen').classList.add('hidden');
-                document.getElementById('app-screen').classList.remove('flex');
+                ui.screenAuth.classList.remove('hidden');
+                ui.screenAuth.style.opacity = '1';
+                ui.screenApp.classList.add('hidden');
+                ui.screenApp.classList.remove('flex');
             }
         });
 
         const saveData = async () => {
-            if(!currentUser) return;
-            try {
-                await setDoc(doc(db, 'artifacts', firestoreAppId, 'users', currentUser.uid, 'app_data', 'main'), appData);
-            } catch(e) { console.error("Erro ao salvar:", e); }
+            if(currentUser) await setDoc(doc(db, 'artifacts', 'fluxocash-app', 'users', currentUser.uid, 'app_data', 'main'), appData);
         };
 
-        // --- 4. FUNÇÕES GLOBAIS (Conectadas ao HTML via window) ---
-
+        // --- 4. DATA OPERATIONS (Window exposed) ---
         window.addFixed = (e) => {
             e.preventDefault();
             const n = document.getElementById('fix-name').value;
             const v = parseFloat(document.getElementById('fix-val').value);
-            if(n && v) {
-                appData.fixed.push({name:n, value:v});
-                document.getElementById('fix-name').value=''; document.getElementById('fix-val').value='';
-                saveData();
-            }
+            if(n && v) { appData.fixed.push({name:n, value:v}); e.target.reset(); saveData(); }
         };
 
         window.addVar = (e) => {
@@ -413,11 +463,7 @@
             const c = document.getElementById('var-cat').value;
             const v = parseFloat(document.getElementById('var-val').value);
             const d = document.getElementById('var-date').value;
-            if(c && v) {
-                appData.variable.push({category:c, value:v, date:d});
-                document.getElementById('var-val').value='';
-                saveData();
-            }
+            if(c && v) { appData.variable.push({category:c, value:v, date:d}); document.getElementById('var-val').value=''; saveData(); }
         };
 
         window.addDebt = (e) => {
@@ -425,81 +471,55 @@
             const n = document.getElementById('debt-name').value;
             const t = parseFloat(document.getElementById('debt-tot').value)||0;
             const p = parseFloat(document.getElementById('debt-par').value);
-            if(n && p) {
-                appData.debts.push({name:n, total:t, parcel:p});
-                document.getElementById('debt-name').value=''; document.getElementById('debt-tot').value=''; document.getElementById('debt-par').value='';
-                saveData();
-            }
+            if(n && p) { appData.debts.push({name:n, total:t, parcel:p}); e.target.reset(); saveData(); }
         };
 
         window.addGoal = (e) => {
             e.preventDefault();
             const n = document.getElementById('goal-name').value;
             const v = parseFloat(document.getElementById('goal-val').value);
-            if(n && v) {
-                appData.goals.push({name:n, value:v});
-                document.getElementById('goal-name').value=''; document.getElementById('goal-val').value='';
-                saveData();
-            }
+            if(n && v) { appData.goals.push({name:n, value:v}); e.target.reset(); saveData(); }
         };
 
-        window.delItem = (type, idx) => {
-            if(confirm("Remover este item?")) {
-                appData[type].splice(idx,1);
-                saveData();
-            }
-        };
+        window.delItem = (type, idx) => { if(confirm("Remover?")) { appData[type].splice(idx,1); saveData(); } };
+        window.resetData = () => { if(confirm("Zerar tudo?")) { appData={income:0,fixed:[],variable:[],debts:[],goals:[]}; saveData(); } };
+        
+        document.getElementById('inp-income').addEventListener('input', (e) => { appData.income = parseFloat(e.target.value)||0; saveData(); });
 
-        window.resetData = () => {
-            if(confirm("Apagar TODOS os dados?")) {
-                appData={income:0,fixed:[],variable:[],debts:[],goals:[]};
-                saveData();
-            }
-        };
-
-        document.getElementById('inp-income').addEventListener('input', (e) => {
-            appData.income = parseFloat(e.target.value)||0;
-            saveData();
-        });
-
-        // RENDERIZAÇÃO DA TELA
+        // --- 5. RENDER & NAV ---
         function fmt(n) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(n); }
 
-        function renderUI() {
-            document.getElementById('inp-income').value = appData.income || 0;
-
-            const listFix = document.getElementById('list-fixed'); listFix.innerHTML=''; let sFix=0;
-            (appData.fixed||[]).forEach((i, idx) => { sFix+=i.value; listFix.innerHTML+=`<tr class="border-b"><td class="py-2 text-slate-700">${i.name}</td><td class="text-right font-medium">${fmt(i.value)}</td><td class="text-right"><button onclick="delItem('fixed',${idx})" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`;});
-
-            const listVar = document.getElementById('list-var'); listVar.innerHTML=''; let sVar=0;
-            (appData.variable||[]).sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach((i, idx) => { sVar+=i.value; listVar.innerHTML+=`<li class="py-3 flex justify-between"><div><span class="block text-slate-700">${i.category}</span><span class="text-xs text-slate-400">${i.date}</span></div><div class="flex gap-2 items-center"><span class="font-bold text-slate-600">${fmt(i.value)}</span><button onclick="delItem('variable',${idx})" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></div></li>`;});
-
-            const listDebt = document.getElementById('list-debt'); listDebt.innerHTML=''; let sDebt=0;
-            (appData.debts||[]).forEach((i, idx) => { sDebt+=i.parcel; listDebt.innerHTML+=`<div class="flex justify-between p-2 border rounded bg-slate-50"><div><div class="font-bold text-slate-700">${i.name}</div><div class="text-xs text-slate-400">Total: ${fmt(i.total)}</div></div><div class="text-right"><div class="text-red-600 font-bold">${fmt(i.parcel)}/mês</div><button onclick="delItem('debts',${idx})" class="text-xs text-slate-300">remover</button></div></div>`;});
-
-            const listGoal = document.getElementById('list-goal'); listGoal.innerHTML=''; let sGoal=0;
-            (appData.goals||[]).forEach((i, idx) => { sGoal+=i.value; listGoal.innerHTML+=`<div class="flex justify-between p-3 border border-emerald-100 bg-emerald-50 rounded"><div><span class="font-bold text-emerald-800">${i.name}</span></div><div class="text-right"><span class="font-bold text-emerald-700">${fmt(i.value)}</span><button onclick="delItem('goals',${idx})" class="ml-2 text-emerald-300 hover:text-emerald-600"><i class="fa-solid fa-trash"></i></button></div></div>`;});
-
-            document.getElementById('d-fix').innerText = fmt(sFix);
-            document.getElementById('d-var').innerText = fmt(sVar);
-            document.getElementById('d-debt').innerText = fmt(sDebt);
-            document.getElementById('d-goal').innerText = fmt(sGoal);
-
-            const balance = (appData.income||0) - (sFix + sVar + sDebt + sGoal);
-            const balEl = document.getElementById('final-balance');
-            balEl.innerText = fmt(balance);
+        function render() {
+            // Dashboard
+            document.getElementById('inp-income').value = appData.income || "";
+            const sFix = appData.fixed.reduce((a,b)=>a+b.value,0);
+            const sVar = appData.variable.reduce((a,b)=>a+b.value,0);
+            const sDebt = appData.debts.reduce((a,b)=>a+b.parcel,0);
+            const sGoal = appData.goals.reduce((a,b)=>a+b.value,0);
             
-            const msgEl = document.getElementById('balance-msg');
-            if(balance > 0) { 
-                balEl.className="text-4xl font-extrabold text-emerald-500"; 
-                msgEl.innerText="Lucro! Use para investir."; 
-            } else if(balance < 0) { 
-                balEl.className="text-4xl font-extrabold text-red-500"; 
-                msgEl.innerText="Prejuízo. Corte gastos."; 
-            } else { 
-                balEl.className="text-4xl font-extrabold text-slate-400"; 
-                msgEl.innerText="Zero a zero."; 
-            }
+            document.getElementById('sum-fixed').innerText = fmt(sFix);
+            document.getElementById('sum-variable').innerText = fmt(sVar);
+            document.getElementById('sum-debts').innerText = fmt(sDebt);
+            document.getElementById('sum-goals').innerText = fmt(sGoal);
+
+            const bal = (appData.income||0) - (sFix + sVar + sDebt + sGoal);
+            const balEl = document.getElementById('final-balance');
+            balEl.innerText = fmt(bal);
+            balEl.className = `text-5xl font-extrabold my-2 transition-colors duration-500 ${bal > 0 ? 'text-emerald-500' : (bal < 0 ? 'text-red-500' : 'text-slate-300')}`;
+            document.getElementById('balance-msg').innerText = bal > 0 ? "Você está enriquecendo! 🚀" : (bal < 0 ? "Cuidado! Você está empobrecendo. ⚠️" : "Equilíbrio zero. 😐");
+
+            // Lists
+            const lFix = document.getElementById('list-fixed'); lFix.innerHTML='';
+            appData.fixed.forEach((i,x) => lFix.innerHTML+=`<tr class="border-b border-slate-50 hover:bg-slate-50"><td class="p-3 text-slate-700">${i.name}</td><td class="p-3 text-right font-bold text-slate-600">${fmt(i.value)}</td><td class="p-3 text-right"><button onclick="delItem('fixed',${x})" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`);
+
+            const lVar = document.getElementById('list-variable'); lVar.innerHTML='';
+            [...appData.variable].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach((i,x) => lVar.innerHTML+=`<li class="bg-white p-4 rounded-lg border border-slate-100 flex justify-between items-center shadow-sm"><div><span class="block font-bold text-slate-700">${i.category}</span><span class="text-xs text-slate-400">${i.date}</span></div><div class="flex items-center gap-3"><span class="font-bold text-orange-600">${fmt(i.value)}</span><button onclick="delItem('variable',${x})" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></div></li>`);
+
+            const lDebt = document.getElementById('list-debts'); lDebt.innerHTML='';
+            appData.debts.forEach((i,x) => lDebt.innerHTML+=`<div class="bg-white p-4 rounded-lg border-l-4 border-red-400 shadow-sm flex justify-between items-center"><div><div class="font-bold text-slate-700">${i.name}</div><div class="text-xs text-slate-400">Total: ${fmt(i.total)}</div></div><div class="text-right"><div class="text-red-600 font-bold text-lg">${fmt(i.parcel)}<span class="text-xs text-slate-400 font-normal">/mês</span></div><button onclick="delItem('debts',${x})" class="text-xs text-slate-300 hover:text-red-500 mt-1">remover</button></div></div>`);
+
+            const lGoal = document.getElementById('list-goals'); lGoal.innerHTML='';
+            appData.goals.forEach((i,x) => lGoal.innerHTML+=`<div class="bg-white p-4 rounded-lg border border-emerald-100 shadow-sm flex justify-between items-center"><div><span class="block font-bold text-emerald-900">${i.name}</span><span class="text-xs text-emerald-500">Investimento</span></div><div class="text-right"><span class="block text-xl font-bold text-emerald-600">${fmt(i.value)}</span><button onclick="delItem('goals',${x})" class="text-xs text-emerald-300 hover:text-red-500">remover</button></div></div>`);
 
             updateChart(appData.income||0, sFix, sVar, sDebt, sGoal);
         }
@@ -508,59 +528,49 @@
             const ctx = document.getElementById('mainChart').getContext('2d');
             if(chartInstance) chartInstance.destroy();
             chartInstance = new Chart(ctx, {
-                type: 'bar',
+                type: 'doughnut',
                 data: {
-                    labels: ['Renda', 'Gastos'],
-                    datasets: [
-                        { label: 'Renda', data: [inc, 0], backgroundColor: '#059669', stack:'0' },
-                        { label: 'Fixas', data: [0, fix], backgroundColor: '#64748b', stack:'1' },
-                        { label: 'Variáveis', data: [0, vari], backgroundColor: '#f97316', stack:'1' },
-                        { label: 'Dívidas', data: [0, debt], backgroundColor: '#ef4444', stack:'1' },
-                        { label: 'Invest', data: [0, goal], backgroundColor: '#34d399', stack:'1' }
-                    ]
+                    labels: ['Fixas', 'Variáveis', 'Dívidas', 'Investimentos', 'Livre'],
+                    datasets: [{
+                        data: [fix, vari, debt, goal, Math.max(0, inc - (fix+vari+debt+goal))],
+                        backgroundColor: ['#64748b', '#f97316', '#ef4444', '#10b981', '#cbd5e1'],
+                        borderWidth: 0
+                    }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: {x:{stacked:true}, y:{stacked:true, display:false}}, plugins: {legend:{position:'bottom'}} }
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } } }
             });
         }
 
-        // NAVEGAÇÃO DE ABAS
         window.switchTab = (id) => {
             ['dashboard','fixed','variable','debts','goals'].forEach(t => {
-                document.getElementById('tab-'+t).classList.add('hidden');
-                document.getElementById('btn-'+t)?.classList.remove('active');
-                document.getElementById('mob-'+t)?.classList.remove('active-mobile');
+                document.getElementById('view-'+t).classList.add('hidden');
+                document.getElementById('d-'+t)?.classList.remove('active');
+                document.getElementById('m-'+t)?.classList.remove('active-mobile');
             });
-            document.getElementById('tab-'+id).classList.remove('hidden');
-            document.getElementById('btn-'+id)?.classList.add('active');
-            document.getElementById('mob-'+id)?.classList.add('active-mobile');
+            document.getElementById('view-'+id).classList.remove('hidden');
+            document.getElementById('d-'+id)?.classList.add('active');
+            document.getElementById('m-'+id)?.classList.add('active-mobile');
         };
 
-        // INTEGRAÇÃO COM IA (GEMINI REST API)
-        window.askAI = async (type) => {
-            document.getElementById('ai-modal').classList.remove('hidden');
-            document.getElementById('ai-res').innerHTML = "Pensando...";
+        // --- 6. AI ---
+        window.askAI = async (ctx) => {
+            const modal = document.getElementById('ai-modal');
+            const content = document.getElementById('ai-content');
+            modal.classList.remove('hidden');
+            content.innerHTML = '<div class="text-center py-8"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-500"></i><p class="mt-2 text-slate-400">Consultando o Pai Rico...</p></div>';
+            
             try {
-                // Usando a REST API em vez do SDK complexo
-                const prompt = `Analise como Pai Rico. Contexto: ${JSON.stringify(appData)}. Foco: ${type}. Responda em Markdown.`;
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${geminiApiKey}`, {
-                    method: 'POST', 
-                    headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({contents:[{parts:[{text:prompt}]}]})
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({contents:[{parts:[{text:`Analise como Robert Kiyosaki (Pai Rico). Contexto: ${JSON.stringify(appData)}. Foco: ${ctx}. Seja breve, direto e use Markdown.`}]}]})
                 });
-                
-                if (!res.ok) throw new Error("Erro na API");
                 const data = await res.json();
-                document.getElementById('ai-res').innerHTML = marked.parse(data.candidates[0].content.parts[0].text);
-            } catch(e) { 
-                console.error(e);
-                document.getElementById('ai-res').innerText = "Erro ao conectar com a IA. Verifique sua chave API."; 
-            }
+                content.innerHTML = marked.parse(data.candidates[0].content.parts[0].text);
+            } catch(e) { content.innerText = "Erro na IA."; }
         };
 
-        // Data inicial
+        // Init
         document.getElementById('var-date').valueAsDate = new Date();
-
     </script>
-    <style>.active-mobile { color: #059669; font-weight: bold; }</style>
 </body>
 </html>
