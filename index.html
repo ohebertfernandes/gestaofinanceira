@@ -242,35 +242,30 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- 1. SAFE CONFIG INIT ---
-        let app, auth, db, appId;
+        // --- 1. CONFIGURAÇÃO CORRETA E SEGURA ---
         
-        try {
-       const firebaseConfig = {
-  apiKey: "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU",
-  authDomain: "fluxocash-b81f6.firebaseapp.com",
-  projectId: "fluxocash-b81f6",
-  storageBucket: "fluxocash-b81f6.firebasestorage.app",
-  messagingSenderId: "1021395240266",
-  appId: "1:1021395240266:web:e44282819a1ab0c2feadb3"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const appId = "fluxocash-app"
-
-        // --- 2. EVENT LISTENERS (No HTML onclicks for auth) ---
+        // Dados do seu Firebase (colados aqui corretamente)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU",
+            authDomain: "fluxocash-b81f6.firebaseapp.com",
+            projectId: "fluxocash-b81f6",
+            storageBucket: "fluxocash-b81f6.firebasestorage.app",
+            messagingSenderId: "1021395240266",
+            appId: "1:1021395240266:web:e44282819a1ab0c2feadb3"
+        };
         
-        // Navigation between Login/Register
-        document.getElementById('btn-go-register').addEventListener('click', () => {
-            document.getElementById('login-block').classList.add('hidden');
-            document.getElementById('register-block').classList.remove('hidden');
-        });
-        document.getElementById('btn-go-login').addEventListener('click', () => {
-            document.getElementById('register-block').classList.add('hidden');
-            document.getElementById('login-block').classList.remove('hidden');
-        });
+        // Nome da coleção do Firestore
+        const firestoreAppId = "fluxocash-app"; 
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // API Key para a IA (usando a mesma do Firebase)
+        const geminiApiKey = "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU";
+
+        // --- 2. LOGICA DE AUTENTICAÇÃO ---
 
         const setStatus = (msg) => document.getElementById('auth-status').innerText = msg;
         const setBtnLoading = (btnId, isLoading, text) => {
@@ -286,33 +281,37 @@ const appId = "fluxocash-app"
             }
         };
 
-        // LOGIN Logic
+        // Trocar entre Login e Registro
+        document.getElementById('btn-go-register').addEventListener('click', () => {
+            document.getElementById('login-block').classList.add('hidden');
+            document.getElementById('register-block').classList.remove('hidden');
+        });
+        document.getElementById('btn-go-login').addEventListener('click', () => {
+            document.getElementById('register-block').classList.add('hidden');
+            document.getElementById('login-block').classList.remove('hidden');
+        });
+
+        // Login
         document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(!auth) return;
-            
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-pass').value;
             
             setBtnLoading('btn-login-submit', true, 'Entrar');
             setStatus("");
-
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
-                // Auth listener will handle the rest
             } catch (error) {
                 console.error(error);
                 setBtnLoading('btn-login-submit', false, 'Entrar');
                 if(error.code === 'auth/invalid-credential') setStatus("E-mail ou senha incorretos.");
-                else setStatus("Erro ao fazer login. Tente novamente.");
+                else setStatus("Erro ao entrar: " + error.code);
             }
         });
 
-        // REGISTER Logic
+        // Registro
         document.getElementById('form-register').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(!auth) return;
-
             const email = document.getElementById('reg-email').value;
             const pass = document.getElementById('reg-pass').value;
             const confirm = document.getElementById('reg-confirm').value;
@@ -321,102 +320,82 @@ const appId = "fluxocash-app"
             
             setBtnLoading('btn-reg-submit', true, 'Cadastrar');
             setStatus("");
-
             try {
                 await createUserWithEmailAndPassword(auth, email, pass);
             } catch (error) {
                 setBtnLoading('btn-reg-submit', false, 'Cadastrar');
-                if(error.code === 'auth/email-already-in-use') setStatus("E-mail já está em uso.");
-                else if(error.code === 'auth/weak-password') setStatus("Senha fraca (use 6+ digitos).");
-                else setStatus("Erro ao cadastrar.");
+                if(error.code === 'auth/email-already-in-use') setStatus("E-mail já cadastrado.");
+                else if(error.code === 'auth/weak-password') setStatus("Senha fraca (min 6 digitos).");
+                else setStatus("Erro: " + error.code);
             }
         });
 
-        // GUEST Logic
+        // Convidado
         document.getElementById('btn-guest').addEventListener('click', async () => {
-            if(!auth) return;
             setBtnLoading('btn-guest', true, 'Entrar como Convidado');
             setStatus("");
             try {
                 await signInAnonymously(auth);
             } catch (e) {
-                console.error(e);
                 setBtnLoading('btn-guest', false, 'Entrar como Convidado');
-                setStatus("Erro ao entrar como convidado.");
+                setStatus("Erro convidado: " + e.code);
             }
         });
 
-        // LOGOUT Logic
+        // Logout
         document.getElementById('btn-logout').addEventListener('click', () => {
-            if(!auth) return;
             if(confirm("Sair da conta?")) signOut(auth).then(() => location.reload());
         });
 
-        // --- 3. GLOBAL STATE & HELPERS ---
+        // --- 3. ESTADO GLOBAL E FIRESTORE ---
         let currentUser = null;
         let appData = { income: 0, fixed: [], variable: [], debts: [], goals: [] };
         let chartInstance = null;
 
-        // AUTH STATE LISTENER
-        if (auth) {
-            // Priority token check
-            const initAuth = async () => {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    try { await signInWithCustomToken(auth, __initial_auth_token); } catch(e) {}
-                }
-            };
-            initAuth();
+        // Monitorar Autenticação
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                // Esconder Auth / Mostrar App
+                document.getElementById('auth-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('auth-screen').classList.add('hidden');
+                    document.getElementById('app-screen').classList.remove('hidden');
+                    document.getElementById('app-screen').classList.add('flex');
+                }, 500);
 
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUser = user;
-                    // Switch Screens
-                    document.getElementById('auth-screen').style.opacity = '0';
-                    setTimeout(() => {
-                        document.getElementById('auth-screen').classList.add('hidden');
-                        document.getElementById('app-screen').classList.remove('hidden');
-                        document.getElementById('app-screen').classList.add('flex');
-                    }, 500);
+                document.getElementById('user-display').innerText = user.isAnonymous ? "Convidado" : user.email;
 
-                    document.getElementById('user-display').innerText = user.isAnonymous ? "Convidado" : user.email;
-
-                    // Listen to Data
-                    const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'app_data', 'main');
-                    onSnapshot(docRef, (snap) => {
-                        if (snap.exists()) {
-                            appData = snap.data();
-                        } else {
-                            // Init defaults for new user
-                            appData = { income: 0, fixed: [], variable: [], debts: [], goals: [] };
-                            saveData();
-                        }
-                        renderUI();
-                    });
-
-                } else {
-                    currentUser = null;
-                    document.getElementById('auth-screen').classList.remove('hidden');
-                    document.getElementById('auth-screen').style.opacity = '1';
-                    document.getElementById('app-screen').classList.add('hidden');
-                    document.getElementById('app-screen').classList.remove('flex');
-                    
-                    // Reset buttons
-                    setBtnLoading('btn-login-submit', false, 'Entrar');
-                    setBtnLoading('btn-reg-submit', false, 'Cadastrar');
-                    setBtnLoading('btn-guest', false, 'Entrar como Convidado');
-                }
-            });
-        }
+                // Conectar ao Banco de Dados (Tempo Real)
+                const docRef = doc(db, 'artifacts', firestoreAppId, 'users', user.uid, 'app_data', 'main');
+                onSnapshot(docRef, (snap) => {
+                    if (snap.exists()) {
+                        appData = snap.data();
+                    } else {
+                        // Novo usuário, cria dados padrão
+                        appData = { income: 0, fixed: [], variable: [], debts: [], goals: [] };
+                        saveData();
+                    }
+                    renderUI();
+                });
+            } else {
+                currentUser = null;
+                // Mostrar Auth
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('auth-screen').style.opacity = '1';
+                document.getElementById('app-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('flex');
+            }
+        });
 
         const saveData = async () => {
-            if(!currentUser || !db) return;
+            if(!currentUser) return;
             try {
-                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'app_data', 'main'), appData);
-            } catch(e) { console.error("Save Error", e); }
+                await setDoc(doc(db, 'artifacts', firestoreAppId, 'users', currentUser.uid, 'app_data', 'main'), appData);
+            } catch(e) { console.error("Erro ao salvar:", e); }
         };
 
-        // --- 4. GLOBAL FUNCTIONS FOR HTML ONCLICK ---
-        // (Only for inside-app interactions)
+        // --- 4. FUNÇÕES GLOBAIS (Conectadas ao HTML via window) ---
 
         window.addFixed = (e) => {
             e.preventDefault();
@@ -483,7 +462,7 @@ const appId = "fluxocash-app"
             saveData();
         });
 
-        // UI RENDER
+        // RENDERIZAÇÃO DA TELA
         function fmt(n) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(n); }
 
         function renderUI() {
@@ -509,9 +488,18 @@ const appId = "fluxocash-app"
             const balance = (appData.income||0) - (sFix + sVar + sDebt + sGoal);
             const balEl = document.getElementById('final-balance');
             balEl.innerText = fmt(balance);
-            if(balance > 0) { balEl.className="text-4xl font-extrabold text-emerald-500"; document.getElementById('balance-msg').innerText="Lucro! Use para investir."; }
-            else if(balance < 0) { balEl.className="text-4xl font-extrabold text-red-500"; document.getElementById('balance-msg').innerText="Prejuízo. Corte gastos."; }
-            else { balEl.className="text-4xl font-extrabold text-slate-400"; document.getElementById('balance-msg').innerText="Zero a zero."; }
+            
+            const msgEl = document.getElementById('balance-msg');
+            if(balance > 0) { 
+                balEl.className="text-4xl font-extrabold text-emerald-500"; 
+                msgEl.innerText="Lucro! Use para investir."; 
+            } else if(balance < 0) { 
+                balEl.className="text-4xl font-extrabold text-red-500"; 
+                msgEl.innerText="Prejuízo. Corte gastos."; 
+            } else { 
+                balEl.className="text-4xl font-extrabold text-slate-400"; 
+                msgEl.innerText="Zero a zero."; 
+            }
 
             updateChart(appData.income||0, sFix, sVar, sDebt, sGoal);
         }
@@ -535,7 +523,7 @@ const appId = "fluxocash-app"
             });
         }
 
-        // NAV
+        // NAVEGAÇÃO DE ABAS
         window.switchTab = (id) => {
             ['dashboard','fixed','variable','debts','goals'].forEach(t => {
                 document.getElementById('tab-'+t).classList.add('hidden');
@@ -547,36 +535,29 @@ const appId = "fluxocash-app"
             document.getElementById('mob-'+id)?.classList.add('active-mobile');
         };
 
-        // AI
-        const apiKey = "import { GoogleGenAI } from "@google/genai";
-
-const ai = new GoogleGenAI({});
-
-async function main() {
-  const response = await ai.models.generateContent({
-    model: "gemini-3-pro-preview",
-    contents: "Explain how AI works in a few words",
-  });
-  console.log(response.text);
-}
-
-await main();"; 
+        // INTEGRAÇÃO COM IA (GEMINI REST API)
         window.askAI = async (type) => {
             document.getElementById('ai-modal').classList.remove('hidden');
             document.getElementById('ai-res').innerHTML = "Pensando...";
             try {
-                if(!apiKey) throw new Error("API Key missing");
+                // Usando a REST API em vez do SDK complexo
                 const prompt = `Analise como Pai Rico. Contexto: ${JSON.stringify(appData)}. Foco: ${type}. Responda em Markdown.`;
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${geminiApiKey}`, {
+                    method: 'POST', 
+                    headers: {'Content-Type':'application/json'},
                     body: JSON.stringify({contents:[{parts:[{text:prompt}]}]})
                 });
+                
+                if (!res.ok) throw new Error("Erro na API");
                 const data = await res.json();
                 document.getElementById('ai-res').innerHTML = marked.parse(data.candidates[0].content.parts[0].text);
-            } catch(e) { document.getElementById('ai-res').innerText = "Erro na IA."; }
+            } catch(e) { 
+                console.error(e);
+                document.getElementById('ai-res').innerText = "Erro ao conectar com a IA. Verifique sua chave API."; 
+            }
         };
 
-        // Init date
+        // Data inicial
         document.getElementById('var-date').valueAsDate = new Date();
 
     </script>
