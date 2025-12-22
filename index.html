@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FluxoCash | Gestão Completa</title>
+    <title>FluxoCash | Gestão Híbrida</title>
     
     <!-- Bibliotecas -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,10 +16,10 @@
         
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; overflow: hidden; }
         
-        /* TELA DE LOGIN (Z-Index Ajustado) */
+        /* TELA DE LOGIN */
         #auth-screen {
             background: linear-gradient(135deg, #065f46 0%, #047857 100%);
-            z-index: 50; /* Menor que o Modal */
+            z-index: 9000;
         }
         .glass-panel {
             background: rgba(255, 255, 255, 0.98);
@@ -47,8 +47,8 @@
         .quick-btn { transition: transform 0.2s; }
         .quick-btn:active { transform: scale(0.95); }
 
-        /* MODAL IA - Correção de Z-Index */
-        #ai-modal { z-index: 10000; } 
+        /* MODAL IA */
+        #ai-modal { z-index: 9999; }
 
         /* UTILITÁRIOS */
         .flex { display: flex !important; }
@@ -71,6 +71,7 @@
                 </div>
                 <h1 class="text-2xl font-bold">FluxoCash</h1>
                 <p class="text-slate-500 text-sm">Controle Financeiro Inteligente</p>
+                <div id="offline-badge" class="hidden mt-2 inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full font-bold">Modo Offline Ativado</div>
             </div>
 
             <!-- Login -->
@@ -78,7 +79,7 @@
                 <form id="form-login" class="space-y-4">
                     <input type="email" id="log-email" class="w-full p-3 border rounded-lg bg-slate-50 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="E-mail" required>
                     <input type="password" id="log-pass" class="w-full p-3 border rounded-lg bg-slate-50 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Senha" required>
-                    <button type="submit" id="btn-login" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg hover:bg-slate-900 transition">Entrar</button>
+                    <button type="submit" id="btn-login" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg hover:bg-slate-900 transition">Entrar (Nuvem)</button>
                 </form>
                 <div class="mt-4 text-center text-sm text-slate-500">
                     Ainda não tem conta? <button onclick="toggleAuth('register')" class="text-emerald-600 font-bold hover:underline">Criar agora</button>
@@ -98,10 +99,16 @@
                 </div>
             </div>
 
-            <div class="mt-6 pt-4 border-t">
-                <button id="btn-guest" class="w-full text-slate-500 text-sm hover:text-slate-800 font-medium">Entrar como Convidado (Sem salvar)</button>
+            <!-- Opções Alternativas -->
+            <div class="mt-6 pt-4 border-t space-y-3">
+                <button id="btn-guest" class="w-full text-slate-600 border border-slate-300 py-2 rounded-lg text-sm hover:bg-slate-50 font-medium">
+                    Entrar como Convidado (Nuvem)
+                </button>
+                <button onclick="enableOfflineMode()" class="w-full text-emerald-600 font-bold text-sm hover:underline">
+                    Usar Offline (Sem Login)
+                </button>
             </div>
-            <p id="auth-error" class="text-red-500 text-xs text-center mt-3 font-bold h-4"></p>
+            <p id="auth-error" class="text-red-500 text-xs text-center mt-3 font-bold h-auto min-h-[1rem]"></p>
         </div>
     </div>
 
@@ -113,6 +120,7 @@
             <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
                 <div class="flex items-center gap-2 text-emerald-700 font-bold text-lg">
                     <i class="fa-solid fa-chart-pie"></i> FluxoCash
+                    <span id="mode-badge" class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-normal">Offline</span>
                 </div>
                 
                 <!-- Menu Desktop -->
@@ -125,7 +133,7 @@
                 </nav>
 
                 <div class="flex items-center gap-3">
-                    <span id="user-label" class="text-xs text-slate-400 hidden sm:block">...</span>
+                    <span id="user-label" class="text-xs text-slate-400 hidden sm:block">Local</span>
                     <button onclick="doLogout()" class="text-xs text-red-500 border border-red-200 px-3 py-1 rounded hover:bg-red-50">Sair</button>
                 </div>
             </div>
@@ -310,45 +318,51 @@
         </nav>
     </div>
 
-    <!-- AI Modal -->
-    <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <!-- AI Modal (Hidden by default) -->
+    <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm" style="display: none;">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
             <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
                 <span class="font-bold text-indigo-600"><i class="fa-solid fa-robot mr-2"></i>Consultor IA</span>
-                <button onclick="closeAI()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-times text-xl"></i></button>
+                <button onclick="closeAI()" class="text-slate-400 text-2xl hover:text-red-500 px-2">&times;</button>
             </div>
             <div id="ai-content" class="p-6 overflow-y-auto prose prose-sm text-slate-700"></div>
         </div>
     </div>
 
-    <!-- SCRIPT (Módulo Único) -->
+    <!-- SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 1. CONFIGURAÇÃO
+        // CONFIGURAÇÃO
         const firebaseConfig = {
-            apiKey: "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck", // Sua chave
+            apiKey: "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck",
             authDomain: "fluxocash-b81f6.firebaseapp.com",
             projectId: "fluxocash-b81f6",
             storageBucket: "fluxocash-b81f6.firebasestorage.app",
             messagingSenderId: "1021395240266",
             appId: "1:1021395240266:web:e44282819a1ab0c2feadb3"
         };
-        const geminiApiKey = "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck"; // Sua chave novamente
+        const geminiApiKey = "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck";
 
-        // Init Services
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // State
+        // VARIAVEIS GLOBAIS
+        let app, auth, db;
         let currentUser = null;
         let appData = { income: 0, extraIncomes: [], fixed: [], variable: [], debts: [], goals: [] };
         let chartInstance = null;
+        let useOffline = false;
 
-        // 2. AUTH HANDLERS
+        // INICIALIZAÇÃO FIREBASE
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (e) {
+            console.error("Erro Firebase", e);
+        }
+
+        // --- AUTH & DATA LOGIC ---
         const ui = {
             screenAuth: document.getElementById('auth-screen'),
             screenApp: document.getElementById('app-screen'),
@@ -361,68 +375,152 @@
             }
         };
 
+        // Função Principal de Carregamento de Dados
+        function loadData() {
+            // Se estiver em modo offline
+            if(useOffline) {
+                const local = localStorage.getItem('fluxocash_local_data');
+                if(local) appData = JSON.parse(local);
+                // Garantir estrutura
+                if(!appData.extraIncomes) appData.extraIncomes = [];
+                render();
+                return;
+            }
+
+            // Se estiver online
+            if(currentUser && db) {
+                const docRef = doc(db, 'artifacts', 'fluxocash-app', 'users', currentUser.uid, 'app_data', 'main');
+                onSnapshot(docRef, (snap) => {
+                    if(snap.exists()) {
+                        appData = snap.data();
+                        if(!appData.extraIncomes) appData.extraIncomes = [];
+                    } else {
+                        saveData(); // Cria doc inicial
+                    }
+                    render();
+                }, (error) => {
+                    console.error("Erro leitura:", error);
+                    // Fallback para offline se der erro de permissão
+                    if(error.code.includes('permission') || error.code.includes('unavailable')) {
+                        enableOfflineMode(true);
+                    }
+                });
+            }
+        }
+
+        // Função de Salvamento (Híbrida)
+        window.saveData = async () => {
+            if(useOffline) {
+                localStorage.setItem('fluxocash_local_data', JSON.stringify(appData));
+                return;
+            }
+            if(currentUser && db) {
+                try {
+                    await setDoc(doc(db, 'artifacts', 'fluxocash-app', 'users', currentUser.uid, 'app_data', 'main'), appData);
+                } catch(e) { console.error("Erro salvamento nuvem", e); }
+            }
+        };
+
+        // --- AUTH LISTENERS ---
+        if(auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    showApp("Nuvem");
+                    loadData();
+                } else {
+                    if(!useOffline) showAuth();
+                }
+            });
+        }
+
+        function showApp(mode) {
+            ui.screenAuth.style.opacity = '0';
+            setTimeout(() => {
+                ui.screenAuth.classList.add('hidden');
+                ui.screenApp.classList.remove('hidden');
+                ui.screenApp.classList.add('flex');
+            }, 500);
+            document.getElementById('user-label').innerText = mode === "Offline" ? "Offline" : (currentUser.isAnonymous ? "Convidado" : currentUser.email);
+            document.getElementById('mode-badge').innerText = mode;
+            document.getElementById('mode-badge').className = mode === "Offline" ? "text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full" : "text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full";
+        }
+
+        function showAuth() {
+            ui.screenAuth.classList.remove('hidden');
+            ui.screenAuth.style.opacity = '1';
+            ui.screenApp.classList.add('hidden');
+            ui.screenApp.classList.remove('flex');
+        }
+
+        // --- BUTTON ACTIONS ---
         window.toggleAuth = (view) => {
             ui.msg.innerText = "";
             document.getElementById('view-login').classList.toggle('hidden', view !== 'login');
             document.getElementById('view-register').classList.toggle('hidden', view !== 'register');
         };
 
-        document.getElementById('form-login').onsubmit = async (e) => {
-            e.preventDefault();
-            ui.setBtn('btn-login', true);
-            try { await signInWithEmailAndPassword(auth, document.getElementById('log-email').value, document.getElementById('log-pass').value); }
-            catch(err) { ui.msg.innerText = "Erro no login: " + err.code; ui.setBtn('btn-login', false); }
+        // MODO OFFLINE EXPLÍCITO
+        window.enableOfflineMode = (forced = false) => {
+            useOffline = true;
+            if(forced) alert("Erro de conexão com o banco. Ativando modo offline automático.");
+            showApp("Offline");
+            loadData();
         };
 
-        document.getElementById('form-register').onsubmit = async (e) => {
+        document.getElementById('btn-login').onclick = async (e) => {
             e.preventDefault();
+            const email = document.getElementById('log-email').value;
+            const pass = document.getElementById('log-pass').value;
+            ui.setBtn('btn-login', true);
+            ui.msg.innerText = "";
+            
+            try { await signInWithEmailAndPassword(auth, email, pass); }
+            catch(err) { 
+                ui.setBtn('btn-login', false); 
+                ui.msg.innerText = "Erro: " + err.code;
+            }
+        };
+
+        document.getElementById('btn-reg').onclick = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('reg-email').value;
             const p1 = document.getElementById('reg-pass').value;
             const p2 = document.getElementById('reg-confirm').value;
-            if(p1 !== p2) { ui.msg.innerText="Senhas não conferem"; return; }
+            
+            if(p1 !== p2) { ui.msg.innerText = "Senhas diferem"; return; }
             ui.setBtn('btn-reg', true);
-            try { await createUserWithEmailAndPassword(auth, document.getElementById('reg-email').value, p1); }
-            catch(err) { ui.msg.innerText = "Erro: " + err.code; ui.setBtn('btn-reg', false); }
+            try { await createUserWithEmailAndPassword(auth, email, p1); }
+            catch(err) { 
+                ui.setBtn('btn-reg', false); 
+                if(err.code === 'auth/email-already-in-use') ui.msg.innerText = "E-mail já cadastrado";
+                else ui.msg.innerText = "Erro: " + err.code;
+            }
         };
 
         document.getElementById('btn-guest').onclick = async () => {
             ui.setBtn('btn-guest', true);
             try { await signInAnonymously(auth); }
-            catch(err) { ui.msg.innerText = "Erro Guest: " + err.code + " (Ative no console Firebase)"; ui.setBtn('btn-guest', false); }
+            catch(err) { 
+                ui.setBtn('btn-guest', false);
+                console.error(err);
+                if(err.code.includes('blocked') || err.code.includes('unauthorized')) {
+                    ui.msg.innerText = "Acesso Convidado não ativado no Firebase. Use Offline.";
+                } else {
+                    ui.msg.innerText = "Erro: " + err.code;
+                }
+            }
         };
 
-        window.doLogout = () => { if(confirm("Sair?")) signOut(auth).then(()=>location.reload()); };
-
-        // 3. AUTH LISTENER & DATA SYNC
-        const initToken = async () => { if(typeof __initial_auth_token!=='undefined') try{await signInWithCustomToken(auth,__initial_auth_token)}catch(e){} };
-        initToken();
-
-        onAuthStateChanged(auth, (user) => {
-            if(user) {
-                currentUser = user;
-                ui.screenAuth.style.opacity = '0';
-                setTimeout(() => { ui.screenAuth.classList.add('hidden'); ui.screenApp.classList.remove('hidden'); ui.screenApp.classList.add('flex'); }, 500);
-                document.getElementById('user-label').innerText = user.isAnonymous ? "Convidado" : user.email;
-                
-                const docRef = doc(db, 'artifacts', 'fluxocash-app', 'users', user.uid, 'app_data', 'main');
-                onSnapshot(docRef, (snap) => {
-                    if(snap.exists()) {
-                        appData = snap.data();
-                        if(!appData.extraIncomes) appData.extraIncomes = [];
-                    }
-                    else { appData = { income: 0, extraIncomes: [], fixed: [], variable: [], debts: [], goals: [] }; saveData(); }
-                    render();
-                });
+        window.doLogout = () => { 
+            if(useOffline) {
+                location.reload();
             } else {
-                ui.screenAuth.classList.remove('hidden');
-                ui.screenAuth.style.opacity = '1';
-                ui.screenApp.classList.add('hidden');
-                ui.screenApp.classList.remove('flex');
+                if(confirm("Sair da conta?")) signOut(auth).then(()=>location.reload());
             }
-        });
+        };
 
-        const saveData = async () => { if(currentUser) await setDoc(doc(db, 'artifacts', 'fluxocash-app', 'users', currentUser.uid, 'app_data', 'main'), appData); };
-
-        // 4. DATA ACTIONS
+        // --- APP LOGIC (CRUD) ---
         window.addFixed = (e) => { e.preventDefault(); const n=document.getElementById('fix-name').value, v=parseFloat(document.getElementById('fix-val').value); if(n&&v){ appData.fixed.push({name:n,value:v}); e.target.reset(); saveData(); nav('dashboard'); } };
         window.addVar = (e) => { e.preventDefault(); const c=document.getElementById('var-cat').value, v=parseFloat(document.getElementById('var-val').value), d=document.getElementById('var-date').value; if(c&&v){ appData.variable.push({category:c,value:v,date:d}); document.getElementById('var-val').value=''; saveData(); nav('dashboard'); } };
         window.addDebt = (e) => { e.preventDefault(); const n=document.getElementById('debt-name').value, t=parseFloat(document.getElementById('debt-tot').value)||0, p=parseFloat(document.getElementById('debt-par').value); if(n&&p){ appData.debts.push({name:n,total:t,parcel:p}); e.target.reset(); saveData(); nav('dashboard'); } };
@@ -433,7 +531,6 @@
             const desc = document.getElementById('extra-desc').value;
             const val = parseFloat(document.getElementById('extra-val').value);
             if(desc && val) {
-                if(!appData.extraIncomes) appData.extraIncomes = [];
                 appData.extraIncomes.push({desc: desc, value: val});
                 document.getElementById('extra-desc').value = '';
                 document.getElementById('extra-val').value = '';
@@ -442,11 +539,11 @@
         };
 
         window.delItem = (type, i) => { if(confirm("Remover?")) { appData[type].splice(i,1); saveData(); } };
-        window.delExtra = (i) => { if(confirm("Remover renda extra?")) { appData.extraIncomes.splice(i,1); saveData(); } };
+        window.delExtra = (i) => { if(confirm("Remover renda?")) { appData.extraIncomes.splice(i,1); saveData(); } };
         window.resetAll = () => { if(confirm("Apagar tudo?")) { appData={income:0, extraIncomes:[], fixed:[],variable:[],debts:[],goals:[]}; saveData(); } };
         document.getElementById('inp-income').addEventListener('input', (e) => { appData.income = parseFloat(e.target.value)||0; saveData(); });
 
-        // 5. RENDER & NAV
+        // --- RENDER ---
         function fmt(n) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(n); }
 
         function render() {
@@ -468,10 +565,10 @@
             
             const balEl = document.getElementById('final-balance');
             balEl.innerText = fmt(bal);
-            balEl.className = `text-5xl font-extrabold my-2 transition-colors duration-500 ${bal>0?'text-emerald-500':(bal<0?'text-red-500':'text-slate-300')}`;
-            document.getElementById('balance-msg').innerText = bal>0?"Você está enriquecendo!":"Cuidado com os gastos!";
+            balEl.className = bal > 0 ? "text-5xl font-extrabold text-emerald-500" : (bal < 0 ? "text-5xl font-extrabold text-red-500" : "text-5xl font-extrabold text-slate-300");
+            document.getElementById('balance-msg').innerText = bal>0 ? "Você está enriquecendo! 🚀" : "Cuidado! Gasto > Renda ⚠️";
 
-            // Lists
+            // Extra Incomes List
             const extraList = document.getElementById('list-extra-incomes');
             extraList.innerHTML = '';
             if(appData.extraIncomes && appData.extraIncomes.length > 0) {
@@ -480,6 +577,7 @@
                 });
             } else { extraList.innerHTML = '<li class="text-xs text-slate-400 italic">Nenhuma renda extra...</li>'; }
 
+            // Lists
             const lFix = document.getElementById('list-fixed'); lFix.innerHTML='';
             appData.fixed.forEach((i,x)=>lFix.innerHTML+=`<tr class="border-b hover:bg-slate-50"><td class="p-3 font-medium">${i.name}</td><td class="p-3 text-right">${fmt(i.value)}</td><td class="p-3"><button onclick="delItem('fixed',${x})" class="text-red-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`);
             
@@ -492,7 +590,10 @@
             const lGoal = document.getElementById('list-goals'); lGoal.innerHTML='';
             appData.goals.forEach((i,x)=>lGoal.innerHTML+=`<div class="bg-white p-3 rounded-lg border border-emerald-100 shadow-sm flex justify-between"><div><span class="block font-bold text-emerald-800">${i.name}</span></div><div class="text-right"><span class="block font-bold text-emerald-600">${fmt(i.value)}</span><button onclick="delItem('goals',${x})" class="text-xs text-red-300">remover</button></div></div>`);
 
-            // Chart
+            updateChart(totalIncome, sFix, sVar, sDebt, sGoal, bal);
+        }
+
+        function updateChart(inc, fix, vari, debt, goal, bal) {
             const ctx = document.getElementById('chart-main').getContext('2d');
             if(chartInstance) chartInstance.destroy();
             chartInstance = new Chart(ctx, {
@@ -500,7 +601,7 @@
                 data: {
                     labels: ['Fixas', 'Variáveis', 'Dívidas', 'Investimentos', 'Livre'],
                     datasets: [{
-                        data: [sFix, sVar, sDebt, sGoal, Math.max(0, bal)],
+                        data: [fix, vari, debt, goal, Math.max(0, bal)],
                         backgroundColor: ['#64748b', '#f97316', '#ef4444', '#10b981', '#cbd5e1'],
                         borderWidth: 0
                     }]
@@ -520,35 +621,35 @@
             document.getElementById('mob-'+id)?.classList.add('active');
         };
 
-        // --- 6. AI & MODAL ---
-        window.askAI = async (ctx) => {
-            const modal = document.getElementById('ai-modal');
-            modal.classList.remove('hidden'); // Mostra o modal (flex)
-            const content = document.getElementById('ai-content');
-            content.innerHTML = '<div class="text-center py-8"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-500"></i><p class="mt-2 text-slate-400">Consultando o Pai Rico...</p></div>';
-            
-            try {
-                // Modelo gemini-1.5-flash-latest (ou gemini-1.5-flash)
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({contents:[{parts:[{text:`Analise como Robert Kiyosaki (Pai Rico). Contexto: ${JSON.stringify(appData)}. Foco: ${ctx}. Seja breve, direto e use Markdown.`}]}]})
-                });
-                
-                if (!res.ok) {
-                    const err = await res.json();
-                    throw new Error(err.error.message || "Erro desconhecido");
-                }
-
-                const data = await res.json();
-                content.innerHTML = marked.parse(data.candidates[0].content.parts[0].text);
-            } catch(e) { 
-                content.innerHTML = `<p class="text-red-500 text-center font-bold">Erro: ${e.message}</p>`; 
-            }
+        // --- AI ---
+        window.closeAI = () => {
+            document.getElementById('ai-modal').style.display = 'none';
+            document.getElementById('ai-modal').classList.add('hidden');
         };
 
-        // Função de Fechar corrigida
-        window.closeAI = () => {
-            document.getElementById('ai-modal').classList.add('hidden');
+        window.askAI = async (ctx) => {
+            const modal = document.getElementById('ai-modal');
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex'; // Força display flex
+            const content = document.getElementById('ai-content');
+            content.innerHTML = '<div class="text-center"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-emerald-600"></i><p class="mt-2 text-slate-500">Consultando o Pai Rico...</p></div>';
+            
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({contents:[{parts:[{text:`Analise como Robert Kiyosaki. Dados: ${JSON.stringify(appData)}. Foco: ${ctx}. Use Markdown.`}]}]})
+                });
+                
+                if(!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error?.message || "Erro desconhecido");
+                }
+
+                const d = await res.json();
+                document.getElementById('ai-content').innerHTML = marked.parse(d.candidates[0].content.parts[0].text);
+            } catch(e) { 
+                document.getElementById('ai-content').innerHTML = `<p class="text-red-500 text-center font-bold">Erro IA: ${e.message}</p>`; 
+            }
         };
 
         document.getElementById('var-date').valueAsDate = new Date();
