@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FluxoCash | Gestão Híbrida</title>
+    <title>FluxoCash | Gestão Completa</title>
     
     <!-- Bibliotecas -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,7 +19,7 @@
         /* TELA DE LOGIN */
         #auth-screen {
             background: linear-gradient(135deg, #065f46 0%, #047857 100%);
-            z-index: 9000;
+            z-index: 50;
         }
         .glass-panel {
             background: rgba(255, 255, 255, 0.98);
@@ -48,7 +48,7 @@
         .quick-btn:active { transform: scale(0.95); }
 
         /* MODAL IA */
-        #ai-modal { z-index: 9999; }
+        #ai-modal { z-index: 10000; }
 
         /* UTILITÁRIOS */
         .flex { display: flex !important; }
@@ -71,7 +71,7 @@
                 </div>
                 <h1 class="text-2xl font-bold">FluxoCash</h1>
                 <p class="text-slate-500 text-sm">Controle Financeiro Inteligente</p>
-                <div id="offline-badge" class="hidden mt-2 inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full font-bold">Modo Offline Ativado</div>
+                <div id="status-badge" class="hidden mt-2 inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full font-bold">Erro de Conexão</div>
             </div>
 
             <!-- Login -->
@@ -79,7 +79,7 @@
                 <form id="form-login" class="space-y-4">
                     <input type="email" id="log-email" class="w-full p-3 border rounded-lg bg-slate-50 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="E-mail" required>
                     <input type="password" id="log-pass" class="w-full p-3 border rounded-lg bg-slate-50 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Senha" required>
-                    <button type="submit" id="btn-login" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg hover:bg-slate-900 transition">Entrar (Nuvem)</button>
+                    <button type="submit" id="btn-login" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg hover:bg-slate-900 transition">Entrar</button>
                 </form>
                 <div class="mt-4 text-center text-sm text-slate-500">
                     Ainda não tem conta? <button onclick="toggleAuth('register')" class="text-emerald-600 font-bold hover:underline">Criar agora</button>
@@ -99,13 +99,9 @@
                 </div>
             </div>
 
-            <!-- Opções Alternativas -->
             <div class="mt-6 pt-4 border-t space-y-3">
-                <button id="btn-guest" class="w-full text-slate-600 border border-slate-300 py-2 rounded-lg text-sm hover:bg-slate-50 font-medium">
-                    Entrar como Convidado (Nuvem)
-                </button>
-                <button onclick="enableOfflineMode()" class="w-full text-emerald-600 font-bold text-sm hover:underline">
-                    Usar Offline (Sem Login)
+                <button onclick="forceOfflineMode()" class="w-full bg-slate-100 text-slate-700 font-bold py-3 rounded-lg hover:bg-slate-200 transition border border-slate-300">
+                    <i class="fa-solid fa-wifi-slash mr-2"></i> Modo Offline (Sem Login)
                 </button>
             </div>
             <p id="auth-error" class="text-red-500 text-xs text-center mt-3 font-bold h-auto min-h-[1rem]"></p>
@@ -120,7 +116,7 @@
             <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
                 <div class="flex items-center gap-2 text-emerald-700 font-bold text-lg">
                     <i class="fa-solid fa-chart-pie"></i> FluxoCash
-                    <span id="mode-badge" class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-normal">Offline</span>
+                    <span id="mode-badge" class="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold">Offline</span>
                 </div>
                 
                 <!-- Menu Desktop -->
@@ -232,84 +228,43 @@
                     </div>
                 </div>
 
-                <!-- 🏢 ABA 2: FIXAS -->
+                <!-- ABAS DE CONTEÚDO (Mantidas) -->
                 <div id="page-fixed" class="hidden space-y-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-bold text-slate-700">Despesas Fixas</h2>
-                            <p class="text-xs text-slate-400">Recorrentes (Todo mês)</p>
-                        </div>
-                        <form onsubmit="addFixed(event)" class="flex gap-3 mb-6">
-                            <input id="fix-name" type="text" placeholder="Nome (Ex: Aluguel)" class="flex-grow p-3 bg-slate-50 border rounded-lg outline-none" required>
-                            <input id="fix-val" type="number" placeholder="Valor" class="w-32 p-3 bg-slate-50 border rounded-lg outline-none font-bold" step="0.01" required>
-                            <button class="bg-slate-800 text-white w-12 rounded-lg hover:bg-slate-700"><i class="fa-solid fa-plus"></i></button>
-                        </form>
-                        <div class="bg-slate-50 rounded-xl overflow-hidden border border-slate-200">
-                            <table class="w-full text-sm text-left">
-                                <tbody id="list-fixed" class="divide-y divide-slate-200"></tbody>
-                            </table>
-                        </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border">
+                        <h2 class="font-bold mb-4 text-slate-700">Contas Fixas</h2>
+                        <form onsubmit="addFixed(event)" class="flex gap-3 mb-6"><input id="fix-name" type="text" placeholder="Nome" class="flex-grow p-3 border rounded outline-none" required><input id="fix-val" type="number" placeholder="Valor" class="w-32 p-3 border rounded outline-none" step="0.01" required><button class="bg-slate-800 text-white px-4 rounded"><i class="fa-solid fa-plus"></i></button></form>
+                        <table class="w-full text-sm"><tbody id="list-fixed" class="divide-y"></tbody></table>
                     </div>
                 </div>
 
-                <!-- 🛒 ABA 3: VARIÁVEIS -->
                 <div id="page-variable" class="hidden space-y-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-bold text-slate-700">Despesas Variáveis</h2>
-                            <span class="bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded font-bold">Diário</span>
-                        </div>
-                        <form onsubmit="addVar(event)" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 p-4 bg-orange-50 rounded-xl border border-orange-100">
-                            <select id="var-cat" class="p-3 bg-white border rounded-lg outline-none text-sm">
-                                <option>Alimentação</option><option>Mercado</option><option>Lazer</option><option>Transporte</option><option>Delivery</option><option>Outros</option>
-                            </select>
-                            <input id="var-val" type="number" placeholder="Valor" class="p-3 bg-white border rounded-lg outline-none font-bold text-orange-600" step="0.01" required>
-                            <input id="var-date" type="date" class="p-3 bg-white border rounded-lg outline-none text-slate-500 md:col-span-1 col-span-2">
-                            <button class="bg-orange-500 text-white font-bold p-3 rounded-lg md:col-span-1 col-span-2 hover:bg-orange-600">Lançar</button>
-                        </form>
-                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-3">Histórico Recente</h3>
-                        <ul id="list-variable" class="space-y-3"></ul>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border">
+                        <h2 class="font-bold mb-4 text-slate-700">Gastos Variáveis</h2>
+                        <form onsubmit="addVar(event)" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6"><select id="var-cat" class="p-3 border rounded outline-none"><option>Alimentação</option><option>Mercado</option><option>Lazer</option><option>Transporte</option><option>Delivery</option><option>Outros</option></select><input id="var-val" type="number" placeholder="Valor" class="p-3 border rounded outline-none" step="0.01" required><input id="var-date" type="date" class="p-3 border rounded outline-none md:col-span-1 col-span-2"><button class="bg-orange-500 text-white font-bold p-3 rounded md:col-span-1 col-span-2">Lançar</button></form>
+                        <ul id="list-variable" class="divide-y text-sm"></ul>
                     </div>
                 </div>
 
-                <!-- 💳 ABA 4: DÍVIDAS -->
                 <div id="page-debts" class="hidden space-y-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-bold text-slate-700">Dívidas</h2>
-                            <button onclick="askAI('debts')" class="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-bold">IA</button>
-                        </div>
-                        <form onsubmit="addDebt(event)" class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 p-4 bg-red-50 rounded-xl border border-red-100">
-                            <input id="debt-name" type="text" placeholder="Nome (Ex: Cartão)" class="p-3 bg-white border rounded-lg col-span-2 md:col-span-1 outline-none" required>
-                            <input id="debt-tot" type="number" placeholder="Total (Opcional)" class="p-3 bg-white border rounded-lg outline-none" step="0.01">
-                            <input id="debt-par" type="number" placeholder="Parcela Mensal" class="p-3 bg-white border rounded-lg outline-none font-bold text-red-600" step="0.01" required>
-                            <button class="bg-red-500 text-white font-bold p-3 rounded-lg md:col-span-3 col-span-2 hover:bg-red-600">Adicionar</button>
-                        </form>
-                        <div id="list-debts" class="grid gap-3"></div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border">
+                        <div class="flex justify-between mb-4"><h2 class="font-bold text-slate-700">Dívidas</h2><button onclick="askAI('debts')" class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded font-bold">IA</button></div>
+                        <form onsubmit="addDebt(event)" class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6"><input id="debt-name" type="text" placeholder="Nome" class="p-3 border rounded col-span-2" required><input id="debt-tot" type="number" placeholder="Total" class="p-3 border rounded" step="0.01"><input id="debt-par" type="number" placeholder="Parcela" class="p-3 border rounded" required step="0.01"><button class="bg-red-500 text-white font-bold p-3 rounded col-span-2">Adicionar</button></form>
+                        <div id="list-debts" class="grid gap-2"></div>
                     </div>
                 </div>
 
-                <!-- 💰 ABA 5: INVESTIMENTOS (METAS) -->
                 <div id="page-goals" class="hidden space-y-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-bold text-slate-700">Pague-se Primeiro</h2>
-                            <button onclick="askAI('goals')" class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-bold">IA</button>
-                        </div>
-                        <form onsubmit="addGoal(event)" class="flex gap-3 mb-6">
-                            <input id="goal-name" type="text" placeholder="Objetivo (Ex: Ações)" class="flex-grow p-3 bg-emerald-50 border border-emerald-200 rounded-lg outline-none text-emerald-800 placeholder-emerald-400" required>
-                            <input id="goal-val" type="number" placeholder="Aporte" class="w-28 p-3 bg-emerald-50 border border-emerald-200 rounded-lg outline-none font-bold text-emerald-700 placeholder-emerald-400" step="0.01" required>
-                            <button class="bg-emerald-600 text-white px-5 rounded-lg hover:bg-emerald-700"><i class="fa-solid fa-plus"></i></button>
-                        </form>
-                        <div id="list-goals" class="grid md:grid-cols-2 gap-4"></div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border">
+                        <div class="flex justify-between mb-4"><h2 class="font-bold text-slate-700">Investimentos</h2><button onclick="askAI('goals')" class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded font-bold">IA</button></div>
+                        <form onsubmit="addGoal(event)" class="flex gap-3 mb-6"><input id="goal-name" type="text" placeholder="Objetivo" class="flex-grow p-3 border rounded outline-none" required><input id="goal-val" type="number" placeholder="Aporte" class="w-28 p-3 border rounded outline-none" step="0.01" required><button class="bg-emerald-600 text-white px-4 rounded"><i class="fa-solid fa-plus"></i></button></form>
+                        <div id="list-goals" class="grid md:grid-cols-2 gap-3"></div>
                     </div>
                 </div>
-
             </div>
         </main>
 
-        <!-- MENU MOBILE (Inferior) -->
-        <nav class="md:hidden flex-none bg-white border-t border-slate-200 flex justify-around py-2 z-40 pb-safe">
+        <!-- MENU MOBILE -->
+        <nav class="md:hidden flex-none bg-white border-t flex justify-around py-2 z-40">
             <button onclick="nav('dashboard')" class="mob-item active flex flex-col items-center p-2" id="mob-dashboard"><i class="fa-solid fa-chart-pie text-xl mb-1"></i><span class="text-[10px]">Geral</span></button>
             <button onclick="nav('fixed')" class="mob-item flex flex-col items-center p-2" id="mob-fixed"><i class="fa-solid fa-house text-xl mb-1"></i><span class="text-[10px]">Fixas</span></button>
             <button onclick="nav('variable')" class="mob-item flex flex-col items-center p-2" id="mob-variable"><i class="fa-solid fa-cart-shopping text-xl mb-1"></i><span class="text-[10px]">Variáveis</span></button>
@@ -318,7 +273,7 @@
         </nav>
     </div>
 
-    <!-- AI Modal (Hidden by default) -->
+    <!-- AI Modal -->
     <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm" style="display: none;">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
             <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
@@ -329,15 +284,14 @@
         </div>
     </div>
 
-    <!-- SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURAÇÃO
+        // CONFIG (Seus Dados Inseridos)
         const firebaseConfig = {
-            apiKey: "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck",
+            apiKey: "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU",
             authDomain: "fluxocash-b81f6.firebaseapp.com",
             projectId: "fluxocash-b81f6",
             storageBucket: "fluxocash-b81f6.firebasestorage.app",
@@ -346,23 +300,18 @@
         };
         const geminiApiKey = "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck";
 
-        // VARIAVEIS GLOBAIS
-        let app, auth, db;
-        let currentUser = null;
+        // SETUP
+        let app, auth, db, currentUser = null;
         let appData = { income: 0, extraIncomes: [], fixed: [], variable: [], debts: [], goals: [] };
-        let chartInstance = null;
-        let useOffline = false;
+        let chartInstance = null, isOffline = false;
 
-        // INICIALIZAÇÃO FIREBASE
         try {
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
-        } catch (e) {
-            console.error("Erro Firebase", e);
-        }
+        } catch(e) { console.error(e); }
 
-        // --- AUTH & DATA LOGIC ---
+        // UI HELPERS
         const ui = {
             screenAuth: document.getElementById('auth-screen'),
             screenApp: document.getElementById('app-screen'),
@@ -370,244 +319,151 @@
             setBtn: (id, loading) => {
                 const btn = document.getElementById(id);
                 btn.disabled = loading;
-                btn.innerText = loading ? "..." : (btn.getAttribute('data-txt') || btn.innerText);
-                if(!btn.getAttribute('data-txt')) btn.setAttribute('data-txt', btn.innerText);
+                btn.innerText = loading ? "..." : (btn.dataset.txt || btn.innerText);
+                if(!btn.dataset.txt) btn.dataset.txt = btn.innerText;
             }
         };
 
-        // Função Principal de Carregamento de Dados
-        function loadData() {
-            // Se estiver em modo offline
-            if(useOffline) {
-                const local = localStorage.getItem('fluxocash_local_data');
-                if(local) appData = JSON.parse(local);
-                // Garantir estrutura
-                if(!appData.extraIncomes) appData.extraIncomes = [];
-                render();
-                return;
-            }
-
-            // Se estiver online
-            if(currentUser && db) {
-                const docRef = doc(db, 'artifacts', 'fluxocash-app', 'users', currentUser.uid, 'app_data', 'main');
-                onSnapshot(docRef, (snap) => {
-                    if(snap.exists()) {
-                        appData = snap.data();
-                        if(!appData.extraIncomes) appData.extraIncomes = [];
-                    } else {
-                        saveData(); // Cria doc inicial
-                    }
-                    render();
-                }, (error) => {
-                    console.error("Erro leitura:", error);
-                    // Fallback para offline se der erro de permissão
-                    if(error.code.includes('permission') || error.code.includes('unavailable')) {
-                        enableOfflineMode(true);
-                    }
-                });
-            }
-        }
-
-        // Função de Salvamento (Híbrida)
-        window.saveData = async () => {
-            if(useOffline) {
-                localStorage.setItem('fluxocash_local_data', JSON.stringify(appData));
-                return;
-            }
-            if(currentUser && db) {
-                try {
-                    await setDoc(doc(db, 'artifacts', 'fluxocash-app', 'users', currentUser.uid, 'app_data', 'main'), appData);
-                } catch(e) { console.error("Erro salvamento nuvem", e); }
-            }
-        };
-
-        // --- AUTH LISTENERS ---
-        if(auth) {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUser = user;
-                    showApp("Nuvem");
-                    loadData();
-                } else {
-                    if(!useOffline) showAuth();
-                }
-            });
-        }
-
-        function showApp(mode) {
-            ui.screenAuth.style.opacity = '0';
-            setTimeout(() => {
-                ui.screenAuth.classList.add('hidden');
-                ui.screenApp.classList.remove('hidden');
-                ui.screenApp.classList.add('flex');
-            }, 500);
-            document.getElementById('user-label').innerText = mode === "Offline" ? "Offline" : (currentUser.isAnonymous ? "Convidado" : currentUser.email);
-            document.getElementById('mode-badge').innerText = mode;
-            document.getElementById('mode-badge').className = mode === "Offline" ? "text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full" : "text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full";
-        }
-
-        function showAuth() {
-            ui.screenAuth.classList.remove('hidden');
-            ui.screenAuth.style.opacity = '1';
-            ui.screenApp.classList.add('hidden');
-            ui.screenApp.classList.remove('flex');
-        }
-
-        // --- BUTTON ACTIONS ---
         window.toggleAuth = (view) => {
-            ui.msg.innerText = "";
+            ui.msg.classList.add('hidden');
             document.getElementById('view-login').classList.toggle('hidden', view !== 'login');
             document.getElementById('view-register').classList.toggle('hidden', view !== 'register');
         };
 
-        // MODO OFFLINE EXPLÍCITO
-        window.enableOfflineMode = (forced = false) => {
-            useOffline = true;
-            if(forced) alert("Erro de conexão com o banco. Ativando modo offline automático.");
-            showApp("Offline");
-            loadData();
-        };
+        // AUTH + DATA LOGIC
+        function showError(msg) {
+            ui.msg.innerText = msg;
+            ui.msg.classList.remove('hidden');
+        }
 
-        document.getElementById('btn-login').onclick = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('log-email').value;
-            const pass = document.getElementById('log-pass').value;
-            ui.setBtn('btn-login', true);
-            ui.msg.innerText = "";
+        // FUNÇÃO DE TRATAMENTO DE ERRO BLINDADA
+        function handleAuthError(err, btnId) {
+            ui.setBtn(btnId, false);
+            console.error("Auth Error:", err);
             
-            try { await signInWithEmailAndPassword(auth, email, pass); }
-            catch(err) { 
-                ui.setBtn('btn-login', false); 
-                ui.msg.innerText = "Erro: " + err.code;
+            // SE A API ESTIVER BLOQUEADA, VAI PRO OFFLINE
+            if(err.code && (err.code.includes('blocked') || err.code.includes('requests-to-this-api'))) {
+                ui.msg.innerText = "Servidor instável. Entrando em modo offline seguro...";
+                ui.msg.classList.remove('hidden');
+                setTimeout(() => window.forceOfflineMode(), 1500);
+            } else {
+                showError("Erro: " + err.code);
             }
+        }
+
+        document.getElementById('form-login').onsubmit = async (e) => {
+            e.preventDefault();
+            ui.setBtn('btn-login', true);
+            try { await signInWithEmailAndPassword(auth, document.getElementById('log-email').value, document.getElementById('log-pass').value); }
+            catch(err) { handleAuthError(err, 'btn-login'); }
         };
 
-        document.getElementById('btn-reg').onclick = async (e) => {
+        document.getElementById('form-register').onsubmit = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('reg-email').value;
             const p1 = document.getElementById('reg-pass').value;
             const p2 = document.getElementById('reg-confirm').value;
-            
-            if(p1 !== p2) { ui.msg.innerText = "Senhas diferem"; return; }
+            if(p1 !== p2) { showError("Senhas diferem"); return; }
             ui.setBtn('btn-reg', true);
-            try { await createUserWithEmailAndPassword(auth, email, p1); }
-            catch(err) { 
-                ui.setBtn('btn-reg', false); 
-                if(err.code === 'auth/email-already-in-use') ui.msg.innerText = "E-mail já cadastrado";
-                else ui.msg.innerText = "Erro: " + err.code;
-            }
+            try { await createUserWithEmailAndPassword(auth, document.getElementById('reg-email').value, p1); }
+            catch(err) { handleAuthError(err, 'btn-reg'); }
         };
 
-        document.getElementById('btn-guest').onclick = async () => {
-            ui.setBtn('btn-guest', true);
-            try { await signInAnonymously(auth); }
-            catch(err) { 
-                ui.setBtn('btn-guest', false);
-                console.error(err);
-                if(err.code.includes('blocked') || err.code.includes('unauthorized')) {
-                    ui.msg.innerText = "Acesso Convidado não ativado no Firebase. Use Offline.";
-                } else {
-                    ui.msg.innerText = "Erro: " + err.code;
+        window.forceOfflineMode = () => {
+            isOffline = true;
+            ui.screenAuth.classList.add('hidden');
+            ui.screenApp.classList.remove('hidden');
+            ui.screenApp.classList.add('flex');
+            document.getElementById('user-label').innerText = "Offline";
+            document.getElementById('mode-badge').innerText = "Offline";
+            document.getElementById('mode-badge').className = "text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold";
+            const local = localStorage.getItem('fluxocash_local');
+            if(local) appData = JSON.parse(local);
+            if(!appData.extraIncomes) appData.extraIncomes = [];
+            render();
+        };
+
+        window.doLogout = () => { if(isOffline) location.reload(); else if(confirm("Sair?")) signOut(auth).then(()=>location.reload()); };
+
+        if(auth) {
+            onAuthStateChanged(auth, (user) => {
+                if(user) {
+                    currentUser = user;
+                    ui.screenAuth.classList.add('hidden');
+                    ui.screenApp.classList.remove('hidden');
+                    ui.screenApp.classList.add('flex');
+                    document.getElementById('user-label').innerText = user.email || "Convidado";
+                    document.getElementById('mode-badge').innerText = "Cloud";
+                    const docRef = doc(db, 'artifacts', 'fluxocash-app', 'users', user.uid, 'app_data', 'main');
+                    onSnapshot(docRef, (s) => {
+                        if(s.exists()) { appData = s.data(); if(!appData.extraIncomes) appData.extraIncomes=[]; }
+                        else { saveData(); }
+                        render();
+                    }, (err) => { 
+                        // Fallback se leitura falhar
+                        window.forceOfflineMode();
+                    });
                 }
-            }
+            });
+        }
+
+        const saveData = async () => {
+            if(isOffline) { localStorage.setItem('fluxocash_local', JSON.stringify(appData)); return; }
+            if(currentUser) await setDoc(doc(db, 'artifacts', 'fluxocash-app', 'users', currentUser.uid, 'app_data', 'main'), appData);
         };
 
-        window.doLogout = () => { 
-            if(useOffline) {
-                location.reload();
-            } else {
-                if(confirm("Sair da conta?")) signOut(auth).then(()=>location.reload());
-            }
-        };
+        // --- APP FUNCTIONS ---
+        window.addFixed = (e) => { e.preventDefault(); const n=document.getElementById('fix-name').value, v=parseFloat(document.getElementById('fix-val').value); if(n&&v){ appData.fixed.push({name:n,value:v}); e.target.reset(); saveData(); } };
+        window.addVar = (e) => { e.preventDefault(); const c=document.getElementById('var-cat').value, v=parseFloat(document.getElementById('var-val').value), d=document.getElementById('var-date').value; if(c&&v){ appData.variable.push({category:c,value:v,date:d}); document.getElementById('var-val').value=''; saveData(); } };
+        window.addDebt = (e) => { e.preventDefault(); const n=document.getElementById('debt-name').value, t=parseFloat(document.getElementById('debt-tot').value)||0, p=parseFloat(document.getElementById('debt-par').value); if(n&&p){ appData.debts.push({name:n,total:t,parcel:p}); e.target.reset(); saveData(); } };
+        window.addGoal = (e) => { e.preventDefault(); const n=document.getElementById('goal-name').value, v=parseFloat(document.getElementById('goal-val').value); if(n&&v){ appData.goals.push({name:n,value:v}); e.target.reset(); saveData(); } };
+        window.addExtraIncome = (e) => { e.preventDefault(); const d=document.getElementById('extra-desc').value, v=parseFloat(document.getElementById('extra-val').value); if(d&&v){ if(!appData.extraIncomes) appData.extraIncomes=[]; appData.extraIncomes.push({desc:d,value:v}); e.target.reset(); saveData(); render(); } };
 
-        // --- APP LOGIC (CRUD) ---
-        window.addFixed = (e) => { e.preventDefault(); const n=document.getElementById('fix-name').value, v=parseFloat(document.getElementById('fix-val').value); if(n&&v){ appData.fixed.push({name:n,value:v}); e.target.reset(); saveData(); nav('dashboard'); } };
-        window.addVar = (e) => { e.preventDefault(); const c=document.getElementById('var-cat').value, v=parseFloat(document.getElementById('var-val').value), d=document.getElementById('var-date').value; if(c&&v){ appData.variable.push({category:c,value:v,date:d}); document.getElementById('var-val').value=''; saveData(); nav('dashboard'); } };
-        window.addDebt = (e) => { e.preventDefault(); const n=document.getElementById('debt-name').value, t=parseFloat(document.getElementById('debt-tot').value)||0, p=parseFloat(document.getElementById('debt-par').value); if(n&&p){ appData.debts.push({name:n,total:t,parcel:p}); e.target.reset(); saveData(); nav('dashboard'); } };
-        window.addGoal = (e) => { e.preventDefault(); const n=document.getElementById('goal-name').value, v=parseFloat(document.getElementById('goal-val').value); if(n&&v){ appData.goals.push({name:n,value:v}); e.target.reset(); saveData(); nav('dashboard'); } };
-        
-        window.addExtraIncome = (e) => {
-            e.preventDefault();
-            const desc = document.getElementById('extra-desc').value;
-            const val = parseFloat(document.getElementById('extra-val').value);
-            if(desc && val) {
-                appData.extraIncomes.push({desc: desc, value: val});
-                document.getElementById('extra-desc').value = '';
-                document.getElementById('extra-val').value = '';
-                saveData();
-            }
-        };
-
-        window.delItem = (type, i) => { if(confirm("Remover?")) { appData[type].splice(i,1); saveData(); } };
-        window.delExtra = (i) => { if(confirm("Remover renda?")) { appData.extraIncomes.splice(i,1); saveData(); } };
-        window.resetAll = () => { if(confirm("Apagar tudo?")) { appData={income:0, extraIncomes:[], fixed:[],variable:[],debts:[],goals:[]}; saveData(); } };
-        document.getElementById('inp-income').addEventListener('input', (e) => { appData.income = parseFloat(e.target.value)||0; saveData(); });
+        window.delItem = (type, i) => { if(confirm("Remover?")) { appData[type].splice(i,1); saveData(); render(); } };
+        window.delExtra = (i) => { if(confirm("Remover?")) { appData.extraIncomes.splice(i,1); saveData(); render(); } };
+        window.resetAll = () => { if(confirm("Zerar?")) { appData={income:0,extraIncomes:[],fixed:[],variable:[],debts:[],goals:[]}; saveData(); render(); } };
+        document.getElementById('inp-income').addEventListener('input', (e) => { appData.income = parseFloat(e.target.value)||0; saveData(); render(); });
 
         // --- RENDER ---
         function fmt(n) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(n); }
-
+        
         function render() {
-            document.getElementById('inp-income').value = appData.income || "";
-            const totalExtra = (appData.extraIncomes || []).reduce((a,b)=>a+b.value, 0);
-            const totalIncome = (appData.income || 0) + totalExtra;
+            if(document.activeElement.id !== 'inp-income') document.getElementById('inp-income').value = appData.income || "";
+            const extra = (appData.extraIncomes||[]).reduce((a,b)=>a+b.value,0);
+            const inc = (appData.income||0) + extra;
+            const fix = appData.fixed.reduce((a,b)=>a+b.value,0);
+            const vari = appData.variable.reduce((a,b)=>a+b.value,0);
+            const debt = appData.debts.reduce((a,b)=>a+b.parcel,0);
+            const goal = appData.goals.reduce((a,b)=>a+b.value,0);
+            const bal = inc - (fix+vari+debt+goal);
 
-            const sFix = appData.fixed.reduce((a,b)=>a+b.value,0);
-            const sVar = appData.variable.reduce((a,b)=>a+b.value,0);
-            const sDebt = appData.debts.reduce((a,b)=>a+b.parcel,0);
-            const sGoal = appData.goals.reduce((a,b)=>a+b.value,0);
-            const bal = totalIncome - (sFix+sVar+sDebt+sGoal);
+            document.getElementById('total-extra-income').innerText = fmt(extra);
+            document.getElementById('dash-fix').innerText = fmt(fix);
+            document.getElementById('dash-var').innerText = fmt(vari);
+            document.getElementById('dash-debt').innerText = fmt(debt);
+            document.getElementById('dash-goal').innerText = fmt(goal);
+            const elBal = document.getElementById('final-balance');
+            elBal.innerText = fmt(bal);
+            elBal.className = `text-5xl font-extrabold my-2 ${bal>0?'text-emerald-500':(bal<0?'text-red-500':'text-slate-300')}`;
+            document.getElementById('balance-msg').innerText = bal>0?"Riqueza crescendo 🚀":"Gasto > Renda ⚠️";
 
-            document.getElementById('total-extra-income').innerText = fmt(totalExtra);
-            document.getElementById('dash-fix').innerText = fmt(sFix);
-            document.getElementById('dash-var').innerText = fmt(sVar);
-            document.getElementById('dash-debt').innerText = fmt(sDebt);
-            document.getElementById('dash-goal').innerText = fmt(sGoal);
-            
-            const balEl = document.getElementById('final-balance');
-            balEl.innerText = fmt(bal);
-            balEl.className = bal > 0 ? "text-5xl font-extrabold text-emerald-500" : (bal < 0 ? "text-5xl font-extrabold text-red-500" : "text-5xl font-extrabold text-slate-300");
-            document.getElementById('balance-msg').innerText = bal>0 ? "Você está enriquecendo! 🚀" : "Cuidado! Gasto > Renda ⚠️";
+            const elExtra = document.getElementById('list-extra-incomes'); elExtra.innerHTML='';
+            (appData.extraIncomes||[]).forEach((i,x) => elExtra.innerHTML+=`<li class="flex justify-between border-b border-emerald-100 py-1"><span>${i.desc}</span><div class="font-bold text-emerald-700">${fmt(i.value)} <button onclick="delExtra(${x})" class="text-red-300 hover:text-red-500 ml-1">x</button></div></li>`);
 
-            // Extra Incomes List
-            const extraList = document.getElementById('list-extra-incomes');
-            extraList.innerHTML = '';
-            if(appData.extraIncomes && appData.extraIncomes.length > 0) {
-                appData.extraIncomes.forEach((item, idx) => {
-                    extraList.innerHTML += `<li class="flex justify-between items-center border-b border-emerald-100 pb-1"><span>${item.desc}</span> <div class="flex gap-2 font-bold text-emerald-700"><span>${fmt(item.value)}</span> <button onclick="delExtra(${idx})" class="text-red-300 hover:text-red-500 text-xs">x</button></div></li>`;
-                });
-            } else { extraList.innerHTML = '<li class="text-xs text-slate-400 italic">Nenhuma renda extra...</li>'; }
-
-            // Lists
             const lFix = document.getElementById('list-fixed'); lFix.innerHTML='';
-            appData.fixed.forEach((i,x)=>lFix.innerHTML+=`<tr class="border-b hover:bg-slate-50"><td class="p-3 font-medium">${i.name}</td><td class="p-3 text-right">${fmt(i.value)}</td><td class="p-3"><button onclick="delItem('fixed',${x})" class="text-red-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`);
-            
+            appData.fixed.forEach((i,x)=>lFix.innerHTML+=`<tr class="border-b hover:bg-slate-50"><td class="p-3">${i.name}</td><td class="p-3 text-right">${fmt(i.value)}</td><td class="p-3 text-right"><button onclick="delItem('fixed',${x})" class="text-red-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`);
+
             const lVar = document.getElementById('list-variable'); lVar.innerHTML='';
-            [...appData.variable].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach((i,x)=>lVar.innerHTML+=`<li class="bg-white p-3 rounded-lg border border-slate-100 flex justify-between items-center"><div><span class="block font-bold text-slate-700">${i.category}</span><span class="text-xs text-slate-400">${i.date}</span></div><div class="flex items-center gap-2"><span class="font-bold text-orange-600">${fmt(i.value)}</span><button onclick="delItem('variable',${x})" class="text-red-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></div></li>`);
+            [...appData.variable].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach((i,x)=>lVar.innerHTML+=`<li class="bg-white p-3 rounded border flex justify-between mb-2"><div><span class="font-bold">${i.category}</span> <span class="text-xs text-slate-400">${i.date}</span></div><div class="flex gap-2 font-bold text-orange-600"><span>${fmt(i.value)}</span><button onclick="delItem('variable',${x})" class="text-red-300 hover:text-red-500">x</button></div></li>`);
 
             const lDebt = document.getElementById('list-debts'); lDebt.innerHTML='';
-            appData.debts.forEach((i,x)=>lDebt.innerHTML+=`<div class="bg-white p-3 rounded-lg border-l-4 border-red-400 shadow-sm flex justify-between"><div><div class="font-bold text-slate-700">${i.name}</div><div class="text-xs text-slate-400">Total: ${fmt(i.total)}</div></div><div class="text-right"><div class="text-red-600 font-bold">${fmt(i.parcel)}</div><button onclick="delItem('debts',${x})" class="text-xs text-slate-400">remover</button></div></div>`);
+            appData.debts.forEach((i,x)=>lDebt.innerHTML+=`<div class="bg-white p-3 rounded border-l-4 border-red-400 shadow-sm flex justify-between"><div><span class="font-bold">${i.name}</span><br><span class="text-xs">Total: ${fmt(i.total)}</span></div><div class="text-right font-bold text-red-600">${fmt(i.parcel)}<button onclick="delItem('debts',${x})" class="ml-2 text-slate-300 hover:text-red-500">x</button></div></div>`);
 
             const lGoal = document.getElementById('list-goals'); lGoal.innerHTML='';
-            appData.goals.forEach((i,x)=>lGoal.innerHTML+=`<div class="bg-white p-3 rounded-lg border border-emerald-100 shadow-sm flex justify-between"><div><span class="block font-bold text-emerald-800">${i.name}</span></div><div class="text-right"><span class="block font-bold text-emerald-600">${fmt(i.value)}</span><button onclick="delItem('goals',${x})" class="text-xs text-red-300">remover</button></div></div>`);
+            appData.goals.forEach((i,x)=>lGoal.innerHTML+=`<div class="bg-emerald-50 p-3 border border-emerald-100 rounded flex justify-between"><div><span class="font-bold text-emerald-800">${i.name}</span></div><div class="text-right text-emerald-600 font-bold">${fmt(i.value)} <button onclick="delItem('goals',${x})" class="text-xs text-red-300 ml-2">x</button></div></div>`);
 
-            updateChart(totalIncome, sFix, sVar, sDebt, sGoal, bal);
-        }
-
-        function updateChart(inc, fix, vari, debt, goal, bal) {
             const ctx = document.getElementById('chart-main').getContext('2d');
             if(chartInstance) chartInstance.destroy();
-            chartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Fixas', 'Variáveis', 'Dívidas', 'Investimentos', 'Livre'],
-                    datasets: [{
-                        data: [fix, vari, debt, goal, Math.max(0, bal)],
-                        backgroundColor: ['#64748b', '#f97316', '#ef4444', '#10b981', '#cbd5e1'],
-                        borderWidth: 0
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right' } } }
-            });
+            chartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: ['Fixas','Variáveis','Dívidas','Investimentos','Livre'], datasets: [{ data: [fix,vari,debt,goal,Math.max(0,bal)], backgroundColor: ['#64748b','#f97316','#ef4444','#10b981','#cbd5e1'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right' } } } });
         }
 
         window.nav = (id) => {
@@ -619,37 +475,23 @@
             document.getElementById('page-'+id).classList.remove('hidden');
             document.getElementById('nav-d-'+id)?.classList.add('active');
             document.getElementById('mob-'+id)?.classList.add('active');
+            if(id==='dashboard') render();
         };
 
-        // --- AI ---
-        window.closeAI = () => {
-            document.getElementById('ai-modal').style.display = 'none';
-            document.getElementById('ai-modal').classList.add('hidden');
-        };
-
+        window.closeAI = () => { document.getElementById('ai-modal').style.display='none'; document.getElementById('ai-modal').classList.add('hidden'); };
         window.askAI = async (ctx) => {
             const modal = document.getElementById('ai-modal');
-            modal.classList.remove('hidden');
-            modal.style.display = 'flex'; // Força display flex
-            const content = document.getElementById('ai-content');
-            content.innerHTML = '<div class="text-center"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-emerald-600"></i><p class="mt-2 text-slate-500">Consultando o Pai Rico...</p></div>';
-            
+            modal.classList.remove('hidden'); modal.style.display='flex';
+            document.getElementById('ai-content').innerHTML = '<div class="text-center"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-emerald-600"></i><p>Pensando...</p></div>';
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
                     method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({contents:[{parts:[{text:`Analise como Robert Kiyosaki. Dados: ${JSON.stringify(appData)}. Foco: ${ctx}. Use Markdown.`}]}]})
+                    body: JSON.stringify({contents:[{parts:[{text:`Analise como Pai Rico. Dados: ${JSON.stringify(appData)}. Foco: ${ctx}. Markdown.`}]}]})
                 });
-                
-                if(!res.ok) {
-                    const err = await res.json();
-                    throw new Error(err.error?.message || "Erro desconhecido");
-                }
-
+                if(!res.ok) throw new Error((await res.json()).error.message);
                 const d = await res.json();
                 document.getElementById('ai-content').innerHTML = marked.parse(d.candidates[0].content.parts[0].text);
-            } catch(e) { 
-                document.getElementById('ai-content').innerHTML = `<p class="text-red-500 text-center font-bold">Erro IA: ${e.message}</p>`; 
-            }
+            } catch(e) { document.getElementById('ai-content').innerHTML = `<p class="text-red-500 font-bold">Erro IA: ${e.message}</p>`; }
         };
 
         document.getElementById('var-date').valueAsDate = new Date();
