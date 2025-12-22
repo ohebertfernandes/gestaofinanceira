@@ -19,7 +19,7 @@
         /* TELA DE LOGIN (Z-Index Ajustado) */
         #auth-screen {
             background: linear-gradient(135deg, #065f46 0%, #047857 100%);
-            z-index: 9000; /* Login sempre no topo ao iniciar */
+            z-index: 9000;
         }
         .glass-panel {
             background: rgba(255, 255, 255, 0.98);
@@ -44,19 +44,14 @@
         .mob-item.active { color: #059669; transform: translateY(-2px); }
 
         /* BOTÕES RÁPIDOS */
-        .quick-btn {
-            transition: transform 0.2s;
-        }
+        .quick-btn { transition: transform 0.2s; }
         .quick-btn:active { transform: scale(0.95); }
 
         /* MODAL IA */
-        #ai-modal {
-            z-index: 9999; /* Acima de tudo quando aberto */
-        }
+        #ai-modal { z-index: 9999; }
 
-        /* UTILITÁRIOS - CORREÇÃO CRÍTICA DE PRIORIDADE */
+        /* UTILITÁRIOS */
         .flex { display: flex !important; }
-        /* .hidden deve vir POR ÚLTIMO para sobrescrever .flex */
         .hidden { display: none !important; }
     </style>
 </head>
@@ -145,12 +140,35 @@
                             <button onclick="resetAll()" class="text-xs text-slate-300 hover:text-red-500">Resetar</button>
                         </div>
 
-                        <!-- Renda -->
-                        <div class="mb-8">
-                            <label class="text-xs font-bold text-slate-400 uppercase">Sua Renda Mensal</label>
-                            <div class="flex items-center border-b-2 border-slate-200 focus-within:border-emerald-500 transition">
-                                <span class="text-2xl text-slate-400 mr-2">R$</span>
-                                <input type="number" id="inp-income" class="w-full text-3xl font-bold text-slate-800 bg-transparent outline-none py-2" placeholder="0.00">
+                        <div class="grid md:grid-cols-2 gap-8 mb-8">
+                            <!-- Renda Fixa -->
+                            <div>
+                                <label class="text-xs font-bold text-slate-400 uppercase">Renda Fixa (Salário)</label>
+                                <div class="flex items-center border-b-2 border-slate-200 focus-within:border-emerald-500 transition mt-1">
+                                    <span class="text-xl text-slate-400 mr-2">R$</span>
+                                    <input type="number" id="inp-income" class="w-full text-2xl font-bold text-slate-800 bg-transparent outline-none py-1" placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <!-- Renda Variável (NOVO) -->
+                            <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="text-xs font-bold text-emerald-700 uppercase">Renda Variável (Extra)</label>
+                                    <span id="total-extra-income" class="font-bold text-emerald-600">R$ 0,00</span>
+                                </div>
+                                
+                                <!-- Lista de Rendas Extras -->
+                                <ul id="list-extra-incomes" class="text-sm space-y-2 mb-3 max-h-32 overflow-y-auto">
+                                    <!-- Itens inseridos via JS -->
+                                    <li class="text-xs text-slate-400 italic">Nenhuma renda extra...</li>
+                                </ul>
+
+                                <!-- Formulário Mini -->
+                                <form onsubmit="addExtraIncome(event)" class="flex gap-2">
+                                    <input id="extra-desc" type="text" placeholder="Ex: Freelance" class="w-full p-2 text-xs border rounded outline-none" required>
+                                    <input id="extra-val" type="number" placeholder="Valor" class="w-20 p-2 text-xs border rounded outline-none" step="0.01" required>
+                                    <button class="bg-emerald-600 text-white px-3 rounded hover:bg-emerald-700 text-xs"><i class="fa-solid fa-plus"></i></button>
+                                </form>
                             </div>
                         </div>
 
@@ -182,7 +200,7 @@
                         </div>
                     </div>
 
-                    <!-- 🚀 BOTÕES DE AÇÃO RÁPIDA (Onde inserir custos) -->
+                    <!-- 🚀 BOTÕES DE AÇÃO RÁPIDA -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <button onclick="nav('variable')" class="quick-btn bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center gap-2 hover:bg-orange-50 group">
                             <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center group-hover:bg-orange-200 transition"><i class="fa-solid fa-cart-shopping"></i></div>
@@ -294,12 +312,12 @@
         </nav>
     </div>
 
-    <!-- AI Modal (Inicia escondido com display:none para garantir) -->
+    <!-- AI Modal -->
     <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm" style="display: none;">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
             <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
                 <span class="font-bold text-indigo-600"><i class="fa-solid fa-robot mr-2"></i>Consultor IA</span>
-                <button onclick="closeModal()" class="text-slate-400"><i class="fa-solid fa-times text-xl"></i></button>
+                <button onclick="document.getElementById('ai-modal').style.display='none'" class="text-slate-400"><i class="fa-solid fa-times text-xl"></i></button>
             </div>
             <div id="ai-content" class="p-6 overflow-y-auto prose prose-sm text-slate-700"></div>
         </div>
@@ -327,9 +345,9 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // State
+        // State (Nova estrutura com incomes)
         let currentUser = null;
-        let appData = { income: 0, fixed: [], variable: [], debts: [], goals: [] };
+        let appData = { income: 0, extraIncomes: [], fixed: [], variable: [], debts: [], goals: [] };
         let chartInstance = null;
 
         // 2. AUTH HANDLERS
@@ -389,8 +407,12 @@
                 
                 const docRef = doc(db, 'artifacts', 'fluxocash-app', 'users', user.uid, 'app_data', 'main');
                 onSnapshot(docRef, (snap) => {
-                    if(snap.exists()) appData = snap.data();
-                    else { appData = { income: 0, fixed: [], variable: [], debts: [], goals: [] }; saveData(); }
+                    if(snap.exists()) {
+                        appData = snap.data();
+                        // Garantir que o array novo existe em contas antigas
+                        if(!appData.extraIncomes) appData.extraIncomes = [];
+                    }
+                    else { appData = { income: 0, extraIncomes: [], fixed: [], variable: [], debts: [], goals: [] }; saveData(); }
                     render();
                 });
             } else {
@@ -409,21 +431,41 @@
         window.addDebt = (e) => { e.preventDefault(); const n=document.getElementById('debt-name').value, t=parseFloat(document.getElementById('debt-tot').value)||0, p=parseFloat(document.getElementById('debt-par').value); if(n&&p){ appData.debts.push({name:n,total:t,parcel:p}); e.target.reset(); saveData(); nav('dashboard'); } };
         window.addGoal = (e) => { e.preventDefault(); const n=document.getElementById('goal-name').value, v=parseFloat(document.getElementById('goal-val').value); if(n&&v){ appData.goals.push({name:n,value:v}); e.target.reset(); saveData(); nav('dashboard'); } };
         
+        // NOVO: Add Extra Income
+        window.addExtraIncome = (e) => {
+            e.preventDefault();
+            const desc = document.getElementById('extra-desc').value;
+            const val = parseFloat(document.getElementById('extra-val').value);
+            if(desc && val) {
+                appData.extraIncomes.push({desc: desc, value: val});
+                document.getElementById('extra-desc').value = '';
+                document.getElementById('extra-val').value = '';
+                saveData();
+            }
+        };
+
         window.delItem = (type, i) => { if(confirm("Remover?")) { appData[type].splice(i,1); saveData(); } };
-        window.resetAll = () => { if(confirm("Apagar tudo?")) { appData={income:0,fixed:[],variable:[],debts:[],goals:[]}; saveData(); } };
+        window.delExtra = (i) => { if(confirm("Remover renda extra?")) { appData.extraIncomes.splice(i,1); saveData(); } };
+        window.resetAll = () => { if(confirm("Apagar tudo?")) { appData={income:0, extraIncomes:[], fixed:[],variable:[],debts:[],goals:[]}; saveData(); } };
         document.getElementById('inp-income').addEventListener('input', (e) => { appData.income = parseFloat(e.target.value)||0; saveData(); });
 
         // 5. RENDER & NAV
         function fmt(n) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(n); }
 
         function render() {
+            // Dashboard Calc
             document.getElementById('inp-income').value = appData.income || "";
+            const totalExtra = (appData.extraIncomes || []).reduce((a,b)=>a+b.value, 0);
+            const totalIncome = (appData.income || 0) + totalExtra;
+
             const sFix = appData.fixed.reduce((a,b)=>a+b.value,0);
             const sVar = appData.variable.reduce((a,b)=>a+b.value,0);
             const sDebt = appData.debts.reduce((a,b)=>a+b.parcel,0);
             const sGoal = appData.goals.reduce((a,b)=>a+b.value,0);
-            const bal = (appData.income||0) - (sFix+sVar+sDebt+sGoal);
+            const bal = totalIncome - (sFix+sVar+sDebt+sGoal);
 
+            // Display Values
+            document.getElementById('total-extra-income').innerText = fmt(totalExtra);
             document.getElementById('dash-fix').innerText = fmt(sFix);
             document.getElementById('dash-var').innerText = fmt(sVar);
             document.getElementById('dash-debt').innerText = fmt(sDebt);
@@ -433,6 +475,17 @@
             balEl.innerText = fmt(bal);
             balEl.className = `text-5xl font-extrabold my-2 transition-colors duration-500 ${bal>0?'text-emerald-500':(bal<0?'text-red-500':'text-slate-300')}`;
             document.getElementById('balance-msg').innerText = bal>0?"Você está enriquecendo!":"Cuidado com os gastos!";
+
+            // Render Extra Income List
+            const extraList = document.getElementById('list-extra-incomes');
+            extraList.innerHTML = '';
+            if(appData.extraIncomes && appData.extraIncomes.length > 0) {
+                appData.extraIncomes.forEach((item, idx) => {
+                    extraList.innerHTML += `<li class="flex justify-between items-center border-b border-emerald-100 pb-1"><span>${item.desc}</span> <div class="flex gap-2 font-bold text-emerald-700"><span>${fmt(item.value)}</span> <button onclick="delExtra(${idx})" class="text-red-300 hover:text-red-500 text-xs">x</button></div></li>`;
+                });
+            } else {
+                extraList.innerHTML = '<li class="text-xs text-slate-400 italic">Nenhuma renda extra...</li>';
+            }
 
             // Lists
             const lFix = document.getElementById('list-fixed'); lFix.innerHTML='';
@@ -475,11 +528,10 @@
             document.getElementById('mob-'+id)?.classList.add('active');
         };
 
-        // --- 6. AI E MODAL ---
         window.askAI = async (ctx) => {
             const modal = document.getElementById('ai-modal');
-            modal.classList.remove('hidden'); // Usa classe tailwind
-            modal.style.display = 'flex'; // Garante display flex
+            modal.style.display = 'flex'; // Force visible via JS
+            modal.classList.remove('hidden');
             const content = document.getElementById('ai-content');
             content.innerHTML = "Pensando...";
             try {
@@ -488,15 +540,9 @@
                     body: JSON.stringify({contents:[{parts:[{text:`Analise como Pai Rico. Dados: ${JSON.stringify(appData)}. Foco: ${ctx}. Markdown.`}]}]})
                 });
                 const d = await res.json();
-                content.innerHTML = marked.parse(d.candidates[0].content.parts[0].text);
-            } catch(e) { content.innerText = "Erro IA"; }
+                document.getElementById('ai-content').innerHTML = marked.parse(d.candidates[0].content.parts[0].text);
+            } catch(e) { document.getElementById('ai-content').innerText = "Erro IA"; }
         };
-
-        window.closeModal = () => {
-            const modal = document.getElementById('ai-modal');
-            modal.classList.add('hidden');
-            modal.style.display = 'none';
-        }
 
         document.getElementById('var-date').valueAsDate = new Date();
     </script>
