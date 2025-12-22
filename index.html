@@ -428,6 +428,8 @@
             const desc = document.getElementById('extra-desc').value;
             const val = parseFloat(document.getElementById('extra-val').value);
             if(desc && val) {
+                // CORREÇÃO DE SEGURANÇA AQUI:
+                if(!appData.extraIncomes) appData.extraIncomes = [];
                 appData.extraIncomes.push({desc: desc, value: val});
                 document.getElementById('extra-desc').value = '';
                 document.getElementById('extra-val').value = '';
