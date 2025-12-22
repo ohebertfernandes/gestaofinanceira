@@ -19,7 +19,7 @@
         /* TELA DE LOGIN (Z-Index Ajustado) */
         #auth-screen {
             background: linear-gradient(135deg, #065f46 0%, #047857 100%);
-            z-index: 9000;
+            z-index: 50; /* Menor que o Modal */
         }
         .glass-panel {
             background: rgba(255, 255, 255, 0.98);
@@ -47,8 +47,8 @@
         .quick-btn { transition: transform 0.2s; }
         .quick-btn:active { transform: scale(0.95); }
 
-        /* MODAL IA */
-        #ai-modal { z-index: 9999; }
+        /* MODAL IA - Correção de Z-Index */
+        #ai-modal { z-index: 10000; } 
 
         /* UTILITÁRIOS */
         .flex { display: flex !important; }
@@ -310,12 +310,12 @@
         </nav>
     </div>
 
-    <!-- AI Modal (Hidden by default) -->
-    <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm" style="display: none;">
+    <!-- AI Modal -->
+    <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
             <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
                 <span class="font-bold text-indigo-600"><i class="fa-solid fa-robot mr-2"></i>Consultor IA</span>
-                <button onclick="document.getElementById('ai-modal').style.display='none'" class="text-slate-400"><i class="fa-solid fa-times text-xl"></i></button>
+                <button onclick="closeAI()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-times text-xl"></i></button>
             </div>
             <div id="ai-content" class="p-6 overflow-y-auto prose prose-sm text-slate-700"></div>
         </div>
@@ -327,16 +327,16 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 1. CONFIGURAÇÃO (Seus Dados)
+        // 1. CONFIGURAÇÃO
         const firebaseConfig = {
-            apiKey: "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU",
+            apiKey: "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck", // Sua chave
             authDomain: "fluxocash-b81f6.firebaseapp.com",
             projectId: "fluxocash-b81f6",
             storageBucket: "fluxocash-b81f6.firebasestorage.app",
             messagingSenderId: "1021395240266",
             appId: "1:1021395240266:web:e44282819a1ab0c2feadb3"
         };
-        const geminiApiKey = "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck";
+        const geminiApiKey = "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck"; // Sua chave novamente
 
         // Init Services
         const app = initializeApp(firebaseConfig);
@@ -520,48 +520,35 @@
             document.getElementById('mob-'+id)?.classList.add('active');
         };
 
-        // --- 6. AI (REFACTOR) ---
+        // --- 6. AI & MODAL ---
         window.askAI = async (ctx) => {
             const modal = document.getElementById('ai-modal');
-            modal.style.display = 'flex'; // Force visible via JS
-            modal.classList.remove('hidden');
+            modal.classList.remove('hidden'); // Mostra o modal (flex)
             const content = document.getElementById('ai-content');
-            content.innerHTML = '<div class="text-center"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-emerald-600"></i><p class="mt-2 text-slate-500">Consultando o Pai Rico...</p></div>';
+            content.innerHTML = '<div class="text-center py-8"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-500"></i><p class="mt-2 text-slate-400">Consultando o Pai Rico...</p></div>';
             
             try {
-                // Endpoint para Gemini 1.5 Flash (Modelo atual e estável)
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`;
-                
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: `Você é Robert Kiyosaki (Pai Rico). Analise estes dados financeiros: ${JSON.stringify(appData)}. Foco da análise: ${ctx}. Seja direto, use emojis e Markdown.`
-                            }]
-                        }]
-                    })
+                // Modelo gemini-1.5-flash-latest (ou gemini-1.5-flash)
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({contents:[{parts:[{text:`Analise como Robert Kiyosaki (Pai Rico). Contexto: ${JSON.stringify(appData)}. Foco: ${ctx}. Seja breve, direto e use Markdown.`}]}]})
                 });
-
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.error.message || "Erro desconhecido na API");
+                
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error.message || "Erro desconhecido");
                 }
 
-                const data = await response.json();
-                const aiText = data.candidates[0].content.parts[0].text;
-                document.getElementById('ai-content').innerHTML = marked.parse(aiText);
-
-            } catch(e) {
-                console.error(e);
-                document.getElementById('ai-content').innerHTML = `
-                    <div class="text-red-500 text-center p-4">
-                        <p class="font-bold">Erro na IA:</p>
-                        <p class="text-xs mt-2 bg-red-50 p-2 rounded border border-red-200">${e.message}</p>
-                    </div>
-                `;
+                const data = await res.json();
+                content.innerHTML = marked.parse(data.candidates[0].content.parts[0].text);
+            } catch(e) { 
+                content.innerHTML = `<p class="text-red-500 text-center font-bold">Erro: ${e.message}</p>`; 
             }
+        };
+
+        // Função de Fechar corrigida
+        window.closeAI = () => {
+            document.getElementById('ai-modal').classList.add('hidden');
         };
 
         document.getElementById('var-date').valueAsDate = new Date();
