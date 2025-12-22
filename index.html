@@ -19,7 +19,7 @@
         /* TELA DE LOGIN */
         #auth-screen {
             background: linear-gradient(135deg, #065f46 0%, #047857 100%);
-            z-index: 50;
+            z-index: 50; 
         }
         .glass-panel {
             background: rgba(255, 255, 255, 0.98);
@@ -39,27 +39,17 @@
             border-bottom-color: #059669;
         }
         
-        /* MOBILE NAV */
         .mob-item { color: #94a3b8; }
         .mob-item.active { color: #059669; transform: translateY(-2px); }
-
-        /* BOTÕES RÁPIDOS */
-        .quick-btn { transition: transform 0.2s; }
-        .quick-btn:active { transform: scale(0.95); }
-
-        /* MODAL IA & FEEDBACK */
-        .modal-overlay { z-index: 10000; }
 
         /* UTILITÁRIOS */
         .flex { display: flex !important; }
         .hidden { display: none !important; }
+        .loading-btn { opacity: 0.7; cursor: wait; }
         
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-
-        /* Quotes */
+        #ai-modal { z-index: 10000; }
+        
+        /* QUOTES */
         .quote-box {
             border-left-width: 4px;
             font-style: italic;
@@ -69,16 +59,15 @@
 </head>
 <body class="h-screen flex flex-col text-slate-800">
 
-    <!-- 1. TELA DE LOGIN / REGISTRO -->
+    <!-- 1. LOGIN / REGISTRO -->
     <div id="auth-screen" class="fixed inset-0 flex items-center justify-center p-4 transition-all duration-500">
         <div class="glass-panel w-full max-w-md p-8 rounded-2xl relative">
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600 text-3xl">
-                    <i class="fa-solid fa-seedling"></i>
+                    <i class="fa-solid fa-chart-line"></i>
                 </div>
                 <h1 class="text-2xl font-bold">FluxoCash</h1>
-                <p class="text-slate-500 text-sm">Controle Financeiro Inteligente</p>
-                <div id="status-badge" class="hidden mt-2 inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full font-bold">Erro de Conexão</div>
+                <p class="text-slate-500 text-sm">Gestão Financeira Inteligente</p>
             </div>
 
             <!-- Login -->
@@ -86,7 +75,7 @@
                 <form id="form-login" class="space-y-4">
                     <input type="email" id="log-email" class="w-full p-3 border rounded-lg bg-slate-50 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="E-mail" required>
                     <input type="password" id="log-pass" class="w-full p-3 border rounded-lg bg-slate-50 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Senha" required>
-                    <button type="submit" id="btn-login" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg hover:bg-slate-900 transition">Entrar (Nuvem)</button>
+                    <button type="submit" id="btn-login" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg hover:bg-slate-900 transition">Entrar</button>
                 </form>
                 <div class="mt-4 text-center text-sm text-slate-500">
                     Ainda não tem conta? <button onclick="toggleAuth('register')" class="text-emerald-600 font-bold hover:underline">Criar agora</button>
@@ -106,28 +95,26 @@
                 </div>
             </div>
 
-            <div class="mt-6 pt-4 border-t space-y-3">
-                <button onclick="forceOfflineMode()" class="w-full bg-slate-100 text-slate-700 font-bold py-3 rounded-lg hover:bg-slate-200 transition border border-slate-300">
-                    <i class="fa-solid fa-wifi-slash mr-2"></i> Entrar no Modo Offline
+            <!-- Botão de emergência (Offline Manual) -->
+            <div class="mt-6 pt-4 border-t text-center">
+                <button onclick="forceOfflineMode()" class="text-slate-400 text-xs hover:text-slate-600 hover:underline">
+                    Entrar Offline (Modo Local)
                 </button>
-                <p class="text-xs text-center text-slate-400">Seus dados serão salvos neste dispositivo.</p>
             </div>
-            <p id="auth-error" class="text-red-500 text-xs text-center mt-3 font-bold h-auto min-h-[1rem]"></p>
+            
+            <p id="auth-error" class="text-red-500 text-xs text-center mt-3 font-bold bg-red-50 p-2 rounded hidden"></p>
         </div>
     </div>
 
-    <!-- 2. APLICATIVO (Painel Principal) -->
+    <!-- 2. APLICATIVO -->
     <div id="app-screen" class="hidden flex-col h-full w-full">
-        
-        <!-- Topo (Desktop) -->
         <header class="bg-white border-b border-slate-200 z-30 flex-none">
-            <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+            <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
                 <div class="flex items-center gap-2 text-emerald-700 font-bold text-lg">
                     <i class="fa-solid fa-chart-pie"></i> FluxoCash
-                    <span id="mode-badge" class="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold">Offline</span>
+                    <span id="mode-badge" class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Cloud</span>
                 </div>
                 
-                <!-- Menu Desktop -->
                 <nav class="hidden md:flex space-x-8 h-full">
                     <button onclick="nav('dashboard')" class="nav-item active h-full flex items-center" id="nav-d-dashboard">Painel Geral</button>
                     <button onclick="nav('fixed')" class="nav-item h-full flex items-center" id="nav-d-fixed">Contas Fixas</button>
@@ -137,66 +124,47 @@
                 </nav>
 
                 <div class="flex items-center gap-3">
-                    <!-- Botão de Feedback (Todos veem) -->
-                    <button onclick="openFeedback()" class="flex items-center gap-2 text-slate-500 hover:text-emerald-600 transition px-3 py-1 rounded hover:bg-slate-100" title="Sugerir Melhoria">
-                        <i class="fa-solid fa-box-open"></i>
-                        <span class="text-xs font-bold hidden sm:inline">(MELHORIAS)</span>
+                    <button onclick="openFeedback()" class="flex items-center gap-1 text-slate-500 hover:text-emerald-600 transition px-2 py-1" title="Sugerir Melhoria">
+                        <i class="fa-solid fa-box-open"></i> <span class="text-[10px] font-bold hidden sm:inline">(MELHORIAS)</span>
                     </button>
-
-                    <!-- Botão Admin (Só admin vê) -->
-                    <button onclick="openAdmin()" id="btn-admin" class="hidden relative text-white bg-slate-800 hover:bg-slate-900 transition px-3 py-1 rounded text-xs font-bold shadow">
-                        <i class="fa-solid fa-lock mr-1"></i> ADM
-                        <span id="admin-badge" class="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] hidden">0</span>
-                    </button>
-
-                    <div class="h-6 w-px bg-slate-200 mx-2"></div>
-
-                    <span id="user-label" class="text-xs text-slate-400 hidden sm:block">Local</span>
-                    <button onclick="doLogout()" class="text-xs text-red-500 border border-red-200 px-3 py-1 rounded hover:bg-red-50">Sair</button>
+                    <button onclick="openAdmin()" id="btn-admin" class="hidden relative text-white bg-slate-800 hover:bg-slate-900 transition px-3 py-1 rounded text-xs font-bold shadow"><i class="fa-solid fa-lock mr-1"></i> ADM <span id="admin-badge" class="absolute -top-2 -right-2 bg-red-500 w-5 h-5 rounded-full flex items-center justify-center text-[10px] hidden">0</span></button>
+                    <span class="h-4 w-px bg-slate-300"></span>
+                    <button onclick="doLogout()" class="text-xs text-red-500 hover:text-red-700 font-bold">Sair</button>
                 </div>
             </div>
         </header>
 
-        <!-- Conteúdo Central (Scroll) -->
         <main class="flex-grow overflow-y-auto bg-slate-50 p-4 pb-24">
             <div class="max-w-5xl mx-auto">
 
-                <!-- 🏠 ABA 1: DASHBOARD (HOME) -->
+                <!-- DASHBOARD -->
                 <div id="page-dashboard" class="space-y-6 animate-fade-in">
                     
-                    <!-- FRASE MOTIVACIONAL: GERAL -->
-                    <div class="quote-box bg-blue-50 border-blue-500 text-blue-800 p-4 rounded mb-6">
+                    <div class="quote-box bg-blue-50 border-blue-500 text-blue-800 p-3 rounded mb-4 text-sm">
                         <i class="fa-solid fa-quote-left mr-2 opacity-50"></i>
                         <span id="quote-dashboard">"Não trabalhe pelo dinheiro. Faça o dinheiro trabalhar para você."</span>
-                        <span class="block text-xs font-bold mt-1 opacity-70">- Robert Kiyosaki</span>
                     </div>
 
-                    <!-- Resumo Financeiro -->
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-lg font-bold text-slate-700">Fluxo de Caixa</h2>
                             <div class="flex gap-2">
-                                <button onclick="saveCurrentMonth()" class="text-xs bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-bold hover:bg-emerald-200 transition">
-                                    <i class="fa-solid fa-save mr-1"></i> Salvar Mês
-                                </button>
-                                <button onclick="resetAll()" class="text-xs text-slate-300 hover:text-red-500 px-2">Resetar</button>
+                                <button onclick="saveCurrentMonth()" class="text-xs bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-bold hover:bg-emerald-200"><i class="fa-solid fa-save mr-1"></i> Salvar Mês</button>
+                                <button onclick="resetAll()" class="text-xs text-slate-300 hover:text-red-500">Resetar</button>
                             </div>
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-8 mb-8">
-                            <!-- Renda Fixa -->
                             <div>
-                                <label class="text-xs font-bold text-slate-400 uppercase">Renda Fixa (Salário)</label>
+                                <label class="text-xs font-bold text-slate-400 uppercase">Renda Fixa</label>
                                 <div class="flex items-center border-b-2 border-slate-200 focus-within:border-emerald-500 transition mt-1">
                                     <span class="text-xl text-slate-400 mr-2">R$</span>
                                     <input type="number" id="inp-income" class="w-full text-2xl font-bold text-slate-800 bg-transparent outline-none py-1" placeholder="0.00">
                                 </div>
                             </div>
-
-                            <!-- Renda Variável -->
                             <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
                                 <div class="flex justify-between items-center mb-2">
-                                    <label class="text-xs font-bold text-emerald-700 uppercase">Renda Variável (Extra)</label>
+                                    <label class="text-xs font-bold text-emerald-700 uppercase">Renda Variável</label>
                                     <span id="total-extra-income" class="font-bold text-emerald-600">R$ 0,00</span>
                                 </div>
                                 <ul id="list-extra-incomes" class="text-sm space-y-2 mb-3 max-h-32 overflow-y-auto"></ul>
@@ -208,7 +176,6 @@
                             </div>
                         </div>
 
-                        <!-- Cards de Totais -->
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-100"><p class="text-xs text-slate-500 font-bold uppercase">Fixas</p><p id="dash-fix" class="text-lg font-bold text-slate-700">R$ 0</p></div>
                             <div class="bg-orange-50 p-4 rounded-xl border border-orange-100"><p class="text-xs text-orange-600 font-bold uppercase">Variáveis</p><p id="dash-var" class="text-lg font-bold text-orange-700">R$ 0</p></div>
@@ -216,7 +183,6 @@
                             <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100"><p class="text-xs text-emerald-600 font-bold uppercase">Ativos</p><p id="dash-goal" class="text-lg font-bold text-emerald-700">R$ 0</p></div>
                         </div>
 
-                        <!-- Saldo Final -->
                         <div class="text-center pt-4 border-t border-slate-100">
                             <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Saldo Livre</p>
                             <div id="final-balance" class="text-5xl font-extrabold text-slate-300 my-2 transition-colors">R$ 0,00</div>
@@ -224,48 +190,31 @@
                         </div>
                     </div>
 
-                    <!-- GRÁFICOS DE PROJEÇÃO E GARGALOS (ADICIONADOS) -->
+                    <!-- GRÁFICOS -->
                     <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Projeção Futura -->
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-80">
-                            <h3 class="font-bold text-slate-700 mb-2 text-sm flex justify-between">
-                                <span>🚀 Projeção (Custos Futuros)</span>
-                                <span class="text-xs font-normal text-slate-400">Fixas + Parcelas</span>
-                            </h3>
-                            <div class="relative h-64 w-full">
-                                <canvas id="chart-projection"></canvas>
-                            </div>
+                            <h3 class="font-bold text-slate-700 mb-2 text-sm">🚀 Projeção (Custos Futuros)</h3>
+                            <div class="relative h-64 w-full"><canvas id="chart-projection"></canvas></div>
                         </div>
-
-                        <!-- Gargalos -->
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-80">
-                            <h3 class="font-bold text-slate-700 mb-2 text-sm">⚠️ Gargalos: Variáveis</h3>
-                            <div class="relative h-64 w-full">
-                                <canvas id="chart-variable-breakdown"></canvas>
-                            </div>
+                            <h3 class="font-bold text-slate-700 mb-2 text-sm">⚠️ Gargalos: Variáveis por Categoria (Agrupado)</h3>
+                            <div class="relative h-64 w-full"><canvas id="chart-variable-breakdown"></canvas></div>
                         </div>
                     </div>
 
-                    <!-- GRÁFICO DE EVOLUÇÃO (LINHA DO TEMPO) -->
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-80">
                          <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-slate-700">📈 Evolução de Riqueza (Histórico)</h3>
-                            <button onclick="clearHistory()" class="text-[10px] text-slate-400 hover:text-red-500">Limpar Histórico</button>
+                            <h3 class="font-bold text-slate-700">📈 Evolução Histórica</h3>
+                            <button onclick="clearHistory()" class="text-[10px] text-slate-400 hover:text-red-500">Limpar</button>
                         </div>
-                        <div class="relative h-56 w-full">
-                            <canvas id="chart-history"></canvas>
-                        </div>
+                        <div class="relative h-56 w-full"><canvas id="chart-history"></canvas></div>
                     </div>
 
-                    <!-- Gráfico Distribuição Atual -->
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-80">
-                        <h3 class="font-bold text-slate-700 mb-4">Distribuição Geral deste Mês</h3>
-                        <div class="relative h-64 w-full">
-                            <canvas id="chart-main"></canvas>
-                        </div>
+                        <h3 class="font-bold text-slate-700 mb-4">Distribuição Geral</h3>
+                        <div class="relative h-64 w-full"><canvas id="chart-main"></canvas></div>
                     </div>
 
-                    <!-- Botões de Ação -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <button onclick="nav('variable')" class="bg-white p-4 rounded-xl shadow-sm border hover:bg-orange-50 transition flex flex-col items-center gap-2"><i class="fa-solid fa-cart-shopping text-orange-500"></i><span class="text-xs font-bold text-slate-600">Gasto Var.</span></button>
                         <button onclick="nav('fixed')" class="bg-white p-4 rounded-xl shadow-sm border hover:bg-blue-50 transition flex flex-col items-center gap-2"><i class="fa-solid fa-file-invoice text-blue-500"></i><span class="text-xs font-bold text-slate-600">Conta Fixa</span></button>
@@ -276,12 +225,7 @@
 
                 <!-- ABAS DE CONTEÚDO -->
                 <div id="page-fixed" class="hidden space-y-6">
-                    <div class="quote-box bg-slate-100 border-slate-400 text-slate-700 p-4 rounded mb-6">
-                        <i class="fa-solid fa-quote-left mr-2 opacity-50"></i>
-                        <span id="quote-fixed">"O problema não é quanto dinheiro você ganha, mas quanto dinheiro você conserva."</span>
-                        <span class="block text-xs font-bold mt-1 opacity-70">- Robert Kiyosaki</span>
-                    </div>
-
+                    <div class="quote-box bg-slate-100 border-slate-400 text-slate-700 p-4 rounded mb-6"><span id="quote-fixed">"O problema não é quanto dinheiro você ganha, mas quanto dinheiro você conserva."</span></div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border">
                         <h2 class="font-bold mb-4 text-slate-700">Contas Fixas</h2>
                         <form onsubmit="addFixed(event)" class="flex gap-3 mb-6"><input id="fix-name" type="text" placeholder="Nome" class="flex-grow p-3 border rounded outline-none" required><input id="fix-val" type="number" placeholder="Valor" class="w-32 p-3 border rounded outline-none" step="0.01" required><button class="bg-slate-800 text-white px-4 rounded"><i class="fa-solid fa-plus"></i></button></form>
@@ -290,53 +234,29 @@
                 </div>
 
                 <div id="page-variable" class="hidden space-y-6">
-                    <div class="quote-box bg-orange-50 border-orange-400 text-orange-800 p-4 rounded mb-6">
-                        <i class="fa-solid fa-quote-left mr-2 opacity-50"></i>
-                        <span id="quote-variable">"O luxo deve ser a recompensa pelo investimento, não o motivo dele."</span>
-                        <span class="block text-xs font-bold mt-1 opacity-70">- Robert Kiyosaki</span>
-                    </div>
-
+                    <div class="quote-box bg-orange-50 border-orange-400 text-orange-800 p-4 rounded mb-6"><span id="quote-variable">"O luxo deve ser a recompensa pelo investimento."</span></div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="font-bold text-slate-700">Gastos Variáveis</h2>
-                            <label class="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-2 border border-slate-200 transition">
-                                <i class="fa-solid fa-file-import text-emerald-600"></i> Importar CSV
-                                <input type="file" id="file-import" accept=".csv" class="hidden" onchange="importCSV(this)">
-                            </label>
+                            <label class="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-2 border border-slate-200 transition"><i class="fa-solid fa-file-import text-emerald-600"></i> Importar CSV <input type="file" id="file-import" accept=".csv" class="hidden" onchange="importCSV(this)"></label>
                         </div>
                         <p class="text-xs text-slate-400 mb-4 bg-slate-50 p-2 rounded">Formato: Data, Nome, Valor</p>
-                        <form onsubmit="addVar(event)" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6"><select id="var-cat" class="p-3 border rounded outline-none"><option>Alimentação</option><option>Mercado</option><option>Lazer</option><option>Transporte</option><option>Delivery</option><option>Outros</option></select><input id="var-val" type="number" placeholder="Valor" class="p-3 border rounded outline-none" step="0.01" required><input id="var-date" type="date" class="p-3 border rounded outline-none md:col-span-1 col-span-2"><button class="bg-orange-500 text-white font-bold p-3 rounded md:col-span-1 col-span-2">Lançar</button></form>
+                        <form onsubmit="addVar(event)" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6"><select id="var-cat" class="p-3 border rounded outline-none"><option>Alimentação</option><option>Transporte</option><option>Mercado</option><option>Lazer</option><option>Delivery</option><option>Outros</option></select><input id="var-val" type="number" placeholder="Valor" class="p-3 border rounded outline-none" step="0.01" required><input id="var-date" type="date" class="p-3 border rounded outline-none md:col-span-1 col-span-2"><button class="bg-orange-500 text-white font-bold p-3 rounded md:col-span-1 col-span-2">Lançar</button></form>
                         <ul id="list-variable" class="divide-y text-sm"></ul>
                     </div>
                 </div>
 
                 <div id="page-debts" class="hidden space-y-6">
-                    <div class="quote-box bg-red-50 border-red-400 text-red-800 p-4 rounded mb-6">
-                        <i class="fa-solid fa-quote-left mr-2 opacity-50"></i>
-                        <span id="quote-debts">"Passivos tiram dinheiro do seu bolso. Os ricos adquirem ativos."</span>
-                        <span class="block text-xs font-bold mt-1 opacity-70">- Robert Kiyosaki</span>
-                    </div>
-
+                    <div class="quote-box bg-red-50 border-red-400 text-red-800 p-4 rounded mb-6"><span id="quote-debts">"Passivos tiram dinheiro do seu bolso."</span></div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border">
                         <div class="flex justify-between mb-4"><h2 class="font-bold text-slate-700">Passivos (Dívidas)</h2><button onclick="askAI('debts')" class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded font-bold">IA</button></div>
-                        <form onsubmit="addDebt(event)" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                            <input id="debt-name" type="text" placeholder="Nome" class="p-3 border rounded col-span-2 md:col-span-2" required>
-                            <input id="debt-tot" type="number" placeholder="Total" class="p-3 border rounded" step="0.01">
-                            <input id="debt-par" type="number" placeholder="Parcela" class="p-3 border rounded" required step="0.01">
-                            <input id="debt-inst" type="number" placeholder="Qtd. Parcelas" class="p-3 border rounded col-span-2 md:col-span-1" required>
-                            <button class="bg-red-500 text-white font-bold p-3 rounded col-span-2 md:col-span-3 mt-2">Adicionar</button>
-                        </form>
+                        <form onsubmit="addDebt(event)" class="grid grid-cols-2 gap-3 mb-6"><input id="debt-name" type="text" placeholder="Nome" class="p-3 border rounded col-span-2" required><input id="debt-tot" type="number" placeholder="Total" class="p-3 border rounded" step="0.01"><input id="debt-par" type="number" placeholder="Parcela" class="p-3 border rounded" required step="0.01"><input id="debt-inst" type="number" placeholder="Qtd. Parcelas" class="p-3 border rounded" required><button class="bg-red-500 text-white font-bold p-3 rounded col-span-2">Adicionar</button></form>
                         <div id="list-debts" class="grid gap-2"></div>
                     </div>
                 </div>
 
                 <div id="page-goals" class="hidden space-y-6">
-                    <div class="quote-box bg-emerald-50 border-emerald-400 text-emerald-800 p-4 rounded mb-6">
-                        <i class="fa-solid fa-quote-left mr-2 opacity-50"></i>
-                        <span id="quote-goals">"A regra número 1: Você deve conhecer a diferença entre um ativo e um passivo."</span>
-                        <span class="block text-xs font-bold mt-1 opacity-70">- Robert Kiyosaki</span>
-                    </div>
-
+                    <div class="quote-box bg-emerald-50 border-emerald-400 text-emerald-800 p-4 rounded mb-6"><span id="quote-goals">"Comprar ativos é a regra número 1."</span></div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border">
                         <div class="flex justify-between mb-4"><h2 class="font-bold text-slate-700">Ativos (Investimentos)</h2><button onclick="askAI('goals')" class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded font-bold">IA</button></div>
                         <form onsubmit="addGoal(event)" class="flex gap-3 mb-6"><input id="goal-name" type="text" placeholder="Objetivo" class="flex-grow p-3 border rounded outline-none" required><input id="goal-val" type="number" placeholder="Aporte" class="w-28 p-3 border rounded outline-none" step="0.01" required><button class="bg-emerald-600 text-white px-4 rounded"><i class="fa-solid fa-plus"></i></button></form>
@@ -355,58 +275,18 @@
         </nav>
     </div>
 
-    <!-- FEEDBACK MODAL -->
+    <!-- MODALS -->
     <div id="feedback-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6">
-            <h3 class="text-lg font-bold text-slate-800 mb-2">Sugestão de Melhoria 💡</h3>
-            <p class="text-sm text-slate-500 mb-4">Sua ideia pode virar realidade no app!</p>
-            <textarea id="feedback-text" class="w-full p-3 border rounded-lg bg-slate-50 h-32 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Escreva sua sugestão aqui..."></textarea>
-            <div class="flex justify-end gap-2 mt-4">
-                <button onclick="document.getElementById('feedback-modal').classList.add('hidden')" class="px-4 py-2 text-slate-500 hover:text-slate-700">Cancelar</button>
-                <button onclick="sendFeedback()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-bold">Enviar</button>
-            </div>
-        </div>
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6"><h3 class="font-bold mb-2">Sugestão 💡</h3><textarea id="feedback-text" class="w-full p-3 border rounded h-32 outline-none" placeholder="Escreva aqui..."></textarea><div class="flex justify-end gap-2 mt-4"><button onclick="document.getElementById('feedback-modal').classList.add('hidden')" class="px-4 py-2 text-slate-500">Cancelar</button><button onclick="sendFeedback()" class="px-4 py-2 bg-emerald-600 text-white rounded font-bold">Enviar</button></div></div>
     </div>
-
-    <!-- NOTIFICATION MODAL -->
     <div id="notify-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 text-center">
-            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-                <i class="fa-solid fa-check"></i>
-            </div>
-            <h3 class="text-xl font-bold text-slate-800 mb-2">Sugestão Atendida!</h3>
-            <p class="text-sm text-slate-600 mb-4">Sua sugestão de melhoria foi implementada com sucesso. Obrigado por contribuir!</p>
-            <button onclick="document.getElementById('notify-modal').classList.add('hidden')" class="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-bold">Ótimo!</button>
-        </div>
+        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 text-center"><div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fa-solid fa-check"></i></div><h3 class="font-bold mb-2">Sugestão Atendida!</h3><p class="text-sm text-slate-600 mb-4">Sua sugestão foi implementada.</p><button onclick="document.getElementById('notify-modal').classList.add('hidden')" class="w-full py-2 bg-green-600 text-white rounded font-bold">Ótimo!</button></div>
     </div>
-
-    <!-- ADMIN MODAL -->
     <div id="admin-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-800 text-white rounded-t-2xl">
-                <h3 class="font-bold"><i class="fa-solid fa-lock mr-2"></i>Painel do Administrador</h3>
-                <button onclick="document.getElementById('admin-modal').classList.add('hidden')"><i class="fa-solid fa-times"></i></button>
-            </div>
-            <div class="p-4 overflow-y-auto flex-grow bg-slate-50">
-                <div id="admin-list" class="space-y-3">
-                    <p class="text-center text-slate-400 mt-10">Carregando sugestões...</p>
-                </div>
-            </div>
-            <div class="p-3 border-t bg-white text-right">
-                <button onclick="loadAdminMessages()" class="text-xs text-blue-600 hover:underline">Atualizar Lista</button>
-            </div>
-        </div>
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[80vh]"><div class="p-4 border-b flex justify-between bg-slate-800 text-white rounded-t-2xl"><h3 class="font-bold">Painel ADM</h3><button onclick="document.getElementById('admin-modal').classList.add('hidden')">x</button></div><div class="p-4 overflow-y-auto flex-grow bg-slate-50" id="admin-list"></div><div class="p-3 border-t bg-white text-right"><button onclick="loadAdminMessages()" class="text-blue-600 text-xs">Atualizar</button></div></div>
     </div>
-
-    <!-- AI Modal -->
     <div id="ai-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
-                <span class="font-bold text-indigo-600"><i class="fa-solid fa-robot mr-2"></i>Consultor IA</span>
-                <button onclick="closeAI()" class="text-slate-400 text-2xl hover:text-red-500 px-2">&times;</button>
-            </div>
-            <div id="ai-content" class="p-6 overflow-y-auto prose prose-sm text-slate-700"></div>
-        </div>
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[80vh]"><div class="p-4 border-b flex justify-between bg-slate-50 rounded-t-2xl"><span class="font-bold text-indigo-600">Consultor IA</span><button onclick="closeAI()" class="text-slate-400 text-2xl">&times;</button></div><div id="ai-content" class="p-6 overflow-y-auto prose prose-sm text-slate-700"></div></div>
     </div>
 
     <script type="module">
@@ -414,17 +294,9 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, getDocs, orderBy, query, updateDoc, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // === CONFIGURAÇÃO ===
-        const ADMIN_EMAIL = "ohebertgustavo@gmail.com"; 
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU",
-            authDomain: "fluxocash-b81f6.firebaseapp.com",
-            projectId: "fluxocash-b81f6",
-            storageBucket: "fluxocash-b81f6.firebasestorage.app",
-            messagingSenderId: "1021395240266",
-            appId: "1:1021395240266:web:e44282819a1ab0c2feadb3"
-        };
+        // CONFIG
+        const ADMIN_EMAIL = "ohebertgustavo@gmail.com";
+        const firebaseConfig = { apiKey: "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU", authDomain: "fluxocash-b81f6.firebaseapp.com", projectId: "fluxocash-b81f6", storageBucket: "fluxocash-b81f6.firebasestorage.app", messagingSenderId: "1021395240266", appId: "1:1021395240266:web:e44282819a1ab0c2feadb3" };
         const geminiApiKey = "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck";
 
         // INIT
@@ -433,371 +305,90 @@
         let chartInstance = null, historyChartInstance = null, variableBreakdownChart = null, projChart = null;
         let isOffline = false;
         
-        // Frases
-        const quotes = {
-            dashboard: ["Não trabalhe pelo dinheiro. Faça o dinheiro trabalhar para você.","A inteligência resolve problemas e produz dinheiro.","O ativo mais poderoso que todos nós temos é a nossa mente.","Riqueza é a capacidade de uma pessoa sobreviver tantos dias no futuro."],
-            fixed: ["O problema não é quanto dinheiro você ganha, mas quanto dinheiro você conserva.","Você deve saber a diferença entre um ativo e um passivo.","Reduza passivos e despesas. Isso aumentará a coluna de ativos."],
-            variable: ["O luxo deve ser a recompensa pelo investimento, não o motivo dele.","Muitas pessoas confundem desejos com necessidades.","Gastar dinheiro para parecer rico é o caminho mais rápido para ficar pobre."],
-            debts: ["Passivos tiram dinheiro do seu bolso. Os ricos adquirem ativos.","A dívida ruim é aquela que você paga. A dívida boa é aquela que outra pessoa paga para você.","Se você descobrir que se enterrou em um buraco... pare de cavar."],
-            goals: ["A regra número 1: Comprar ativos.","Os pobres e a classe média trabalham pelo dinheiro. Os ricos fazem o dinheiro trabalhar para eles.","Comece pequeno, sonhe grande.","Investir não é arriscado. Arriscado é não ter controle financeiro."]
-        };
+        const quotes = { dashboard: ["Não trabalhe pelo dinheiro. Faça o dinheiro trabalhar para você."], fixed: ["O problema não é quanto você ganha, mas quanto conserva."], variable: ["O luxo deve ser a recompensa pelo investimento."], debts: ["Passivos tiram dinheiro do seu bolso."], goals: ["Comprar ativos é a regra número 1."] };
 
-        try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-        } catch(e) { console.error(e); }
+        try { app = initializeApp(firebaseConfig); auth = getAuth(app); db = getFirestore(app); } catch(e) { console.error(e); }
 
-        // --- AUTH & ADMIN ---
-        const ui = {
-            screenAuth: document.getElementById('auth-screen'),
-            screenApp: document.getElementById('app-screen'),
-            msg: document.getElementById('auth-error'),
-            setBtn: (id, loading) => {
-                const btn = document.getElementById(id);
-                btn.disabled = loading;
-                btn.innerText = loading ? "..." : (btn.dataset.txt || btn.innerText);
-                if(!btn.dataset.txt) btn.dataset.txt = btn.innerText;
-            }
-        };
-
-        window.toggleAuth = (view) => {
-            ui.msg.classList.add('hidden');
-            document.getElementById('view-login').classList.toggle('hidden', view !== 'login');
-            document.getElementById('view-register').classList.toggle('hidden', view !== 'register');
-        };
-
-        function handleAuthError(err, btnId) {
-            ui.setBtn(btnId, false);
-            console.error("Auth Error:", err);
-            if(err.code && (err.code.includes('blocked') || err.code.includes('requests-to-this-api'))) {
-                ui.msg.innerText = "Servidor instável. Entrando em modo offline seguro...";
-                ui.msg.classList.remove('hidden');
-                setTimeout(() => window.forceOfflineMode(), 1500);
-            } else {
-                ui.msg.innerText = "Erro: " + err.code;
-                ui.msg.classList.remove('hidden');
-            }
-        }
-
-        document.getElementById('form-login').onsubmit = async (e) => {
-            e.preventDefault(); ui.setBtn('btn-login', true);
-            try { await signInWithEmailAndPassword(auth, document.getElementById('log-email').value, document.getElementById('log-pass').value); }
-            catch(err) { handleAuthError(err, 'btn-login'); }
-        };
-
-        document.getElementById('form-register').onsubmit = async (e) => {
-            e.preventDefault(); const p1 = document.getElementById('reg-pass').value;
-            if(p1 !== document.getElementById('reg-confirm').value) { ui.msg.innerText="Senhas diferem"; ui.msg.classList.remove('hidden'); return; }
-            ui.setBtn('btn-reg', true);
-            try { await createUserWithEmailAndPassword(auth, document.getElementById('reg-email').value, p1); }
-            catch(err) { handleAuthError(err, 'btn-reg'); }
-        };
-
-        window.forceOfflineMode = () => {
-            isOffline = true;
-            ui.screenAuth.classList.add('hidden'); ui.screenApp.classList.remove('hidden'); ui.screenApp.classList.add('flex');
-            document.getElementById('user-label').innerText = "Offline";
-            document.getElementById('mode-badge').innerText = "Offline";
-            const local = localStorage.getItem('fluxocash_local');
-            if(local) { appData = JSON.parse(local); }
-            if(!appData.extraIncomes) appData.extraIncomes = []; if(!appData.history) appData.history = [];
-            render(); updateQuote('dashboard');
-        };
-
+        // AUTH
+        const ui = { screenAuth: document.getElementById('auth-screen'), screenApp: document.getElementById('app-screen'), msg: document.getElementById('auth-error'), setBtn: (id, l) => { const b=document.getElementById(id); b.disabled=l; b.innerText=l?"...":b.dataset.txt||b.innerText; if(!b.dataset.txt)b.dataset.txt=b.innerText; } };
+        window.toggleAuth = (v) => { ui.msg.classList.add('hidden'); document.getElementById('view-login').classList.toggle('hidden', v!=='login'); document.getElementById('view-register').classList.toggle('hidden', v!=='register'); };
+        function handleAuthError(err, btnId) { ui.setBtn(btnId, false); if(err.code&&(err.code.includes('blocked')||err.code.includes('requests'))) { ui.msg.innerText="Servidor instável. Offline..."; ui.msg.classList.remove('hidden'); setTimeout(()=>window.forceOfflineMode(),1500); } else { ui.msg.innerText="Erro: "+err.code; ui.msg.classList.remove('hidden'); } }
+        document.getElementById('form-login').onsubmit = async (e) => { e.preventDefault(); ui.setBtn('btn-login', true); try { await signInWithEmailAndPassword(auth, document.getElementById('log-email').value, document.getElementById('log-pass').value); } catch(err) { handleAuthError(err, 'btn-login'); } };
+        document.getElementById('form-register').onsubmit = async (e) => { e.preventDefault(); if(document.getElementById('reg-pass').value!==document.getElementById('reg-confirm').value){ui.msg.innerText="Senhas diferem";ui.msg.classList.remove('hidden');return;} ui.setBtn('btn-reg', true); try { await createUserWithEmailAndPassword(auth, document.getElementById('reg-email').value, document.getElementById('reg-pass').value); } catch(err) { handleAuthError(err, 'btn-reg'); } };
+        window.forceOfflineMode = () => { isOffline=true; ui.screenAuth.classList.add('hidden'); ui.screenApp.classList.remove('hidden'); ui.screenApp.classList.add('flex'); document.getElementById('user-label').innerText="Offline"; document.getElementById('mode-badge').innerText="Offline"; const l=localStorage.getItem('fluxocash_local'); if(l)appData=JSON.parse(l); if(!appData.extraIncomes)appData.extraIncomes=[]; if(!appData.history)appData.history=[]; render(); updateQuote('dashboard'); };
         window.doLogout = () => { if(isOffline) location.reload(); else if(confirm("Sair?")) signOut(auth).then(()=>location.reload()); };
 
-        if(auth) {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUser = user;
-                    ui.screenAuth.classList.add('hidden'); ui.screenApp.classList.remove('hidden'); ui.screenApp.classList.add('flex');
-                    document.getElementById('user-label').innerText = user.email || "Convidado";
-                    document.getElementById('mode-badge').innerText = "Cloud";
-                    
-                    // CHECK ADMIN
-                    if(user.email === ADMIN_EMAIL) {
-                        document.getElementById('btn-admin').classList.remove('hidden');
-                        checkAdminNotifications(); // Count pending
-                    }
-                    
-                    // CHECK USER NOTIFICATIONS (If suggest done)
-                    checkUserNotifications(user.uid);
+        if(auth) { onAuthStateChanged(auth, (user) => { if (user) { currentUser = user; ui.screenAuth.classList.add('hidden'); ui.screenApp.classList.remove('hidden'); ui.screenApp.classList.add('flex'); document.getElementById('user-label').innerText = user.email||"Convidado"; document.getElementById('mode-badge').innerText="Cloud"; if(user.email===ADMIN_EMAIL){document.getElementById('btn-admin').classList.remove('hidden');checkAdminNotifications();} checkUserNotifications(user.uid); const docRef=doc(db,'artifacts','fluxocash-app','users',user.uid,'app_data','main'); onSnapshot(docRef,(s)=>{ if(s.exists()){appData=s.data();if(!appData.extraIncomes)appData.extraIncomes=[];if(!appData.history)appData.history=[];}else{saveData();} render(); updateQuote('dashboard'); },(err)=>{window.forceOfflineMode();}); } }); }
+        const saveData = async () => { if(isOffline){localStorage.setItem('fluxocash_local',JSON.stringify(appData));return;} if(currentUser)await setDoc(doc(db,'artifacts','fluxocash-app','users',currentUser.uid,'app_data','main'),appData); };
 
-                    const docRef = doc(db, 'artifacts', 'fluxocash-app', 'users', user.uid, 'app_data', 'main');
-                    onSnapshot(docRef, (s) => {
-                        if(s.exists()) { appData = s.data(); if(!appData.extraIncomes) appData.extraIncomes=[]; if(!appData.history) appData.history = []; }
-                        else { saveData(); }
-                        render(); updateQuote('dashboard');
-                    }, (err) => { window.forceOfflineMode(); });
-                }
-            });
-        }
+        // ADMIN
+        window.openFeedback = () => document.getElementById('feedback-modal').classList.remove('hidden');
+        window.sendFeedback = async () => { const t=document.getElementById('feedback-text').value; if(!t)return; try{if(isOffline)throw new Error("Online apenas."); await addDoc(collection(db,'artifacts','fluxocash-app','global_feedback'),{text:t,user:currentUser.email,userId:currentUser.uid,status:'pending',date:new Date().toISOString()}); alert("Enviado!"); document.getElementById('feedback-modal').classList.add('hidden'); }catch(e){alert(e.message);} };
+        window.openAdmin = () => { document.getElementById('admin-modal').classList.remove('hidden'); window.loadAdminMessages(); };
+        window.loadAdminMessages = async () => { const l=document.getElementById('admin-list'); l.innerHTML='Carregando...'; const q=query(collection(db,'artifacts','fluxocash-app','global_feedback'),orderBy("date","desc")); const s=await getDocs(q); l.innerHTML=""; s.forEach(d=>{ const da=d.data(); const c=da.status==='done'?'bg-green-100':(da.status==='doing'?'bg-blue-100':'bg-yellow-100'); l.innerHTML+=`<div class="bg-white p-3 border mb-2"><div class="flex justify-between"><b>${da.user}</b><select onchange="updateStatus('${d.id}',this.value)" class="${c} p-1 rounded text-xs"><option value="pending" ${da.status=='pending'?'selected':''}>PENDENTE</option><option value="doing" ${da.status=='doing'?'selected':''}>EXECUTANDO</option><option value="done" ${da.status=='done'?'selected':''}>CONCLUIDO</option></select></div><p class="text-sm mt-1">${da.text}</p></div>`; }); };
+        window.updateStatus = async (id,st) => { await updateDoc(doc(db,'artifacts','fluxocash-app','global_feedback',id),{status:st}); loadAdminMessages(); checkAdminNotifications(); };
+        async function checkAdminNotifications(){ try{ const q=query(collection(db,'artifacts','fluxocash-app','global_feedback'),where('status','==','pending')); const s=await getDocs(q); const b=document.getElementById('admin-badge'); if(s.size>0){b.innerText=s.size;b.classList.remove('hidden');}else b.classList.add('hidden'); }catch(e){} }
+        async function checkUserNotifications(uid){ try{ const q=query(collection(db,'artifacts','fluxocash-app','global_feedback'),where('userId','==',uid),where('status','==','done')); const s=await getDocs(q); let show=false; s.forEach(d=>{if(!localStorage.getItem(`read_${d.id}`)){show=true;localStorage.setItem(`read_${d.id}`,'true');}}); if(show)document.getElementById('notify-modal').classList.remove('hidden'); }catch(e){} }
 
-        const saveData = async () => {
-            if(isOffline) { localStorage.setItem('fluxocash_local', JSON.stringify(appData)); return; }
-            if(currentUser) await setDoc(doc(db, 'artifacts', 'fluxocash-app', 'users', currentUser.uid, 'app_data', 'main'), appData);
-        };
+        // APP LOGIC
+        window.addFixed=(e)=>{e.preventDefault();const n=document.getElementById('fix-name').value,v=parseFloat(document.getElementById('fix-val').value);if(n&&v){appData.fixed.push({name:n,value:v});e.target.reset();saveData();}};
+        window.addVar=(e)=>{e.preventDefault();const c=document.getElementById('var-cat').value,v=parseFloat(document.getElementById('var-val').value),d=document.getElementById('var-date').value;if(c&&v){appData.variable.push({category:c,value:v,date:d});document.getElementById('var-val').value='';saveData();}};
+        window.addDebt=(e)=>{e.preventDefault();const n=document.getElementById('debt-name').value,p=parseFloat(document.getElementById('debt-par').value),inst=parseInt(document.getElementById('debt-inst').value)||1;if(n&&p){appData.debts.push({name:n,parcel:p,installments:inst});e.target.reset();saveData();}};
+        window.addGoal=(e)=>{e.preventDefault();const n=document.getElementById('goal-name').value,v=parseFloat(document.getElementById('goal-val').value);if(n&&v){appData.goals.push({name:n,value:v});e.target.reset();saveData();}};
+        window.addExtraIncome=(e)=>{e.preventDefault();const d=document.getElementById('extra-desc').value,v=parseFloat(document.getElementById('extra-val').value);if(d&&v){appData.extraIncomes.push({desc:d,value:v});e.target.reset();saveData();render();}};
+        window.delItem=(t,i)=>{if(confirm("Remover?")){appData[t].splice(i,1);saveData();render();}}; window.delExtra=(i)=>{if(confirm("Remover?")){appData.extraIncomes.splice(i,1);saveData();render();}}; window.resetAll=()=>{if(confirm("Zerar?")){appData={income:0,extraIncomes:[],fixed:[],variable:[],debts:[],goals:[],history:[]};saveData();render();}};
+        document.getElementById('inp-income').addEventListener('input',(e)=>{appData.income=parseFloat(e.target.value)||0;saveData();render();});
+        window.saveCurrentMonth=()=>{const l=prompt("Mês:",new Date().toLocaleDateString('pt-BR',{month:'short'}));if(!l)return;const bal=(appData.income||0)+(appData.extraIncomes||[]).reduce((a,b)=>a+b.value,0)-(appData.fixed.reduce((a,b)=>a+b.value,0)+appData.variable.reduce((a,b)=>a+b.value,0)+appData.debts.reduce((a,b)=>a+b.parcel,0)+appData.goals.reduce((a,b)=>a+b.value,0));appData.history.push({label:l,balance:bal});saveData();render();};
+        window.clearHistory=()=>{if(confirm("Limpar?")){appData.history=[];saveData();render();}};
+        window.importCSV=(i)=>{const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=(e)=>{e.target.result.split('\n').forEach(l=>{const c=l.split(/[,;]/);if(c.length>=3){const v=parseFloat(c[2].replace(/[^\d.,]/g,'').replace(',','.'));if(!isNaN(v))appData.variable.push({category:c[1].replace(/"/g,''),value:Math.abs(v),date:c[0]});}});alert("Importado!");saveData();render();};r.readAsText(f);};
 
-        // --- FEEDBACK & ADMIN LOGIC (IMPROVED) ---
-        
-        window.openFeedback = () => { document.getElementById('feedback-modal').classList.remove('hidden'); };
-        
-        window.sendFeedback = async () => {
-            const txt = document.getElementById('feedback-text').value;
-            if(!txt) return alert("Escreva algo!");
+        // RENDER
+        function fmt(n){return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(n);}
+        function render(){
+            if(document.activeElement.id!=='inp-income')document.getElementById('inp-income').value=appData.income||"";
+            const ext=(appData.extraIncomes||[]).reduce((a,b)=>a+b.value,0), inc=(appData.income||0)+ext, fix=appData.fixed.reduce((a,b)=>a+b.value,0), vari=appData.variable.reduce((a,b)=>a+b.value,0), debt=appData.debts.reduce((a,b)=>a+b.parcel,0), goal=appData.goals.reduce((a,b)=>a+b.value,0), bal=inc-(fix+vari+debt+goal);
+            document.getElementById('total-extra-income').innerText=fmt(ext); document.getElementById('dash-fix').innerText=fmt(fix); document.getElementById('dash-var').innerText=fmt(vari); document.getElementById('dash-debt').innerText=fmt(debt); document.getElementById('dash-goal').innerText=fmt(goal);
+            const elBal=document.getElementById('final-balance'); elBal.innerText=fmt(bal); elBal.className=`text-5xl font-extrabold my-2 ${bal>0?'text-emerald-500':'text-red-500'}`;
             
-            try {
-                if(isOffline) throw new Error("Precisa estar online para enviar sugestões.");
-                // Salva em uma coleção GLOBAL (Public Write)
-                await addDoc(collection(db, 'artifacts', 'fluxocash-app', 'global_feedback'), {
-                    text: txt,
-                    user: currentUser.email || "Anônimo",
-                    userId: currentUser.uid,
-                    status: 'pending', // Default status
-                    date: new Date().toISOString()
-                });
-                alert("Sugestão enviada! Você será notificado quando concluída.");
-                document.getElementById('feedback-text').value = "";
-                document.getElementById('feedback-modal').classList.add('hidden');
-            } catch(e) {
-                alert("Erro ao enviar: " + e.message);
-            }
-        };
-
-        window.openAdmin = () => {
-            document.getElementById('admin-modal').classList.remove('hidden');
-            window.loadAdminMessages();
-        };
-
-        window.loadAdminMessages = async () => {
-            const list = document.getElementById('admin-list');
-            list.innerHTML = '<p class="text-center text-slate-400">Carregando...</p>';
-            try {
-                // Query global feedback collection
-                const q = query(collection(db, 'artifacts', 'fluxocash-app', 'global_feedback'), orderBy("date", "desc"));
-                const snapshot = await getDocs(q);
-                
-                list.innerHTML = "";
-                if(snapshot.empty) {
-                    list.innerHTML = '<p class="text-center text-slate-400">Nenhuma mensagem ainda.</p>';
-                    return;
-                }
-
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    const docId = docSnap.id;
-                    const date = new Date(data.date).toLocaleDateString('pt-BR');
-                    const statusColor = data.status === 'done' ? 'bg-green-100 text-green-800' : (data.status === 'doing' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800');
-                    
-                    list.innerHTML += `
-                        <div class="bg-white p-4 rounded border border-slate-200 shadow-sm">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <span class="font-bold text-sm text-indigo-600 block">${data.user}</span>
-                                    <span class="text-xs text-slate-400">${date}</span>
-                                </div>
-                                <select onchange="updateFeedbackStatus('${docId}', this.value)" class="text-xs font-bold p-1 rounded border outline-none ${statusColor}">
-                                    <option value="pending" ${data.status === 'pending' ? 'selected' : ''}>PENDENTE</option>
-                                    <option value="doing" ${data.status === 'doing' ? 'selected' : ''}>EXECUTANDO</option>
-                                    <option value="done" ${data.status === 'done' ? 'selected' : ''}>CONCLUIDO</option>
-                                </select>
-                            </div>
-                            <p class="text-sm text-slate-700 mt-2 bg-slate-50 p-2 rounded">${data.text}</p>
-                        </div>
-                    `;
-                });
-            } catch(e) {
-                list.innerHTML = `<p class="text-red-500 text-center">Erro: ${e.message}</p>`;
-            }
-        };
-
-        window.updateFeedbackStatus = async (id, newStatus) => {
-            try {
-                const ref = doc(db, 'artifacts', 'fluxocash-app', 'global_feedback', id);
-                await updateDoc(ref, { status: newStatus });
-                // Refresh list color
-                loadAdminMessages(); 
-                checkAdminNotifications();
-            } catch(e) { console.error("Update failed", e); }
-        };
-
-        async function checkAdminNotifications() {
-            try {
-                // Count pending
-                const q = query(collection(db, 'artifacts', 'fluxocash-app', 'global_feedback'), where('status', '==', 'pending'));
-                const snap = await getDocs(q);
-                const count = snap.size;
-                const badge = document.getElementById('admin-badge');
-                if(count > 0) {
-                    badge.innerText = count;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
-            } catch(e) {}
-        }
-
-        async function checkUserNotifications(uid) {
-            try {
-                // Check if user has any 'done' feedback that hasn't been notified locally (simplified check)
-                const q = query(collection(db, 'artifacts', 'fluxocash-app', 'global_feedback'), where('userId', '==', uid), where('status', '==', 'done'));
-                const snap = await getDocs(q);
-                
-                // Simple logic: if exists any done, show notification (in real app we would mark as read in DB)
-                let hasUnread = false;
-                snap.forEach(d => {
-                    const data = d.data();
-                    if(!localStorage.getItem(`read_${d.id}`)) {
-                        hasUnread = true;
-                        localStorage.setItem(`read_${d.id}`, 'true'); // Mark locally as seen
-                    }
-                });
-
-                if(hasUnread) {
-                    document.getElementById('notify-modal').classList.remove('hidden');
-                }
-            } catch(e) {}
-        }
-
-
-        // --- APP FUNCTIONS ---
-        window.addFixed = (e) => { e.preventDefault(); const n=document.getElementById('fix-name').value, v=parseFloat(document.getElementById('fix-val').value); if(n&&v){ appData.fixed.push({name:n,value:v}); e.target.reset(); saveData(); } };
-        window.addVar = (e) => { e.preventDefault(); const c=document.getElementById('var-cat').value, v=parseFloat(document.getElementById('var-val').value), d=document.getElementById('var-date').value; if(c&&v){ appData.variable.push({category:c,value:v,date:d}); document.getElementById('var-val').value=''; saveData(); } };
-        
-        // DEBTS WITH INSTALLMENTS
-        window.addDebt = (e) => { 
-            e.preventDefault(); 
-            const n=document.getElementById('debt-name').value, p=parseFloat(document.getElementById('debt-par').value), inst=parseInt(document.getElementById('debt-inst').value)||1; 
-            if(n&&p){ appData.debts.push({name:n, parcel:p, installments: inst}); e.target.reset(); saveData(); } 
-        };
-        
-        window.addGoal = (e) => { e.preventDefault(); const n=document.getElementById('goal-name').value, v=parseFloat(document.getElementById('goal-val').value); if(n&&v){ appData.goals.push({name:n,value:v}); e.target.reset(); saveData(); } };
-        window.addExtraIncome = (e) => { e.preventDefault(); const d=document.getElementById('extra-desc').value, v=parseFloat(document.getElementById('extra-val').value); if(d&&v){ appData.extraIncomes.push({desc:d,value:v}); e.target.reset(); saveData(); render(); } };
-        
-        window.delItem = (t, i) => { if(confirm("Remover?")) { appData[t].splice(i,1); saveData(); render(); } };
-        window.delExtra = (i) => { if(confirm("Remover?")) { appData.extraIncomes.splice(i,1); saveData(); render(); } };
-        window.resetAll = () => { if(confirm("Zerar?")) { appData={income:0,extraIncomes:[],fixed:[],variable:[],debts:[],goals:[], history:[]}; saveData(); render(); } };
-        document.getElementById('inp-income').addEventListener('input', (e) => { appData.income = parseFloat(e.target.value)||0; saveData(); render(); });
-
-        window.saveCurrentMonth = () => {
-            const label = prompt("Mês (ex: Jan/24):", new Date().toLocaleDateString('pt-BR',{month:'short'})); if(!label) return;
-            // Simplified Snapshot Logic
-            const bal = (appData.income||0) + (appData.extraIncomes||[]).reduce((a,b)=>a+b.value,0) - (appData.fixed.reduce((a,b)=>a+b.value,0) + appData.variable.reduce((a,b)=>a+b.value,0) + appData.debts.reduce((a,b)=>a+b.parcel,0) + appData.goals.reduce((a,b)=>a+b.value,0));
-            appData.history.push({label, balance:bal}); saveData(); render();
-        };
-        window.clearHistory = () => { if(confirm("Limpar histórico?")) { appData.history=[]; saveData(); render(); } };
-        window.importCSV = (i) => {
-            const f=i.files[0]; if(!f) return;
-            const r=new FileReader(); r.onload=(e)=>{
-                e.target.result.split('\n').forEach(line=>{
-                    const c=line.split(line.includes(';')?';':',');
-                    if(c.length>=3) {
-                        const val = parseFloat(c[2].replace(/[^\d.,-]/g,'').replace(',','.'));
-                        if(!isNaN(val)) appData.variable.push({category:c[1].replace(/"/g,''), value:Math.abs(val), date: c[0]});
-                    }
-                });
-                alert("Importado!"); saveData(); render();
-            }; r.readAsText(f);
-        };
-
-        // --- RENDER ---
-        function fmt(n) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(n); }
-        function render() {
-            if(document.activeElement.id !== 'inp-income') document.getElementById('inp-income').value = appData.income || "";
-            const ext = (appData.extraIncomes||[]).reduce((a,b)=>a+b.value,0);
-            const inc = (appData.income||0) + ext;
-            const fix = appData.fixed.reduce((a,b)=>a+b.value,0);
-            const vari = appData.variable.reduce((a,b)=>a+b.value,0);
-            const debt = appData.debts.reduce((a,b)=>a+b.parcel,0);
-            const goal = appData.goals.reduce((a,b)=>a+b.value,0);
-            const bal = inc - (fix+vari+debt+goal);
-
-            document.getElementById('total-extra-income').innerText = fmt(ext);
-            document.getElementById('dash-fix').innerText = fmt(fix);
-            document.getElementById('dash-var').innerText = fmt(vari);
-            document.getElementById('dash-debt').innerText = fmt(debt);
-            document.getElementById('dash-goal').innerText = fmt(goal);
-            const elBal = document.getElementById('final-balance'); elBal.innerText = fmt(bal);
-            elBal.className = `text-5xl font-extrabold my-2 ${bal>0?'text-emerald-500':'text-red-500'}`;
-            document.getElementById('balance-msg').innerText = bal>0?"Riqueza crescendo 🚀":"Gasto > Renda ⚠️";
-
-            // LISTS
-            const lEx=document.getElementById('list-extra-incomes'); lEx.innerHTML=''; (appData.extraIncomes||[]).forEach((i,x)=>lEx.innerHTML+=`<li class="flex justify-between border-b pb-1 text-sm"><span>${i.desc}</span><span class="font-bold text-emerald-600">${fmt(i.value)} <button onclick="delExtra(${x})" class="text-red-400">x</button></span></li>`);
+            const lEx=document.getElementById('list-extra-incomes'); lEx.innerHTML=''; (appData.extraIncomes||[]).forEach((i,x)=>lEx.innerHTML+=`<li class="flex justify-between border-b pb-1 text-sm"><span>${i.desc}</span><div class="font-bold text-emerald-600">${fmt(i.value)} <button onclick="delExtra(${x})" class="text-red-400">x</button></div></li>`);
             const lFix=document.getElementById('list-fixed'); lFix.innerHTML=''; appData.fixed.forEach((i,x)=>lFix.innerHTML+=`<tr class="border-b"><td class="p-3">${i.name}</td><td class="text-right">${fmt(i.value)}</td><td class="text-right"><button onclick="delItem('fixed',${x})"><i class="fa-solid fa-trash text-red-300"></i></button></td></tr>`);
             const lVar=document.getElementById('list-variable'); lVar.innerHTML=''; [...appData.variable].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach((i,x)=>lVar.innerHTML+=`<li class="bg-white p-3 rounded border flex justify-between mb-2"><div><span class="font-bold">${i.category}</span> <span class="text-xs text-slate-400">${i.date}</span></div><div class="font-bold text-orange-600">${fmt(i.value)}<button onclick="delItem('variable',${x})" class="ml-2 text-red-300">x</button></div></li>`);
-            const lDebt=document.getElementById('list-debts'); lDebt.innerHTML=''; appData.debts.forEach((i,x)=>lDebt.innerHTML+=`<div class="bg-white p-3 rounded border-l-4 border-red-400 shadow-sm flex justify-between"><div><div class="font-bold">${i.name}</div><div class="text-xs text-slate-500">${i.installments}x restantes</div></div><div class="text-right font-bold text-red-600">${fmt(i.parcel)}<button onclick="delItem('debts',${x})" class="ml-2 text-slate-300">x</button></div></div>`);
+            const lDebt=document.getElementById('list-debts'); lDebt.innerHTML=''; appData.debts.forEach((i,x)=>lDebt.innerHTML+=`<div class="bg-white p-3 rounded border-l-4 border-red-400 shadow-sm flex justify-between"><div><div class="font-bold">${i.name}</div><div class="text-xs">${i.installments||'∞'}x restantes</div></div><div class="text-right font-bold text-red-600">${fmt(i.parcel)}<button onclick="delItem('debts',${x})" class="ml-2 text-slate-300">x</button></div></div>`);
             const lGoal=document.getElementById('list-goals'); lGoal.innerHTML=''; appData.goals.forEach((i,x)=>lGoal.innerHTML+=`<div class="bg-emerald-50 p-3 border border-emerald-100 rounded flex justify-between"><div><span class="font-bold text-emerald-800">${i.name}</span></div><div class="text-right text-emerald-600 font-bold">${fmt(i.value)}<button onclick="delItem('goals',${x})" class="ml-2 text-red-300">x</button></div></div>`);
 
-            // --- CHARTS ---
+            // Charts Check
+            const cP=document.getElementById('chart-projection'), cV=document.getElementById('chart-variable-breakdown'), cH=document.getElementById('chart-history'), cM=document.getElementById('chart-main');
             
-            // 1. PROJECTION CHART (Future Costs)
-            const ctxProj = document.getElementById('chart-projection');
-            if (ctxProj) {
-                const maxMonths = Math.max(6, ...appData.debts.map(d=>d.installments || 1)); // Min 6 months
-                const labelsProj = []; const dataProj = [];
-                
-                for(let i=1; i<=maxMonths; i++) {
-                    labelsProj.push(`Mês ${i}`);
-                    let monthlyCost = fix; // Fixed expenses always exist
-                    // Add debt parcels only if installment is still active for month i
-                    appData.debts.forEach(d => { if(d.installments >= i) monthlyCost += d.parcel; });
-                    dataProj.push(monthlyCost);
-                }
-                
-                if(window.projChart) window.projChart.destroy();
-                window.projChart = new Chart(ctxProj.getContext('2d'), {
-                    type: 'bar',
-                    data: { labels: labelsProj, datasets: [{ label: 'Custo Previsto (Fixo + Passivos)', data: dataProj, backgroundColor: '#64748b' }] },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
+            if(cP) {
+                const maxM = Math.max(6, ...appData.debts.map(d=>d.installments||1));
+                const lP=[], dP=[]; for(let i=1;i<=maxM;i++){ lP.push(`Mês ${i}`); let m=fix; appData.debts.forEach(d=>{if((d.installments||999)>=i)m+=d.parcel;}); dP.push(m); }
+                if(window.projChart)window.projChart.destroy(); window.projChart=new Chart(cP.getContext('2d'),{type:'bar',data:{labels:lP,datasets:[{label:'Custo Futuro',data:dP,backgroundColor:'#64748b'}]},options:{responsive:true,maintainAspectRatio:false}});
             }
-
-            // 2. VARIABLE BREAKDOWN CHART
-            const ctxVar = document.getElementById('chart-variable-breakdown');
-            if (ctxVar) {
-                const catTotals = {};
-                appData.variable.forEach(v => { catTotals[v.category] = (catTotals[v.category]||0) + v.value; });
-                
-                if(window.varChart) window.varChart.destroy();
-                window.varChart = new Chart(ctxVar.getContext('2d'), {
-                    type: 'doughnut',
-                    data: { labels: Object.keys(catTotals), datasets: [{ data: Object.values(catTotals), backgroundColor: ['#f87171', '#fb923c', '#fbbf24', '#a3e635', '#34d399', '#22d3ee', '#818cf8', '#e879f9'] }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } } }
-                });
+            if(cV) {
+                const cats={}; appData.variable.forEach(v=>{cats[v.category]=(cats[v.category]||0)+v.value;});
+                if(window.varChart)window.varChart.destroy(); window.varChart=new Chart(cV.getContext('2d'),{type:'doughnut',data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats),backgroundColor:['#f87171','#fb923c','#fbbf24','#a3e635','#34d399','#22d3ee']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10}}}}});
             }
-
-            // 3. HISTORY CHART
-            const ctxHist = document.getElementById('chart-history');
-            if (ctxHist) {
-                if(historyChartInstance) historyChartInstance.destroy();
-                const histData = appData.history || [];
-                historyChartInstance = new Chart(ctxHist.getContext('2d'), { type: 'line', data: { labels: histData.map(h => h.label), datasets: [{ label: 'Evolução Saldo', data: histData.map(h => h.balance), borderColor: '#059669', tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false } });
+            if(cH) {
+                if(historyChartInstance)historyChartInstance.destroy();
+                const hD=appData.history||[]; historyChartInstance=new Chart(cH.getContext('2d'),{type:'line',data:{labels:hD.map(h=>h.label),datasets:[{label:'Evolução',data:hD.map(h=>h.balance),borderColor:'#059669',tension:0.3}]},options:{responsive:true,maintainAspectRatio:false}});
             }
-
-            // 4. MAIN CHART
-            const ctxMain = document.getElementById('chart-main');
-            if (ctxMain) {
-                if(chartInstance) chartInstance.destroy();
-                chartInstance = new Chart(ctxMain.getContext('2d'), { type: 'doughnut', data: { labels: ['Fixas','Variáveis','Passivos','Ativos','Livre'], datasets: [{ data: [fix,vari,debt,goal,Math.max(0,bal)], backgroundColor: ['#64748b','#f97316','#ef4444','#10b981','#cbd5e1'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right' } } } });
+            if(cM) {
+                if(chartInstance)chartInstance.destroy();
+                chartInstance=new Chart(cM.getContext('2d'),{type:'doughnut',data:{labels:['Fixas','Var','Passivos','Ativos','Livre'],datasets:[{data:[fix,vari,debt,goal,Math.max(0,bal)],backgroundColor:['#64748b','#f97316','#ef4444','#10b981','#cbd5e1'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{position:'right'}}}});
             }
         }
 
         window.nav = (id) => {
             ['dashboard','fixed','variable','debts','goals'].forEach(t => { document.getElementById('page-'+t).classList.add('hidden'); document.getElementById('nav-d-'+t)?.classList.remove('active'); document.getElementById('mob-'+t)?.classList.remove('active'); });
             document.getElementById('page-'+id).classList.remove('hidden'); document.getElementById('nav-d-'+id)?.classList.add('active'); document.getElementById('mob-'+id)?.classList.add('active');
-            if(id === 'dashboard') render(); updateQuote(id);
+            if(id==='dashboard') render(); updateQuote(id);
         };
-        function updateQuote(id) { const el = document.getElementById('quote-'+id); if(el && quotes[id]) { const t = quotes[id][Math.floor(Math.random()*quotes[id].length)]; el.innerText = `"${t}"`; } }
+        function updateQuote(id){const e=document.getElementById('quote-'+id);if(e&&quotes[id]){e.parentElement.style.opacity='0';setTimeout(()=>{e.innerText=`"${quotes[id][Math.floor(Math.random()*quotes[id].length)]}"`;e.parentElement.style.opacity='1';},200);}}
 
-        // AI
         window.closeAI = () => document.getElementById('ai-modal').classList.add('hidden');
         window.askAI = async (ctx) => {
             document.getElementById('ai-modal').classList.remove('hidden'); document.getElementById('ai-content').innerText = "Pensando...";
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({contents:[{parts:[{text:`Analise como Robert Kiyosaki. Dados: ${JSON.stringify(appData)}. Foco: ${ctx}. Markdown.`}]}]}) });
-                const d = await res.json(); document.getElementById('ai-content').innerHTML = marked.parse(d.candidates[0].content.parts[0].text);
-            } catch(e) { document.getElementById('ai-content').innerText = "Erro IA"; }
+            try { const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({contents:[{parts:[{text:`Analise como Robert Kiyosaki. Dados: ${JSON.stringify(appData)}. Foco: ${ctx}. Markdown.`}]}]}) }); const d = await res.json(); document.getElementById('ai-content').innerHTML = marked.parse(d.candidates[0].content.parts[0].text); } catch(e) { document.getElementById('ai-content').innerText = "Erro IA"; }
         };
 
         document.getElementById('var-date').valueAsDate = new Date();
