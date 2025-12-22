@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxo de Caixa | Sistema Seguro</title>
+    
+    <!-- Bibliotecas Externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; overflow-x: hidden; }
+        
+        /* Auth Screen - Garantir visibilidade */
+        #auth-screen {
+            background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+            display: flex;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .tab-btn.active {
+            border-bottom: 3px solid #059669;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        .hidden { display: none !important; }
+        .loading-btn { opacity: 0.7; cursor: not-allowed; }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex flex-col">
+
+    <!-- 🔒 TELA DE LOGIN E REGISTRO -->
+    <div id="auth-screen" class="fixed inset-0 z-[100] items-center justify-center p-4">
+        <div class="glass-card p-8 rounded-2xl max-w-md w-full space-y-6 relative">
+            
+            <!-- Logo -->
+            <div class="text-center">
+                <div class="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-vault text-emerald-600 text-3xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-slate-800">FluxoCash</h1>
+                <p class="text-sm text-slate-500">Gestão Financeira Método Pai Rico</p>
+            </div>
+
+            <!-- Área de Erros Globais -->
+            <div id="global-error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-sm text-center"></div>
+
+            <!-- Formulário de Login -->
+            <div id="login-block">
+                <form id="form-login" class="space-y-4">
+                    <input type="email" id="login-email" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="seu@email.com" required>
+                    <input type="password" id="login-pass" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Senha" required>
+                    <button type="submit" id="btn-login-submit" class="w-full bg-slate-800 text-white font-bold py-3 rounded-lg hover:bg-slate-900 transition">Entrar</button>
+                </form>
+                <div class="mt-4 text-center text-sm">
+                    <span class="text-slate-500">Novo por aqui?</span>
+                    <button type="button" id="btn-go-register" class="text-emerald-600 font-bold hover:underline ml-1">Criar conta</button>
+                </div>
+            </div>
+
+            <!-- Formulário de Registro -->
+            <div id="register-block" class="hidden">
+                <form id="form-register" class="space-y-4">
+                    <input type="email" id="reg-email" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg outline-none" placeholder="seu@email.com" required>
+                    <input type="password" id="reg-pass" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg outline-none" placeholder="Senha (min 6 digitos)" required minlength="6">
+                    <input type="password" id="reg-confirm" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-lg outline-none" placeholder="Confirmar Senha" required>
+                    <button type="submit" id="btn-reg-submit" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition">Cadastrar e Entrar</button>
+                </form>
+                <div class="mt-4 text-center text-sm">
+                    <span class="text-slate-500">Já tem conta?</span>
+                    <button type="button" id="btn-go-login" class="text-emerald-600 font-bold hover:underline ml-1">Fazer Login</button>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-200 my-4 pt-4">
+                 <button type="button" id="btn-guest" class="w-full border border-slate-300 text-slate-600 py-2 rounded-lg text-sm hover:bg-slate-50 font-medium">
+                    Entrar como Convidado
+                 </button>
+            </div>
+            
+            <div id="auth-status" class="text-center text-xs text-red-500 font-bold h-4 mt-2"></div>
+        </div>
+    </div>
+
+    <!-- 📱 APLICATIVO PRINCIPAL -->
+    <div id="app-screen" class="hidden flex-col h-full overflow-hidden w-full">
+        <!-- Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-50 flex-none">
+            <div class="max-w-4xl mx-auto px-4">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-emerald-600 text-xl"></i>
+                        <h1 class="font-bold text-lg">FluxoCash</h1>
+                    </div>
+                    
+                    <nav class="hidden md:flex space-x-6">
+                        <button onclick="switchTab('dashboard')" class="tab-btn active py-5 text-sm font-medium hover:text-emerald-600" id="btn-dashboard">Visão Geral</button>
+                        <button onclick="switchTab('fixed')" class="tab-btn py-5 text-sm font-medium hover:text-emerald-600" id="btn-fixed">Fixas</button>
+                        <button onclick="switchTab('variable')" class="tab-btn py-5 text-sm font-medium hover:text-emerald-600" id="btn-variable">Variáveis</button>
+                        <button onclick="switchTab('debts')" class="tab-btn py-5 text-sm font-medium hover:text-emerald-600" id="btn-debts">Dívidas</button>
+                        <button onclick="switchTab('goals')" class="tab-btn py-5 text-sm font-medium hover:text-emerald-600" id="btn-goals">Reserva</button>
+                    </nav>
+
+                    <div class="flex items-center gap-3">
+                        <span id="user-display" class="text-xs text-slate-400 hidden sm:block">...</span>
+                        <button id="btn-logout" class="text-xs text-red-500 border border-red-200 px-2 py-1 rounded hover:bg-red-50">Sair</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow overflow-y-auto bg-slate-50 w-full">
+            <div class="max-w-4xl mx-auto px-4 py-6 pb-24">
+                
+                <!-- DASHBOARD TAB -->
+                <div id="tab-dashboard" class="block animate-fade-in">
+                    <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-slate-100">
+                        <div class="flex justify-between mb-4">
+                            <h2 class="text-xl font-bold">Visão Geral</h2>
+                            <button onclick="resetData()" class="text-xs text-red-300 underline">Resetar</button>
+                        </div>
+                        <div class="mb-6">
+                            <label class="text-xs font-bold uppercase text-slate-500">Renda Mensal</label>
+                            <input type="number" id="inp-income" class="w-full p-3 text-lg font-bold border rounded bg-slate-50 focus:ring-emerald-500 outline-none" placeholder="0.00">
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                            <div class="p-3 bg-slate-50 border rounded"><p class="text-xs text-slate-500">Fixas</p><p id="d-fix" class="font-bold">R$ 0</p></div>
+                            <div class="p-3 bg-slate-50 border rounded"><p class="text-xs text-slate-500">Variáveis</p><p id="d-var" class="font-bold text-orange-600">R$ 0</p></div>
+                            <div class="p-3 bg-slate-50 border rounded"><p class="text-xs text-slate-500">Dívidas</p><p id="d-debt" class="font-bold text-red-600">R$ 0</p></div>
+                            <div class="p-3 bg-emerald-50 border rounded"><p class="text-xs text-emerald-700">Investimentos</p><p id="d-goal" class="font-bold text-emerald-700">R$ 0</p></div>
+                        </div>
+                        <div class="border-t pt-4 text-center">
+                            <p class="text-xs uppercase text-slate-400">Fluxo de Caixa Livre</p>
+                            <div id="final-balance" class="text-4xl font-extrabold text-slate-300">R$ 0,00</div>
+                            <p id="balance-msg" class="text-sm text-slate-500 mt-2">...</p>
+                        </div>
+                    </div>
+                    
+                    <button onclick="askAI('general')" class="w-full mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 rounded-xl shadow-md flex justify-center gap-2 items-center hover:scale-[1.01] transition">
+                        <i class="fa-solid fa-robot"></i> <span>Análise do Pai Rico</span>
+                    </button>
+
+                    <div class="bg-white p-4 rounded-xl shadow-sm border h-[300px]">
+                        <canvas id="mainChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- FIXED TAB -->
+                <div id="tab-fixed" class="hidden">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border">
+                        <h2 class="font-bold mb-4">Despesas Fixas</h2>
+                        <form onsubmit="addFixed(event)" class="flex gap-2 mb-4">
+                            <input id="fix-name" type="text" placeholder="Nome" class="flex-grow p-2 border rounded" required>
+                            <input id="fix-val" type="number" placeholder="Valor" class="w-24 p-2 border rounded" required step="0.01">
+                            <button class="bg-slate-800 text-white px-4 rounded"><i class="fa-solid fa-plus"></i></button>
+                        </form>
+                        <table class="w-full text-sm"><tbody id="list-fixed"></tbody></table>
+                    </div>
+                </div>
+
+                <!-- VARIABLE TAB -->
+                <div id="tab-variable" class="hidden">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border">
+                        <h2 class="font-bold mb-4">Despesas Variáveis</h2>
+                        <form onsubmit="addVar(event)" class="grid grid-cols-2 gap-2 mb-4">
+                            <select id="var-cat" class="p-2 border rounded"><option>Alimentação</option><option>Lazer</option><option>Mercado</option><option>Transporte</option><option>Outros</option></select>
+                            <input id="var-val" type="number" placeholder="Valor" class="p-2 border rounded" required step="0.01">
+                            <input id="var-date" type="date" class="p-2 border rounded col-span-2">
+                            <button class="col-span-2 bg-orange-500 text-white p-2 rounded font-bold">Adicionar</button>
+                        </form>
+                        <ul id="list-var" class="divide-y text-sm"></ul>
+                    </div>
+                </div>
+
+                <!-- DEBTS TAB -->
+                <div id="tab-debts" class="hidden">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border">
+                        <div class="flex justify-between mb-4"><h2 class="font-bold">Dívidas</h2><button onclick="askAI('debts')" class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">IA</button></div>
+                        <form onsubmit="addDebt(event)" class="grid grid-cols-2 gap-2 mb-4">
+                            <input id="debt-name" type="text" placeholder="Nome" class="col-span-2 p-2 border rounded" required>
+                            <input id="debt-tot" type="number" placeholder="Total Devido" class="p-2 border rounded" step="0.01">
+                            <input id="debt-par" type="number" placeholder="Parcela Mensal" class="p-2 border rounded" required step="0.01">
+                            <button class="col-span-2 bg-red-500 text-white p-2 rounded font-bold">Adicionar</button>
+                        </form>
+                        <div id="list-debt" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- GOALS TAB -->
+                <div id="tab-goals" class="hidden">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border">
+                        <div class="flex justify-between mb-4"><h2 class="font-bold">Investimentos</h2><button onclick="askAI('goals')" class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded">IA</button></div>
+                        <form onsubmit="addGoal(event)" class="flex gap-2 mb-4">
+                            <input id="goal-name" type="text" placeholder="Objetivo" class="flex-grow p-2 border rounded" required>
+                            <input id="goal-val" type="number" placeholder="Aporte" class="w-24 p-2 border rounded" required step="0.01">
+                            <button class="bg-emerald-600 text-white px-4 rounded"><i class="fa-solid fa-plus"></i></button>
+                        </form>
+                        <div id="list-goal" class="grid grid-cols-1 gap-2"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- AI Modal -->
+        <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[200] hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+                <div class="p-4 border-b flex justify-between bg-slate-50 rounded-t-xl">
+                    <span class="font-bold text-indigo-600"><i class="fa-solid fa-robot mr-2"></i>Consultor IA</span>
+                    <button onclick="document.getElementById('ai-modal').classList.add('hidden')"><i class="fa-solid fa-times"></i></button>
+                </div>
+                <div id="ai-res" class="p-6 overflow-y-auto prose prose-sm"></div>
+            </div>
+        </div>
+
+        <!-- Mobile Nav -->
+        <nav class="md:hidden fixed bottom-0 w-full bg-white border-t flex justify-around py-3 z-50">
+            <button onclick="switchTab('dashboard')" class="flex flex-col items-center text-slate-400 tab-icon active-mobile" id="mob-dashboard"><i class="fa-solid fa-chart-pie"></i><span class="text-[10px]">Visão</span></button>
+            <button onclick="switchTab('fixed')" class="flex flex-col items-center text-slate-400 tab-icon" id="mob-fixed"><i class="fa-solid fa-house"></i><span class="text-[10px]">Fixas</span></button>
+            <button onclick="switchTab('variable')" class="flex flex-col items-center text-slate-400 tab-icon" id="mob-variable"><i class="fa-solid fa-cart-shopping"></i><span class="text-[10px]">Variáveis</span></button>
+            <button onclick="switchTab('debts')" class="flex flex-col items-center text-slate-400 tab-icon" id="mob-debts"><i class="fa-solid fa-credit-card"></i><span class="text-[10px]">Dívidas</span></button>
+            <button onclick="switchTab('goals')" class="flex flex-col items-center text-slate-400 tab-icon" id="mob-goals"><i class="fa-solid fa-piggy-bank"></i><span class="text-[10px]">Reserva</span></button>
+        </nav>
+    </div>
+
+    <!-- MAIN LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- 1. SAFE CONFIG INIT ---
+        let app, auth, db, appId;
+        
+        try {
+       const firebaseConfig = {
+  apiKey: "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU",
+  authDomain: "fluxocash-b81f6.firebaseapp.com",
+  projectId: "fluxocash-b81f6",
+  storageBucket: "fluxocash-b81f6.firebasestorage.app",
+  messagingSenderId: "1021395240266",
+  appId: "1:1021395240266:web:e44282819a1ab0c2feadb3"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = "fluxocash-app"
+
+        // --- 2. EVENT LISTENERS (No HTML onclicks for auth) ---
+        
+        // Navigation between Login/Register
+        document.getElementById('btn-go-register').addEventListener('click', () => {
+            document.getElementById('login-block').classList.add('hidden');
+            document.getElementById('register-block').classList.remove('hidden');
+        });
+        document.getElementById('btn-go-login').addEventListener('click', () => {
+            document.getElementById('register-block').classList.add('hidden');
+            document.getElementById('login-block').classList.remove('hidden');
+        });
+
+        const setStatus = (msg) => document.getElementById('auth-status').innerText = msg;
+        const setBtnLoading = (btnId, isLoading, text) => {
+            const btn = document.getElementById(btnId);
+            if(isLoading) {
+                btn.disabled = true;
+                btn.innerText = "Processando...";
+                btn.classList.add('loading-btn');
+            } else {
+                btn.disabled = false;
+                btn.innerText = text;
+                btn.classList.remove('loading-btn');
+            }
+        };
+
+        // LOGIN Logic
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(!auth) return;
+            
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            
+            setBtnLoading('btn-login-submit', true, 'Entrar');
+            setStatus("");
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                // Auth listener will handle the rest
+            } catch (error) {
+                console.error(error);
+                setBtnLoading('btn-login-submit', false, 'Entrar');
+                if(error.code === 'auth/invalid-credential') setStatus("E-mail ou senha incorretos.");
+                else setStatus("Erro ao fazer login. Tente novamente.");
+            }
+        });
+
+        // REGISTER Logic
+        document.getElementById('form-register').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(!auth) return;
+
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            const confirm = document.getElementById('reg-confirm').value;
+
+            if(pass !== confirm) { setStatus("Senhas não conferem."); return; }
+            
+            setBtnLoading('btn-reg-submit', true, 'Cadastrar');
+            setStatus("");
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, pass);
+            } catch (error) {
+                setBtnLoading('btn-reg-submit', false, 'Cadastrar');
+                if(error.code === 'auth/email-already-in-use') setStatus("E-mail já está em uso.");
+                else if(error.code === 'auth/weak-password') setStatus("Senha fraca (use 6+ digitos).");
+                else setStatus("Erro ao cadastrar.");
+            }
+        });
+
+        // GUEST Logic
+        document.getElementById('btn-guest').addEventListener('click', async () => {
+            if(!auth) return;
+            setBtnLoading('btn-guest', true, 'Entrar como Convidado');
+            setStatus("");
+            try {
+                await signInAnonymously(auth);
+            } catch (e) {
+                console.error(e);
+                setBtnLoading('btn-guest', false, 'Entrar como Convidado');
+                setStatus("Erro ao entrar como convidado.");
+            }
+        });
+
+        // LOGOUT Logic
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            if(!auth) return;
+            if(confirm("Sair da conta?")) signOut(auth).then(() => location.reload());
+        });
+
+        // --- 3. GLOBAL STATE & HELPERS ---
+        let currentUser = null;
+        let appData = { income: 0, fixed: [], variable: [], debts: [], goals: [] };
+        let chartInstance = null;
+
+        // AUTH STATE LISTENER
+        if (auth) {
+            // Priority token check
+            const initAuth = async () => {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    try { await signInWithCustomToken(auth, __initial_auth_token); } catch(e) {}
+                }
+            };
+            initAuth();
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    // Switch Screens
+                    document.getElementById('auth-screen').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('auth-screen').classList.add('hidden');
+                        document.getElementById('app-screen').classList.remove('hidden');
+                        document.getElementById('app-screen').classList.add('flex');
+                    }, 500);
+
+                    document.getElementById('user-display').innerText = user.isAnonymous ? "Convidado" : user.email;
+
+                    // Listen to Data
+                    const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'app_data', 'main');
+                    onSnapshot(docRef, (snap) => {
+                        if (snap.exists()) {
+                            appData = snap.data();
+                        } else {
+                            // Init defaults for new user
+                            appData = { income: 0, fixed: [], variable: [], debts: [], goals: [] };
+                            saveData();
+                        }
+                        renderUI();
+                    });
+
+                } else {
+                    currentUser = null;
+                    document.getElementById('auth-screen').classList.remove('hidden');
+                    document.getElementById('auth-screen').style.opacity = '1';
+                    document.getElementById('app-screen').classList.add('hidden');
+                    document.getElementById('app-screen').classList.remove('flex');
+                    
+                    // Reset buttons
+                    setBtnLoading('btn-login-submit', false, 'Entrar');
+                    setBtnLoading('btn-reg-submit', false, 'Cadastrar');
+                    setBtnLoading('btn-guest', false, 'Entrar como Convidado');
+                }
+            });
+        }
+
+        const saveData = async () => {
+            if(!currentUser || !db) return;
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'app_data', 'main'), appData);
+            } catch(e) { console.error("Save Error", e); }
+        };
+
+        // --- 4. GLOBAL FUNCTIONS FOR HTML ONCLICK ---
+        // (Only for inside-app interactions)
+
+        window.addFixed = (e) => {
+            e.preventDefault();
+            const n = document.getElementById('fix-name').value;
+            const v = parseFloat(document.getElementById('fix-val').value);
+            if(n && v) {
+                appData.fixed.push({name:n, value:v});
+                document.getElementById('fix-name').value=''; document.getElementById('fix-val').value='';
+                saveData();
+            }
+        };
+
+        window.addVar = (e) => {
+            e.preventDefault();
+            const c = document.getElementById('var-cat').value;
+            const v = parseFloat(document.getElementById('var-val').value);
+            const d = document.getElementById('var-date').value;
+            if(c && v) {
+                appData.variable.push({category:c, value:v, date:d});
+                document.getElementById('var-val').value='';
+                saveData();
+            }
+        };
+
+        window.addDebt = (e) => {
+            e.preventDefault();
+            const n = document.getElementById('debt-name').value;
+            const t = parseFloat(document.getElementById('debt-tot').value)||0;
+            const p = parseFloat(document.getElementById('debt-par').value);
+            if(n && p) {
+                appData.debts.push({name:n, total:t, parcel:p});
+                document.getElementById('debt-name').value=''; document.getElementById('debt-tot').value=''; document.getElementById('debt-par').value='';
+                saveData();
+            }
+        };
+
+        window.addGoal = (e) => {
+            e.preventDefault();
+            const n = document.getElementById('goal-name').value;
+            const v = parseFloat(document.getElementById('goal-val').value);
+            if(n && v) {
+                appData.goals.push({name:n, value:v});
+                document.getElementById('goal-name').value=''; document.getElementById('goal-val').value='';
+                saveData();
+            }
+        };
+
+        window.delItem = (type, idx) => {
+            if(confirm("Remover este item?")) {
+                appData[type].splice(idx,1);
+                saveData();
+            }
+        };
+
+        window.resetData = () => {
+            if(confirm("Apagar TODOS os dados?")) {
+                appData={income:0,fixed:[],variable:[],debts:[],goals:[]};
+                saveData();
+            }
+        };
+
+        document.getElementById('inp-income').addEventListener('input', (e) => {
+            appData.income = parseFloat(e.target.value)||0;
+            saveData();
+        });
+
+        // UI RENDER
+        function fmt(n) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(n); }
+
+        function renderUI() {
+            document.getElementById('inp-income').value = appData.income || 0;
+
+            const listFix = document.getElementById('list-fixed'); listFix.innerHTML=''; let sFix=0;
+            (appData.fixed||[]).forEach((i, idx) => { sFix+=i.value; listFix.innerHTML+=`<tr class="border-b"><td class="py-2 text-slate-700">${i.name}</td><td class="text-right font-medium">${fmt(i.value)}</td><td class="text-right"><button onclick="delItem('fixed',${idx})" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`;});
+
+            const listVar = document.getElementById('list-var'); listVar.innerHTML=''; let sVar=0;
+            (appData.variable||[]).sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach((i, idx) => { sVar+=i.value; listVar.innerHTML+=`<li class="py-3 flex justify-between"><div><span class="block text-slate-700">${i.category}</span><span class="text-xs text-slate-400">${i.date}</span></div><div class="flex gap-2 items-center"><span class="font-bold text-slate-600">${fmt(i.value)}</span><button onclick="delItem('variable',${idx})" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></div></li>`;});
+
+            const listDebt = document.getElementById('list-debt'); listDebt.innerHTML=''; let sDebt=0;
+            (appData.debts||[]).forEach((i, idx) => { sDebt+=i.parcel; listDebt.innerHTML+=`<div class="flex justify-between p-2 border rounded bg-slate-50"><div><div class="font-bold text-slate-700">${i.name}</div><div class="text-xs text-slate-400">Total: ${fmt(i.total)}</div></div><div class="text-right"><div class="text-red-600 font-bold">${fmt(i.parcel)}/mês</div><button onclick="delItem('debts',${idx})" class="text-xs text-slate-300">remover</button></div></div>`;});
+
+            const listGoal = document.getElementById('list-goal'); listGoal.innerHTML=''; let sGoal=0;
+            (appData.goals||[]).forEach((i, idx) => { sGoal+=i.value; listGoal.innerHTML+=`<div class="flex justify-between p-3 border border-emerald-100 bg-emerald-50 rounded"><div><span class="font-bold text-emerald-800">${i.name}</span></div><div class="text-right"><span class="font-bold text-emerald-700">${fmt(i.value)}</span><button onclick="delItem('goals',${idx})" class="ml-2 text-emerald-300 hover:text-emerald-600"><i class="fa-solid fa-trash"></i></button></div></div>`;});
+
+            document.getElementById('d-fix').innerText = fmt(sFix);
+            document.getElementById('d-var').innerText = fmt(sVar);
+            document.getElementById('d-debt').innerText = fmt(sDebt);
+            document.getElementById('d-goal').innerText = fmt(sGoal);
+
+            const balance = (appData.income||0) - (sFix + sVar + sDebt + sGoal);
+            const balEl = document.getElementById('final-balance');
+            balEl.innerText = fmt(balance);
+            if(balance > 0) { balEl.className="text-4xl font-extrabold text-emerald-500"; document.getElementById('balance-msg').innerText="Lucro! Use para investir."; }
+            else if(balance < 0) { balEl.className="text-4xl font-extrabold text-red-500"; document.getElementById('balance-msg').innerText="Prejuízo. Corte gastos."; }
+            else { balEl.className="text-4xl font-extrabold text-slate-400"; document.getElementById('balance-msg').innerText="Zero a zero."; }
+
+            updateChart(appData.income||0, sFix, sVar, sDebt, sGoal);
+        }
+
+        function updateChart(inc, fix, vari, debt, goal) {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Renda', 'Gastos'],
+                    datasets: [
+                        { label: 'Renda', data: [inc, 0], backgroundColor: '#059669', stack:'0' },
+                        { label: 'Fixas', data: [0, fix], backgroundColor: '#64748b', stack:'1' },
+                        { label: 'Variáveis', data: [0, vari], backgroundColor: '#f97316', stack:'1' },
+                        { label: 'Dívidas', data: [0, debt], backgroundColor: '#ef4444', stack:'1' },
+                        { label: 'Invest', data: [0, goal], backgroundColor: '#34d399', stack:'1' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: {x:{stacked:true}, y:{stacked:true, display:false}}, plugins: {legend:{position:'bottom'}} }
+            });
+        }
+
+        // NAV
+        window.switchTab = (id) => {
+            ['dashboard','fixed','variable','debts','goals'].forEach(t => {
+                document.getElementById('tab-'+t).classList.add('hidden');
+                document.getElementById('btn-'+t)?.classList.remove('active');
+                document.getElementById('mob-'+t)?.classList.remove('active-mobile');
+            });
+            document.getElementById('tab-'+id).classList.remove('hidden');
+            document.getElementById('btn-'+id)?.classList.add('active');
+            document.getElementById('mob-'+id)?.classList.add('active-mobile');
+        };
+
+        // AI
+        const apiKey = "import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({});
+
+async function main() {
+  const response = await ai.models.generateContent({
+    model: "gemini-3-pro-preview",
+    contents: "Explain how AI works in a few words",
+  });
+  console.log(response.text);
+}
+
+await main();"; 
+        window.askAI = async (type) => {
+            document.getElementById('ai-modal').classList.remove('hidden');
+            document.getElementById('ai-res').innerHTML = "Pensando...";
+            try {
+                if(!apiKey) throw new Error("API Key missing");
+                const prompt = `Analise como Pai Rico. Contexto: ${JSON.stringify(appData)}. Foco: ${type}. Responda em Markdown.`;
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({contents:[{parts:[{text:prompt}]}]})
+                });
+                const data = await res.json();
+                document.getElementById('ai-res').innerHTML = marked.parse(data.candidates[0].content.parts[0].text);
+            } catch(e) { document.getElementById('ai-res').innerText = "Erro na IA."; }
+        };
+
+        // Init date
+        document.getElementById('var-date').valueAsDate = new Date();
+
+    </script>
+    <style>.active-mobile { color: #059669; font-weight: bold; }</style>
+</body>
+</html>
