@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxo de Caixa | Método Pai Rico</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome (Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        
+        .tab-btn.active {
+            border-bottom: 3px solid #059669; /* emerald-600 */
+            color: #059669;
+            font-weight: 700;
+        }
+        
+        /* Chart Container Responsiveness */
+        .chart-wrapper {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+    <!-- Chosen Palette: Emerald (Growth), Rose (Debt), Slate (Neutral) -->
+    <!-- Application Structure: Single Page App with Tabbed Navigation matching the 5 requested sections. -->
+</head>
+<body class="text-slate-800 pb-20 md:pb-0">
+
+    <!-- Top Navigation (Desktop) / Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-emerald-600 text-xl"></i>
+                    <h1 class="font-bold text-lg tracking-tight">FluxoCash <span class="text-xs font-normal text-slate-500 hidden sm:inline">| Método 10min</span></h1>
+                </div>
+                
+                <!-- Desktop Tabs -->
+                <nav class="hidden md:flex space-x-6">
+                    <button onclick="switchTab('dashboard')" class="tab-btn active py-5 text-sm font-medium text-slate-500 hover:text-emerald-600 transition" id="btn-dashboard">Visão Geral</button>
+                    <button onclick="switchTab('fixed')" class="tab-btn py-5 text-sm font-medium text-slate-500 hover:text-emerald-600 transition" id="btn-fixed">Fixas</button>
+                    <button onclick="switchTab('variable')" class="tab-btn py-5 text-sm font-medium text-slate-500 hover:text-emerald-600 transition" id="btn-variable">Variáveis</button>
+                    <button onclick="switchTab('debts')" class="tab-btn py-5 text-sm font-medium text-slate-500 hover:text-emerald-600 transition" id="btn-debts">Dívidas</button>
+                    <button onclick="switchTab('goals')" class="tab-btn py-5 text-sm font-medium text-slate-500 hover:text-emerald-600 transition" id="btn-goals">Reserva</button>
+                </nav>
+
+                <div class="text-xs text-slate-400 font-mono hidden sm:block" id="last-update">Atualizado: Hoje</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- 🟢 ABA 1: VISÃO GERAL -->
+        <section id="tab-dashboard" class="block animate-fade-in">
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-slate-100">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Sua Realidade Financeira</h2>
+                        <p class="text-sm text-slate-500">Você está melhorando ou apenas pagando contas?</p>
+                    </div>
+                    <button onclick="resetData()" class="text-xs text-red-300 hover:text-red-500 underline">Resetar Dados</button>
+                </div>
+
+                <!-- Input Renda -->
+                <div class="mb-6">
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Renda Mensal Total</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3 text-slate-400">R$</span>
+                        <input type="number" id="income-input" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-lg font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="0,00" onchange="updateDashboard()">
+                    </div>
+                </div>
+
+                <!-- Big Numbers Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
+                        <p class="text-xs text-slate-500 mb-1">Despesas Fixas</p>
+                        <p class="font-bold text-slate-700" id="dash-fixed">R$ 0</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
+                        <p class="text-xs text-slate-500 mb-1">Variáveis (Mês)</p>
+                        <p class="font-bold text-orange-600" id="dash-variable">R$ 0</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
+                        <p class="text-xs text-slate-500 mb-1">Dívidas (Parcelas)</p>
+                        <p class="font-bold text-red-600" id="dash-debt">R$ 0</p>
+                    </div>
+                    <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-100">
+                        <p class="text-xs text-emerald-700 mb-1">Investimentos</p>
+                        <p class="font-bold text-emerald-700" id="dash-goals">R$ 0</p>
+                    </div>
+                </div>
+
+                <!-- The Verdict -->
+                <div class="border-t border-slate-100 pt-6 text-center">
+                    <p class="text-sm font-medium text-slate-400 uppercase tracking-wide mb-2">Fluxo de Caixa Livre (Saldo)</p>
+                    <div id="final-balance" class="text-4xl md:text-5xl font-extrabold text-slate-300">R$ 0,00</div>
+                    <p id="balance-message" class="mt-2 text-sm text-slate-500">Insira seus dados para ver o resultado.</p>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <h3 class="font-bold text-slate-700 mb-4">Para onde vai o dinheiro?</h3>
+                <div class="chart-wrapper">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Rich Dad Tip -->
+            <div class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg text-sm text-yellow-800">
+                <strong>📌 Fórmula Mental:</strong> Renda – Gastos = Liberdade (se positivo) ou Prisão (se negativo). O objetivo não é cortar o cafezinho, é garantir que sobra dinheiro para comprar Ativos.
+            </div>
+        </section>
+
+        <!-- 🟢 ABA 2: DESPESAS FIXAS -->
+        <section id="tab-fixed" class="hidden">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <h2 class="text-lg font-bold mb-1">Despesas Fixas</h2>
+                <p class="text-xs text-slate-500 mb-6">Acontece todo mês, gostando ou não.</p>
+
+                <!-- Form -->
+                <form onsubmit="addFixedItem(event)" class="flex gap-2 mb-6">
+                    <input type="text" id="fixed-name" placeholder="Ex: Aluguel, Luz" class="flex-grow p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500" required>
+                    <input type="number" id="fixed-value" placeholder="Valor" class="w-28 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500" required step="0.01">
+                    <button type="submit" class="bg-slate-800 text-white px-4 rounded-lg hover:bg-slate-900"><i class="fa-solid fa-plus"></i></button>
+                </form>
+
+                <!-- List -->
+                <div class="overflow-hidden rounded-lg border border-slate-200">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th class="p-3 font-medium">Categoria</th>
+                                <th class="p-3 font-medium text-right">Valor</th>
+                                <th class="p-3 w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="fixed-list" class="divide-y divide-slate-100">
+                            <!-- JS Content -->
+                        </tbody>
+                        <tfoot class="bg-slate-50 font-bold text-slate-700">
+                            <tr>
+                                <td class="p-3">TOTAL FIXO</td>
+                                <td class="p-3 text-right" id="total-fixed-display">R$ 0,00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="mt-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg text-sm text-blue-800">
+                <strong>📌 Regra:</strong> Se é uma despesa fixa e não gera renda, controle rigidamente. Tente reduzir o custo fixo para aumentar sua margem de manobra.
+            </div>
+        </section>
+
+        <!-- 🟢 ABA 3: DESPESAS VARIÁVEIS -->
+        <section id="tab-variable" class="hidden">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <div class="flex justify-between items-center mb-1">
+                    <h2 class="text-lg font-bold">Variáveis (Onde o dinheiro some)</h2>
+                    <span class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-bold" id="month-indicator">Mês Atual</span>
+                </div>
+                <p class="text-xs text-slate-500 mb-6">Atualize uma vez por semana. Controle o comportamento.</p>
+
+                <!-- Form -->
+                <form onsubmit="addVariableItem(event)" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+                    <select id="var-cat" class="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none" required>
+                        <option value="Alimentação">Alimentação</option>
+                        <option value="Lazer">Lazer</option>
+                        <option value="Compras">Compras</option>
+                        <option value="Delivery">Delivery</option>
+                        <option value="Extras">Extras</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                    <input type="number" id="var-val" placeholder="Valor" class="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none" required step="0.01">
+                    <input type="date" id="var-date" class="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none text-slate-500 text-sm">
+                    <button type="submit" class="bg-orange-500 text-white p-3 rounded-lg hover:bg-orange-600 font-bold">Adicionar</button>
+                </form>
+
+                <!-- Category Summary (Pai Rico Strategy: Look at categories, not pennies) -->
+                <div class="grid grid-cols-2 gap-3 mb-6" id="var-summary">
+                    <!-- JS Generated Summary Cards -->
+                </div>
+
+                <!-- Recent List -->
+                <h3 class="text-xs font-bold uppercase text-slate-400 mb-2">Últimos Lançamentos</h3>
+                <div class="overflow-hidden rounded-lg border border-slate-200 bg-white">
+                    <ul id="variable-list" class="divide-y divide-slate-100 text-sm">
+                        <!-- JS Content -->
+                    </ul>
+                </div>
+                <div class="text-right mt-2 font-bold text-orange-600 text-lg">
+                    Total: <span id="total-variable-display">R$ 0,00</span>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-orange-50 border-l-4 border-orange-400 rounded-r-lg text-sm text-orange-800">
+                <strong>📌 Dica Pai Rico:</strong> Você não controla centavos, controla comportamento. Se "Delivery" está alto, mude o hábito, não fique sofrendo por causa de R$ 5,00.
+            </div>
+        </section>
+
+        <!-- 🟢 ABA 4: DÍVIDAS -->
+        <section id="tab-debts" class="hidden">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <h2 class="text-lg font-bold mb-1">Dívidas (Estratégico)</h2>
+                <p class="text-xs text-slate-500 mb-6">O objetivo é liberar fluxo de caixa mensal.</p>
+
+                <!-- Form -->
+                <form onsubmit="addDebtItem(event)" class="grid grid-cols-1 md:grid-cols-5 gap-2 mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] uppercase font-bold text-slate-400">Nome</label>
+                        <input type="text" id="debt-name" placeholder="Ex: Cartão Visa" class="w-full p-2 bg-white border border-slate-200 rounded focus:outline-none" required>
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-slate-400">Total Devido</label>
+                        <input type="number" id="debt-total" placeholder="Total" class="w-full p-2 bg-white border border-slate-200 rounded focus:outline-none" step="0.01">
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-slate-400">Parcela Mensal</label>
+                        <input type="number" id="debt-parcel" placeholder="Mensal" class="w-full p-2 bg-white border border-slate-200 rounded focus:outline-none" required step="0.01">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 font-bold text-sm h-[38px]">Gravar</button>
+                    </div>
+                </form>
+
+                <!-- List -->
+                <div class="space-y-3" id="debt-list">
+                    <!-- JS Cards -->
+                </div>
+                
+                <div class="mt-4 text-right">
+                    <p class="text-sm text-slate-500">Comprometimento Mensal:</p>
+                    <p class="text-xl font-bold text-red-600" id="total-debt-monthly">R$ 0,00</p>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-red-50 border-l-4 border-red-400 rounded-r-lg text-sm text-red-800">
+                <strong>📌 Estratégia:</strong> Pague primeiro as dívidas com juros mais altos (Prioridade). Eliminar uma parcela de R$ 300 libera R$ 300 de fluxo de caixa para investir no próximo mês.
+            </div>
+        </section>
+
+        <!-- 🟢 ABA 5: RESERVA & OBJETIVOS -->
+        <section id="tab-goals" class="hidden">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <h2 class="text-lg font-bold mb-1">Pague-se Primeiro</h2>
+                <p class="text-xs text-slate-500 mb-6">Investimentos e Reserva. O dinheiro do seu "Eu" futuro.</p>
+
+                <!-- Form -->
+                <form onsubmit="addGoalItem(event)" class="flex gap-2 mb-6">
+                    <input type="text" id="goal-name" placeholder="Ex: Reserva, Ações" class="flex-grow p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none" required>
+                    <input type="number" id="goal-val" placeholder="Aporte Mensal" class="w-32 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none" required step="0.01">
+                    <button type="submit" class="bg-emerald-600 text-white px-4 rounded-lg hover:bg-emerald-700"><i class="fa-solid fa-plus"></i></button>
+                </form>
+
+                <!-- List -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="goal-list">
+                    <!-- JS Cards -->
+                </div>
+
+                <div class="mt-6 border-t border-slate-100 pt-4 flex justify-between items-center">
+                    <span class="font-bold text-slate-600">Total Destinado a Você:</span>
+                    <span class="text-2xl font-bold text-emerald-600" id="total-goals-display">R$ 0,00</span>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-emerald-50 border-l-4 border-emerald-400 rounded-r-lg text-sm text-emerald-800">
+                <strong>📌 Hábito > Valor:</strong> Não importa se são R$ 50,00 ou R$ 5.000,00. O hábito de separar dinheiro para investir *antes* de gastar com variáveis é o que enriquece.
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around py-3 z-50 pb-safe">
+        <button onclick="switchTab('dashboard')" class="flex flex-col items-center text-slate-400 hover:text-emerald-600 tab-icon-btn active-mobile" id="mob-dashboard">
+            <i class="fa-solid fa-chart-pie text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Visão</span>
+        </button>
+        <button onclick="switchTab('fixed')" class="flex flex-col items-center text-slate-400 hover:text-emerald-600 tab-icon-btn" id="mob-fixed">
+            <i class="fa-solid fa-house-chimney text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Fixas</span>
+        </button>
+        <button onclick="switchTab('variable')" class="flex flex-col items-center text-slate-400 hover:text-emerald-600 tab-icon-btn" id="mob-variable">
+            <i class="fa-solid fa-cart-shopping text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Variáveis</span>
+        </button>
+        <button onclick="switchTab('debts')" class="flex flex-col items-center text-slate-400 hover:text-emerald-600 tab-icon-btn" id="mob-debts">
+            <i class="fa-solid fa-credit-card text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Dívidas</span>
+        </button>
+        <button onclick="switchTab('goals')" class="flex flex-col items-center text-slate-400 hover:text-emerald-600 tab-icon-btn" id="mob-goals">
+            <i class="fa-solid fa-piggy-bank text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Reserva</span>
+        </button>
+    </nav>
+
+    <style>
+        .active-mobile { color: #059669; }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+    </style>
+
+    <!-- LOGIC -->
+    <script>
+        // --- DATA & STATE MANAGEMENT ---
+        const defaultState = {
+            income: 0,
+            fixed: [],
+            variable: [],
+            debts: [],
+            goals: []
+        };
+
+        let appData = JSON.parse(localStorage.getItem('richDadApp')) || defaultState;
+
+        // FIX: Declaração movida para o topo para evitar ReferenceError
+        let mainChartInstance = null;
+
+        // Load specific default examples if empty (for user experience)
+        if(appData.fixed.length === 0 && appData.variable.length === 0) {
+            appData.income = 5500;
+            appData.fixed = [
+                { id: 1, name: 'Aluguel', value: 1800 },
+                { id: 2, name: 'Internet/Celular', value: 150 }
+            ];
+            appData.goals = [
+                { id: 1, name: 'Reserva Emergência', value: 500 }
+            ];
+            saveData();
+        }
+
+        // --- CORE FUNCTIONS ---
+
+        function saveData() {
+            localStorage.setItem('richDadApp', JSON.stringify(appData));
+            updateDashboard();
+            updateLastUpdate();
+        }
+
+        function resetData() {
+            if(confirm("Deseja zerar todos os dados?")) {
+                appData = defaultState;
+                localStorage.removeItem('richDadApp');
+                location.reload();
+            }
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        }
+
+        function updateLastUpdate() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('last-update').innerText = `Atualizado: ${dateStr}`;
+        }
+
+        // --- RENDER FUNCTIONS ---
+
+        function renderFixed() {
+            const list = document.getElementById('fixed-list');
+            list.innerHTML = '';
+            let total = 0;
+            
+            appData.fixed.forEach((item, index) => {
+                total += item.value;
+                list.innerHTML += `
+                    <tr class="group hover:bg-slate-50">
+                        <td class="p-3 text-slate-700">${item.name}</td>
+                        <td class="p-3 text-right font-medium">${formatCurrency(item.value)}</td>
+                        <td class="p-3 text-right">
+                            <button onclick="deleteItem('fixed', ${index})" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById('total-fixed-display').innerText = formatCurrency(total);
+            return total;
+        }
+
+        function renderVariable() {
+            const list = document.getElementById('variable-list');
+            const summaryDiv = document.getElementById('var-summary');
+            list.innerHTML = '';
+            summaryDiv.innerHTML = '';
+            
+            let total = 0;
+            let catTotals = {};
+
+            // Sort by date (newest first)
+            const sorted = [...appData.variable].sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            sorted.forEach((item, index) => {
+                total += item.value;
+                
+                // Summary Logic
+                if(!catTotals[item.category]) catTotals[item.category] = 0;
+                catTotals[item.category] += item.value;
+
+                // Only show last 10 in list
+                if(index < 10) {
+                    list.innerHTML += `
+                        <li class="p-3 flex justify-between items-center hover:bg-slate-50">
+                            <div>
+                                <span class="block font-medium text-slate-700">${item.category}</span>
+                                <span class="text-xs text-slate-400">${new Date(item.date).toLocaleDateString('pt-BR')}</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-slate-600">${formatCurrency(item.value)}</span>
+                                <button onclick="deleteItem('variable', ${appData.variable.indexOf(item)})" class="text-slate-300 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </li>
+                    `;
+                }
+            });
+
+            // Render Summary Cards (Top 4 categories)
+            const sortedCats = Object.entries(catTotals).sort((a,b) => b[1] - a[1]).slice(0,4);
+            sortedCats.forEach(([cat, val]) => {
+                summaryDiv.innerHTML += `
+                    <div class="bg-slate-50 p-3 rounded border border-slate-100">
+                        <div class="text-[10px] uppercase text-slate-500 font-bold">${cat}</div>
+                        <div class="text-sm font-bold text-slate-800">${formatCurrency(val)}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('total-variable-display').innerText = formatCurrency(total);
+            return total;
+        }
+
+        function renderDebts() {
+            const list = document.getElementById('debt-list');
+            list.innerHTML = '';
+            let totalMonthly = 0;
+
+            appData.debts.forEach((item, index) => {
+                totalMonthly += item.parcel;
+                list.innerHTML += `
+                    <div class="bg-white p-3 rounded border border-l-4 border-slate-200 shadow-sm flex justify-between items-center ${item.parcel > 500 ? 'border-l-red-400' : 'border-l-slate-300'}">
+                        <div>
+                            <div class="font-bold text-slate-700">${item.name}</div>
+                            <div class="text-xs text-slate-400">Total: ${formatCurrency(item.total)}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-red-600 block">${formatCurrency(item.parcel)}/mês</div>
+                            <button onclick="deleteItem('debts', ${index})" class="text-xs text-slate-300 hover:text-red-500 mt-1">remover</button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('total-debt-monthly').innerText = formatCurrency(totalMonthly);
+            return totalMonthly;
+        }
+
+        function renderGoals() {
+            const list = document.getElementById('goal-list');
+            list.innerHTML = '';
+            let total = 0;
+
+            appData.goals.forEach((item, index) => {
+                total += item.value;
+                list.innerHTML += `
+                    <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-100 flex justify-between items-center">
+                        <div>
+                            <span class="block font-bold text-emerald-800">${item.name}</span>
+                            <span class="text-xs text-emerald-600">Investimento Mensal</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="block font-bold text-lg text-emerald-700">${formatCurrency(item.value)}</span>
+                            <button onclick="deleteItem('goals', ${index})" class="text-xs text-emerald-300 hover:text-red-500">remover</button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('total-goals-display').innerText = formatCurrency(total);
+            return total;
+        }
+
+        // --- DASHBOARD UPDATE ---
+
+        // (Variable declaration moved to top)
+
+        function updateDashboard() {
+            // Inputs
+            document.getElementById('income-input').value = appData.income;
+
+            // Calculations
+            const sumFixed = appData.fixed.reduce((a, b) => a + b.value, 0);
+            const sumVariable = appData.variable.reduce((a, b) => a + b.value, 0);
+            const sumDebt = appData.debts.reduce((a, b) => a + b.parcel, 0); // Only monthly impact
+            const sumGoals = appData.goals.reduce((a, b) => a + b.value, 0);
+
+            const totalExpenses = sumFixed + sumVariable + sumDebt;
+            const balance = appData.income - totalExpenses - sumGoals; // Goals are subtracted to show TRUE free cash flow
+
+            // Update DOM Numbers
+            document.getElementById('dash-fixed').innerText = formatCurrency(sumFixed);
+            document.getElementById('dash-variable').innerText = formatCurrency(sumVariable);
+            document.getElementById('dash-debt').innerText = formatCurrency(sumDebt);
+            document.getElementById('dash-goals').innerText = formatCurrency(sumGoals);
+
+            const balEl = document.getElementById('final-balance');
+            const msgEl = document.getElementById('balance-message');
+
+            balEl.innerText = formatCurrency(balance);
+            
+            if(balance > 0) {
+                balEl.className = "text-4xl md:text-5xl font-extrabold text-emerald-500";
+                msgEl.innerText = "Excelente! Você está gerando riqueza. Use esse saldo para aumentar os Aportes.";
+            } else if (balance < 0) {
+                balEl.className = "text-4xl md:text-5xl font-extrabold text-red-500";
+                msgEl.innerText = "Alerta! Você está gastando mais do que ganha. Corte Variáveis urgente.";
+            } else {
+                balEl.className = "text-4xl md:text-5xl font-extrabold text-slate-400";
+                msgEl.innerText = "Zero a zero. Você está trabalhando apenas para sobreviver.";
+            }
+
+            // Update Chart
+            updateChart(appData.income, sumFixed, sumVariable, sumDebt, sumGoals);
+        }
+
+        function updateChart(income, fixed, variable, debt, goals) {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            
+            if (mainChartInstance) {
+                mainChartInstance.destroy();
+            }
+
+            mainChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Renda', 'Saídas'],
+                    datasets: [
+                        {
+                            label: 'Entradas',
+                            data: [income, 0],
+                            backgroundColor: '#059669', // Emerald
+                            barPercentage: 0.6
+                        },
+                        {
+                            label: 'Fixas',
+                            data: [0, fixed],
+                            backgroundColor: '#64748b', // Slate
+                            stack: 'Stack 0'
+                        },
+                        {
+                            label: 'Variáveis',
+                            data: [0, variable],
+                            backgroundColor: '#f97316', // Orange
+                            stack: 'Stack 0'
+                        },
+                        {
+                            label: 'Dívidas',
+                            data: [0, debt],
+                            backgroundColor: '#ef4444', // Red
+                            stack: 'Stack 0'
+                        },
+                        {
+                            label: 'Investimentos',
+                            data: [0, goals],
+                            backgroundColor: '#34d399', // Light Emerald
+                            stack: 'Stack 0'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, display: false } // Hide Y axis for cleaner look
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // --- FORM HANDLERS ---
+
+        document.getElementById('income-input').addEventListener('input', (e) => {
+            appData.income = parseFloat(e.target.value) || 0;
+            saveData();
+        });
+
+        function addFixedItem(e) {
+            e.preventDefault();
+            const name = document.getElementById('fixed-name').value;
+            const val = parseFloat(document.getElementById('fixed-value').value);
+            appData.fixed.push({ name, value: val });
+            document.getElementById('fixed-name').value = '';
+            document.getElementById('fixed-value').value = '';
+            renderFixed();
+            saveData();
+        }
+
+        function addVariableItem(e) {
+            e.preventDefault();
+            const cat = document.getElementById('var-cat').value;
+            const val = parseFloat(document.getElementById('var-val').value);
+            const date = document.getElementById('var-date').value || new Date().toISOString().split('T')[0]; // Default today
+            
+            appData.variable.push({ category: cat, value: val, date: date });
+            document.getElementById('var-val').value = '';
+            renderVariable();
+            saveData();
+        }
+
+        function addDebtItem(e) {
+            e.preventDefault();
+            const name = document.getElementById('debt-name').value;
+            const total = parseFloat(document.getElementById('debt-total').value) || 0;
+            const parcel = parseFloat(document.getElementById('debt-parcel').value);
+            
+            appData.debts.push({ name, total, parcel });
+            // Clear inputs
+            document.getElementById('debt-name').value = '';
+            document.getElementById('debt-total').value = '';
+            document.getElementById('debt-parcel').value = '';
+            renderDebts();
+            saveData();
+        }
+
+        function addGoalItem(e) {
+            e.preventDefault();
+            const name = document.getElementById('goal-name').value;
+            const val = parseFloat(document.getElementById('goal-val').value);
+            appData.goals.push({ name, value: val });
+            document.getElementById('goal-name').value = '';
+            document.getElementById('goal-val').value = '';
+            renderGoals();
+            saveData();
+        }
+
+        function deleteItem(type, index) {
+            if(confirm('Remover este item?')) {
+                appData[type].splice(index, 1);
+                
+                // Re-render specific section
+                if(type === 'fixed') renderFixed();
+                if(type === 'variable') renderVariable();
+                if(type === 'debts') renderDebts();
+                if(type === 'goals') renderGoals();
+                
+                saveData();
+            }
+        }
+
+        // --- NAVIGATION LOGIC ---
+
+        function switchTab(tabId) {
+            // Hide all
+            ['dashboard', 'fixed', 'variable', 'debts', 'goals'].forEach(id => {
+                document.getElementById('tab-' + id).classList.add('hidden');
+                // Desktop styling
+                const btn = document.getElementById('btn-' + id);
+                if(btn) btn.classList.remove('active');
+                // Mobile styling
+                const mobBtn = document.getElementById('mob-' + id);
+                if(mobBtn) mobBtn.classList.remove('active-mobile');
+            });
+
+            // Show selected
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            
+            // Activate buttons
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if(activeBtn) activeBtn.classList.add('active');
+            
+            const activeMobBtn = document.getElementById('mob-' + tabId);
+            if(activeMobBtn) activeMobBtn.classList.add('active-mobile');
+
+            // Force Dashboard Update on view
+            if(tabId === 'dashboard') updateDashboard();
+        }
+
+        // --- INIT ---
+        window.onload = function() {
+            // Set default date for variable expenses
+            document.getElementById('var-date').valueAsDate = new Date();
+
+            // Render all lists
+            renderFixed();
+            renderVariable();
+            renderDebts();
+            renderGoals();
+            updateDashboard();
+        }
+
+    </script>
+</body>
+</html>
