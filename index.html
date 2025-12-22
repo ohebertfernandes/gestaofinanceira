@@ -16,7 +16,7 @@
         
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; overflow: hidden; }
         
-        /* TELA DE LOGIN (Z-Index Ajustado) */
+        /* TELA DE LOGIN */
         #auth-screen {
             background: linear-gradient(135deg, #065f46 0%, #047857 100%);
             z-index: 9000;
@@ -53,6 +53,11 @@
         /* UTILITÁRIOS */
         .flex { display: flex !important; }
         .hidden { display: none !important; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     </style>
 </head>
 <body class="h-screen flex flex-col text-slate-800">
@@ -305,7 +310,7 @@
         </nav>
     </div>
 
-    <!-- AI Modal (Hidden) -->
+    <!-- AI Modal (Hidden by default) -->
     <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm" style="display: none;">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
             <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
@@ -428,7 +433,6 @@
             const desc = document.getElementById('extra-desc').value;
             const val = parseFloat(document.getElementById('extra-val').value);
             if(desc && val) {
-                // CORREÇÃO DE SEGURANÇA AQUI:
                 if(!appData.extraIncomes) appData.extraIncomes = [];
                 appData.extraIncomes.push({desc: desc, value: val});
                 document.getElementById('extra-desc').value = '';
@@ -516,20 +520,48 @@
             document.getElementById('mob-'+id)?.classList.add('active');
         };
 
+        // --- 6. AI (REFACTOR) ---
         window.askAI = async (ctx) => {
             const modal = document.getElementById('ai-modal');
             modal.style.display = 'flex'; // Force visible via JS
             modal.classList.remove('hidden');
             const content = document.getElementById('ai-content');
             content.innerHTML = '<div class="text-center"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-emerald-600"></i><p class="mt-2 text-slate-500">Consultando o Pai Rico...</p></div>';
+            
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
-                    method: 'POST', headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({contents:[{parts:[{text:`Analise como Robert Kiyosaki. Dados: ${JSON.stringify(appData)}. Foco: ${ctx}. Use Markdown.`}]}]})
+                // Endpoint para Gemini 1.5 Flash (Modelo atual e estável)
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Você é Robert Kiyosaki (Pai Rico). Analise estes dados financeiros: ${JSON.stringify(appData)}. Foco da análise: ${ctx}. Seja direto, use emojis e Markdown.`
+                            }]
+                        }]
+                    })
                 });
-                const d = await res.json();
-                document.getElementById('ai-content').innerHTML = marked.parse(d.candidates[0].content.parts[0].text);
-            } catch(e) { document.getElementById('ai-content').innerText = "Erro IA: " + e.message; }
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error.message || "Erro desconhecido na API");
+                }
+
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+                document.getElementById('ai-content').innerHTML = marked.parse(aiText);
+
+            } catch(e) {
+                console.error(e);
+                document.getElementById('ai-content').innerHTML = `
+                    <div class="text-red-500 text-center p-4">
+                        <p class="font-bold">Erro na IA:</p>
+                        <p class="text-xs mt-2 bg-red-50 p-2 rounded border border-red-200">${e.message}</p>
+                    </div>
+                `;
+            }
         };
 
         document.getElementById('var-date').valueAsDate = new Date();
