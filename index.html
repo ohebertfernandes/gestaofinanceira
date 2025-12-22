@@ -47,8 +47,8 @@
         .quick-btn { transition: transform 0.2s; }
         .quick-btn:active { transform: scale(0.95); }
 
-        /* MODAL IA */
-        #ai-modal { z-index: 10000; }
+        /* MODAL IA & FEEDBACK */
+        .modal-overlay { z-index: 10000; }
 
         /* UTILITÁRIOS */
         .flex { display: flex !important; }
@@ -121,7 +121,7 @@
         
         <!-- Topo (Desktop) -->
         <header class="bg-white border-b border-slate-200 z-30 flex-none">
-            <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
+            <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
                 <div class="flex items-center gap-2 text-emerald-700 font-bold text-lg">
                     <i class="fa-solid fa-chart-pie"></i> FluxoCash
                     <span id="mode-badge" class="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold">Offline</span>
@@ -137,6 +137,18 @@
                 </nav>
 
                 <div class="flex items-center gap-3">
+                    <!-- Botão de Feedback (Todos veem) -->
+                    <button onclick="openFeedback()" class="text-slate-500 hover:text-emerald-600 transition p-2" title="Sugerir Melhoria">
+                        <i class="fa-solid fa-box-open"></i>
+                    </button>
+
+                    <!-- Botão Admin (Só admin vê) -->
+                    <button onclick="openAdmin()" id="btn-admin" class="hidden text-white bg-slate-800 hover:bg-slate-900 transition px-3 py-1 rounded text-xs font-bold shadow">
+                        <i class="fa-solid fa-lock mr-1"></i> ADM
+                    </button>
+
+                    <div class="h-6 w-px bg-slate-200 mx-2"></div>
+
                     <span id="user-label" class="text-xs text-slate-400 hidden sm:block">Local</span>
                     <button onclick="doLogout()" class="text-xs text-red-500 border border-red-200 px-3 py-1 rounded hover:bg-red-50">Sair</button>
                 </div>
@@ -240,7 +252,6 @@
 
                 <!-- ABAS DE CONTEÚDO -->
                 <div id="page-fixed" class="hidden space-y-6">
-                    <!-- FRASE: FIXAS -->
                     <div class="quote-box bg-slate-100 border-slate-400 text-slate-700 p-4 rounded mb-6">
                         <i class="fa-solid fa-quote-left mr-2 opacity-50"></i>
                         <span id="quote-fixed">"O problema não é quanto dinheiro você ganha, mas quanto dinheiro você conserva."</span>
@@ -255,7 +266,6 @@
                 </div>
 
                 <div id="page-variable" class="hidden space-y-6">
-                    <!-- FRASE: VARIÁVEIS -->
                     <div class="quote-box bg-orange-50 border-orange-400 text-orange-800 p-4 rounded mb-6">
                         <i class="fa-solid fa-quote-left mr-2 opacity-50"></i>
                         <span id="quote-variable">"O luxo deve ser a recompensa pelo investimento, não o motivo dele."</span>
@@ -277,7 +287,6 @@
                 </div>
 
                 <div id="page-debts" class="hidden space-y-6">
-                    <!-- FRASE: PASSIVOS -->
                     <div class="quote-box bg-red-50 border-red-400 text-red-800 p-4 rounded mb-6">
                         <i class="fa-solid fa-quote-left mr-2 opacity-50"></i>
                         <span id="quote-debts">"Passivos tiram dinheiro do seu bolso. Os ricos adquirem ativos."</span>
@@ -292,7 +301,6 @@
                 </div>
 
                 <div id="page-goals" class="hidden space-y-6">
-                    <!-- FRASE: ATIVOS -->
                     <div class="quote-box bg-emerald-50 border-emerald-400 text-emerald-800 p-4 rounded mb-6">
                         <i class="fa-solid fa-quote-left mr-2 opacity-50"></i>
                         <span id="quote-goals">"A regra número 1: Você deve conhecer a diferença entre um ativo e um passivo."</span>
@@ -317,8 +325,39 @@
         </nav>
     </div>
 
+    <!-- FEEDBACK MODAL -->
+    <div id="feedback-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Sugestão de Melhoria</h3>
+            <p class="text-sm text-slate-500 mb-4">Sua ideia pode virar realidade no app!</p>
+            <textarea id="feedback-text" class="w-full p-3 border rounded-lg bg-slate-50 h-32 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Escreva sua sugestão aqui..."></textarea>
+            <div class="flex justify-end gap-2 mt-4">
+                <button onclick="document.getElementById('feedback-modal').classList.add('hidden')" class="px-4 py-2 text-slate-500 hover:text-slate-700">Cancelar</button>
+                <button onclick="sendFeedback()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-bold">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN MODAL -->
+    <div id="admin-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
+            <div class="p-4 border-b flex justify-between items-center bg-slate-800 text-white rounded-t-2xl">
+                <h3 class="font-bold"><i class="fa-solid fa-lock mr-2"></i>Painel do Administrador</h3>
+                <button onclick="document.getElementById('admin-modal').classList.add('hidden')"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow bg-slate-50">
+                <div id="admin-list" class="space-y-3">
+                    <p class="text-center text-slate-400 mt-10">Carregando sugestões...</p>
+                </div>
+            </div>
+            <div class="p-3 border-t bg-white text-right">
+                <button onclick="loadAdminMessages()" class="text-xs text-blue-600 hover:underline">Atualizar Lista</button>
+            </div>
+        </div>
+    </div>
+
     <!-- AI Modal -->
-    <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm" style="display: none;">
+    <div id="ai-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
             <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
                 <span class="font-bold text-indigo-600"><i class="fa-solid fa-robot mr-2"></i>Consultor IA</span>
@@ -331,9 +370,11 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIG
+        // === CONFIGURAÇÃO ===
+        const ADMIN_EMAIL = "ohebertgustavo@gmail.com"; 
+        
         const firebaseConfig = {
             apiKey: "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU",
             authDomain: "fluxocash-b81f6.firebaseapp.com",
@@ -344,42 +385,20 @@
         };
         const geminiApiKey = "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck";
 
-        // SETUP
+        // INIT
         let app, auth, db, currentUser = null;
         let appData = { income: 0, extraIncomes: [], fixed: [], variable: [], debts: [], goals: [], history: [] }; 
         let chartInstance = null;
         let historyChartInstance = null;
         let isOffline = false;
-
-        // BANCO DE FRASES MOTIVACIONAIS
+        
+        // Frases
         const quotes = {
-            dashboard: [
-                "Não trabalhe pelo dinheiro. Faça o dinheiro trabalhar para você.",
-                "A inteligência resolve problemas e produz dinheiro.",
-                "O ativo mais poderoso que todos nós temos é a nossa mente.",
-                "Riqueza é a capacidade de uma pessoa sobreviver tantos dias no futuro."
-            ],
-            fixed: [
-                "O problema não é quanto dinheiro você ganha, mas quanto dinheiro você conserva.",
-                "Você deve saber a diferença entre um ativo e um passivo.",
-                "Reduza passivos e despesas. Isso aumentará a coluna de ativos."
-            ],
-            variable: [
-                "O luxo deve ser a recompensa pelo investimento, não o motivo dele.",
-                "Muitas pessoas confundem desejos com necessidades.",
-                "Gastar dinheiro para parecer rico é o caminho mais rápido para ficar pobre."
-            ],
-            debts: [ // Passivos
-                "Passivos tiram dinheiro do seu bolso. Os ricos adquirem ativos.",
-                "A dívida ruim é aquela que você paga. A dívida boa é aquela que outra pessoa paga para você.",
-                "Se você descobrir que se enterrou em um buraco... pare de cavar."
-            ],
-            goals: [ // Ativos
-                "A regra número 1: Comprar ativos.",
-                "Os pobres e a classe média trabalham pelo dinheiro. Os ricos fazem o dinheiro trabalhar para eles.",
-                "Comece pequeno, sonhe grande.",
-                "Investir não é arriscado. Arriscado é não ter controle financeiro."
-            ]
+            dashboard: ["Não trabalhe pelo dinheiro. Faça o dinheiro trabalhar para você.","A inteligência resolve problemas e produz dinheiro.","O ativo mais poderoso que todos nós temos é a nossa mente.","Riqueza é a capacidade de uma pessoa sobreviver tantos dias no futuro."],
+            fixed: ["O problema não é quanto dinheiro você ganha, mas quanto dinheiro você conserva.","Você deve saber a diferença entre um ativo e um passivo.","Reduza passivos e despesas. Isso aumentará a coluna de ativos."],
+            variable: ["O luxo deve ser a recompensa pelo investimento, não o motivo dele.","Muitas pessoas confundem desejos com necessidades.","Gastar dinheiro para parecer rico é o caminho mais rápido para ficar pobre."],
+            debts: ["Passivos tiram dinheiro do seu bolso. Os ricos adquirem ativos.","A dívida ruim é aquela que você paga. A dívida boa é aquela que outra pessoa paga para você.","Se você descobrir que se enterrou em um buraco... pare de cavar."],
+            goals: ["A regra número 1: Comprar ativos.","Os pobres e a classe média trabalham pelo dinheiro. Os ricos fazem o dinheiro trabalhar para eles.","Comece pequeno, sonhe grande.","Investir não é arriscado. Arriscado é não ter controle financeiro."]
         };
 
         try {
@@ -388,7 +407,7 @@
             db = getFirestore(app);
         } catch(e) { console.error(e); }
 
-        // UI HELPERS
+        // --- AUTH & ADMIN ---
         const ui = {
             screenAuth: document.getElementById('auth-screen'),
             screenApp: document.getElementById('app-screen'),
@@ -407,11 +426,9 @@
             document.getElementById('view-register').classList.toggle('hidden', view !== 'register');
         };
 
-        // AUTH + DATA LOGIC
         function handleAuthError(err, btnId) {
             ui.setBtn(btnId, false);
             console.error("Auth Error:", err);
-            
             if(err.code && (err.code.includes('blocked') || err.code.includes('requests-to-this-api'))) {
                 ui.msg.innerText = "Servidor instável. Entrando em modo offline seguro...";
                 ui.msg.classList.remove('hidden');
@@ -423,17 +440,14 @@
         }
 
         document.getElementById('form-login').onsubmit = async (e) => {
-            e.preventDefault();
-            ui.setBtn('btn-login', true);
+            e.preventDefault(); ui.setBtn('btn-login', true);
             try { await signInWithEmailAndPassword(auth, document.getElementById('log-email').value, document.getElementById('log-pass').value); }
             catch(err) { handleAuthError(err, 'btn-login'); }
         };
 
         document.getElementById('form-register').onsubmit = async (e) => {
-            e.preventDefault();
-            const p1 = document.getElementById('reg-pass').value;
-            const p2 = document.getElementById('reg-confirm').value;
-            if(p1 !== p2) { ui.msg.innerText="Senhas diferem"; ui.msg.classList.remove('hidden'); return; }
+            e.preventDefault(); const p1 = document.getElementById('reg-pass').value;
+            if(p1 !== document.getElementById('reg-confirm').value) { ui.msg.innerText="Senhas diferem"; ui.msg.classList.remove('hidden'); return; }
             ui.setBtn('btn-reg', true);
             try { await createUserWithEmailAndPassword(auth, document.getElementById('reg-email').value, p1); }
             catch(err) { handleAuthError(err, 'btn-reg'); }
@@ -441,21 +455,13 @@
 
         window.forceOfflineMode = () => {
             isOffline = true;
-            ui.screenAuth.classList.add('hidden');
-            ui.screenApp.classList.remove('hidden');
-            ui.screenApp.classList.add('flex');
+            ui.screenAuth.classList.add('hidden'); ui.screenApp.classList.remove('hidden'); ui.screenApp.classList.add('flex');
             document.getElementById('user-label').innerText = "Offline";
             document.getElementById('mode-badge').innerText = "Offline";
-            document.getElementById('mode-badge').className = "text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold";
             const local = localStorage.getItem('fluxocash_local');
             if(local) { appData = JSON.parse(local); }
-            
-            // Ensure defaults
-            if(!appData.extraIncomes) appData.extraIncomes = [];
-            if(!appData.history) appData.history = [];
-            
-            render();
-            updateQuote('dashboard'); // Frase inicial
+            if(!appData.extraIncomes) appData.extraIncomes = []; if(!appData.history) appData.history = [];
+            render(); updateQuote('dashboard');
         };
 
         window.doLogout = () => { if(isOffline) location.reload(); else if(confirm("Sair?")) signOut(auth).then(()=>location.reload()); };
@@ -464,25 +470,21 @@
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     currentUser = user;
-                    ui.screenAuth.classList.add('hidden');
-                    ui.screenApp.classList.remove('hidden');
-                    ui.screenApp.classList.add('flex');
+                    ui.screenAuth.classList.add('hidden'); ui.screenApp.classList.remove('hidden'); ui.screenApp.classList.add('flex');
                     document.getElementById('user-label').innerText = user.email || "Convidado";
                     document.getElementById('mode-badge').innerText = "Cloud";
+                    
+                    // CHECK ADMIN
+                    if(user.email === ADMIN_EMAIL) {
+                        document.getElementById('btn-admin').classList.remove('hidden');
+                    }
+
                     const docRef = doc(db, 'artifacts', 'fluxocash-app', 'users', user.uid, 'app_data', 'main');
                     onSnapshot(docRef, (s) => {
-                        if(s.exists()) { 
-                            appData = s.data(); 
-                            if(!appData.extraIncomes) appData.extraIncomes=[]; 
-                            if(!appData.history) appData.history = [];
-                        } else { 
-                            saveData(); 
-                        }
-                        render();
-                        updateQuote('dashboard'); // Frase inicial
-                    }, (err) => { 
-                        window.forceOfflineMode();
-                    });
+                        if(s.exists()) { appData = s.data(); if(!appData.extraIncomes) appData.extraIncomes=[]; if(!appData.history) appData.history = []; }
+                        else { saveData(); }
+                        render(); updateQuote('dashboard');
+                    }, (err) => { window.forceOfflineMode(); });
                 }
             });
         }
@@ -492,95 +494,66 @@
             if(currentUser) await setDoc(doc(db, 'artifacts', 'fluxocash-app', 'users', currentUser.uid, 'app_data', 'main'), appData);
         };
 
-        // --- NEW: QUOTE ROTATOR ---
-        function updateQuote(tabId) {
-            const list = quotes[tabId];
-            if(!list) return;
-            const randomQuote = list[Math.floor(Math.random() * list.length)];
-            const el = document.getElementById(`quote-${tabId}`);
-            if(el) {
-                // Efeito de fade
-                el.parentElement.style.opacity = '0';
-                setTimeout(() => {
-                    el.innerText = `"${randomQuote}"`;
-                    el.parentElement.style.opacity = '1';
-                }, 200);
-            }
-        }
-
-        // --- NEW FEATURES: SAVE MONTH & HISTORY ---
-        window.saveCurrentMonth = () => {
-            const label = prompt("Digite o nome do mês (ex: Jan/2024):", new Date().toLocaleDateString('pt-BR', {month:'short', year:'2-digit'}));
-            if(!label) return;
-
-            const extra = (appData.extraIncomes||[]).reduce((a,b)=>a+b.value,0);
-            const inc = (appData.income||0) + extra;
-            const sFix = appData.fixed.reduce((a,b)=>a+b.value,0);
-            const sVar = appData.variable.reduce((a,b)=>a+b.value,0);
-            const sDebt = appData.debts.reduce((a,b)=>a+b.parcel,0);
-            const sGoal = appData.goals.reduce((a,b)=>a+b.value,0);
-            const bal = inc - (sFix+sVar+sDebt+sGoal);
-
-            if(!appData.history) appData.history = [];
-            appData.history.push({
-                label: label,
-                balance: bal,
-                income: inc,
-                expense: (sFix+sVar+sDebt+sGoal)
-            });
-
-            saveData();
-            render();
-            alert("Histórico salvo com sucesso!");
-        };
-
-        window.clearHistory = () => {
-            if(confirm("Apagar todo o histórico de evolução?")) {
-                appData.history = [];
-                saveData();
-                render();
-            }
-        };
-
-        // --- IMPORTAR CSV ---
-        window.importCSV = (input) => {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const text = e.target.result;
-                const lines = text.split('\n');
-                let count = 0;
-                lines.forEach(line => {
-                    if(!line.trim()) return;
-                    let cols = line.split(',');
-                    if(cols.length < 3) cols = line.split(';');
-                    if (cols.length >= 3) {
-                        let rawDate = cols[0].trim();
-                        let date = rawDate;
-                        if(rawDate.includes('/') && rawDate.split('/').length === 3) {
-                            const parts = rawDate.split('/');
-                            date = `${parts[2]}-${parts[1]}-${parts[0]}`;
-                        }
-                        let title = cols[1].trim().replace(/"/g, '');
-                        let rawVal = cols[2].trim();
-                        let cleanVal = rawVal.replace(/[^\d.,-]/g, '');
-                        if(cleanVal.includes(',') && !cleanVal.includes('.')) cleanVal = cleanVal.replace(',', '.');
-                        else if(cleanVal.includes('.') && cleanVal.includes(',')) cleanVal = cleanVal.replace('.', '').replace(',', '.');
-                        let val = parseFloat(cleanVal);
-                        if (!isNaN(val)) {
-                             val = Math.abs(val);
-                             appData.variable.push({ category: title, value: val, date: date });
-                             count++;
-                        }
-                    }
+        // --- FEEDBACK & ADMIN LOGIC ---
+        window.openFeedback = () => { document.getElementById('feedback-modal').classList.remove('hidden'); };
+        
+        window.sendFeedback = async () => {
+            const txt = document.getElementById('feedback-text').value;
+            if(!txt) return alert("Escreva algo!");
+            
+            try {
+                if(isOffline) throw new Error("Precisa estar online para enviar sugestões.");
+                // Salva em uma coleção GLOBAL (Public Write)
+                await addDoc(collection(db, 'artifacts', 'fluxocash-app', 'global_feedback'), {
+                    text: txt,
+                    user: currentUser.email || "Anônimo",
+                    date: new Date().toISOString()
                 });
-                alert(`${count} itens importados!`);
-                saveData();
-                render();
-            };
-            reader.readAsText(file);
+                alert("Sugestão enviada com sucesso! Obrigado.");
+                document.getElementById('feedback-text').value = "";
+                document.getElementById('feedback-modal').classList.add('hidden');
+            } catch(e) {
+                alert("Erro ao enviar: " + e.message);
+            }
         };
+
+        window.openAdmin = () => {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            window.loadAdminMessages();
+        };
+
+        window.loadAdminMessages = async () => {
+            const list = document.getElementById('admin-list');
+            list.innerHTML = '<p class="text-center text-slate-400">Carregando...</p>';
+            try {
+                // Query global feedback collection
+                const q = query(collection(db, 'artifacts', 'fluxocash-app', 'global_feedback'), orderBy("date", "desc"));
+                const snapshot = await getDocs(q);
+                
+                list.innerHTML = "";
+                if(snapshot.empty) {
+                    list.innerHTML = '<p class="text-center text-slate-400">Nenhuma mensagem ainda.</p>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = new Date(data.date).toLocaleDateString('pt-BR');
+                    list.innerHTML += `
+                        <div class="bg-white p-4 rounded border border-slate-200 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold text-sm text-indigo-600">${data.user}</span>
+                                <span class="text-xs text-slate-400">${date}</span>
+                            </div>
+                            <p class="text-sm text-slate-700">${data.text}</p>
+                        </div>
+                    `;
+                });
+            } catch(e) {
+                list.innerHTML = `<p class="text-red-500 text-center">Erro: ${e.message}</p>`;
+            }
+        };
+
 
         // --- APP FUNCTIONS ---
         window.addFixed = (e) => { e.preventDefault(); const n=document.getElementById('fix-name').value, v=parseFloat(document.getElementById('fix-val').value); if(n&&v){ appData.fixed.push({name:n,value:v}); e.target.reset(); saveData(); } };
@@ -594,6 +567,37 @@
         window.resetAll = () => { if(confirm("Zerar?")) { appData={income:0,extraIncomes:[],fixed:[],variable:[],debts:[],goals:[], history:[]}; saveData(); render(); } };
         document.getElementById('inp-income').addEventListener('input', (e) => { appData.income = parseFloat(e.target.value)||0; saveData(); render(); });
 
+        window.saveCurrentMonth = () => {
+            const label = prompt("Nome do mês (ex: Jan/24):", new Date().toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}));
+            if(!label) return;
+            const ext = (appData.extraIncomes||[]).reduce((a,b)=>a+b.value,0);
+            const fix = appData.fixed.reduce((a,b)=>a+b.value,0);
+            const vari = appData.variable.reduce((a,b)=>a+b.value,0);
+            const debt = appData.debts.reduce((a,b)=>a+b.parcel,0);
+            const goal = appData.goals.reduce((a,b)=>a+b.value,0);
+            const bal = (appData.income||0)+ext-(fix+vari+debt+goal);
+            if(!appData.history) appData.history=[];
+            appData.history.push({label, balance:bal});
+            saveData(); render();
+        };
+        window.clearHistory = () => { if(confirm("Limpar histórico?")) { appData.history=[]; saveData(); render(); } };
+        window.importCSV = (i) => {
+            const f=i.files[0]; if(!f)return;
+            const r=new FileReader(); r.onload=(e)=>{
+                const l=e.target.result.split('\n'); let c=0;
+                l.forEach(line=>{
+                    if(!line.trim())return;
+                    let cols=line.split(line.includes(';')?';':',');
+                    if(cols.length>=3){
+                        let d=cols[0].trim(), t=cols[1].trim().replace(/"/g,''), v=parseFloat(cols[2].trim().replace(/[^\d.,-]/g,'').replace(',','.'));
+                        if(d.includes('/')) d=`${d.split('/')[2]}-${d.split('/')[1]}-${d.split('/')[0]}`;
+                        if(!isNaN(v)){ appData.variable.push({category:t,value:Math.abs(v),date:d}); c++; }
+                    }
+                });
+                alert(`${c} importados!`); saveData(); render();
+            }; r.readAsText(f);
+        };
+
         // --- RENDER ---
         function fmt(n) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(n); }
         
@@ -601,17 +605,17 @@
             if(document.activeElement.id !== 'inp-income') document.getElementById('inp-income').value = appData.income || "";
             const extra = (appData.extraIncomes||[]).reduce((a,b)=>a+b.value,0);
             const inc = (appData.income||0) + extra;
-            const sFix = appData.fixed.reduce((a,b)=>a+b.value,0);
-            const sVar = appData.variable.reduce((a,b)=>a+b.value,0);
-            const sDebt = appData.debts.reduce((a,b)=>a+b.parcel,0);
-            const sGoal = appData.goals.reduce((a,b)=>a+b.value,0);
-            const bal = inc - (sFix+sVar+sDebt+sGoal);
+            const fix = appData.fixed.reduce((a,b)=>a+b.value,0);
+            const vari = appData.variable.reduce((a,b)=>a+b.value,0);
+            const debt = appData.debts.reduce((a,b)=>a+b.parcel,0);
+            const goal = appData.goals.reduce((a,b)=>a+b.value,0);
+            const bal = inc - (fix+vari+debt+goal);
 
             document.getElementById('total-extra-income').innerText = fmt(extra);
-            document.getElementById('dash-fix').innerText = fmt(sFix);
-            document.getElementById('dash-var').innerText = fmt(sVar);
-            document.getElementById('dash-debt').innerText = fmt(sDebt);
-            document.getElementById('dash-goal').innerText = fmt(sGoal);
+            document.getElementById('dash-fix').innerText = fmt(fix);
+            document.getElementById('dash-var').innerText = fmt(vari);
+            document.getElementById('dash-debt').innerText = fmt(debt);
+            document.getElementById('dash-goal').innerText = fmt(goal);
             const elBal = document.getElementById('final-balance');
             elBal.innerText = fmt(bal);
             elBal.className = `text-5xl font-extrabold my-2 ${bal>0?'text-emerald-500':(bal<0?'text-red-500':'text-slate-300')}`;
@@ -624,7 +628,7 @@
             appData.fixed.forEach((i,x)=>lFix.innerHTML+=`<tr class="border-b hover:bg-slate-50"><td class="p-3">${i.name}</td><td class="p-3 text-right">${fmt(i.value)}</td><td class="p-3 text-right"><button onclick="delItem('fixed',${x})" class="text-red-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`);
 
             const lVar = document.getElementById('list-variable'); lVar.innerHTML='';
-            [...appData.variable].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach((i,x)=>lVar.innerHTML+=`<li class="bg-white p-3 rounded border flex justify-between mb-2"><div><span class="font-bold">${i.category}</span> <span class="text-xs text-slate-400">${i.date}</span></div><div class="flex gap-2 font-bold text-orange-600"><span>${fmt(i.value)}</span><button onclick="delItem('variable',${x})" class="text-red-300 hover:text-red-500">x</button></div></li>`);
+            [...appData.variable].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach((i,x)=>lVar.innerHTML+=`<li class="bg-white p-3 rounded border flex justify-between mb-2"><div><span class="font-bold block">${i.category}</span><span class="text-xs text-slate-400">${i.date}</span></div><div class="flex gap-2 font-bold text-orange-600"><span>${fmt(i.value)}</span><button onclick="delItem('variable',${x})" class="text-red-300 hover:text-red-500">x</button></div></li>`);
 
             const lDebt = document.getElementById('list-debts'); lDebt.innerHTML='';
             appData.debts.forEach((i,x)=>lDebt.innerHTML+=`<div class="bg-white p-3 rounded border-l-4 border-red-400 shadow-sm flex justify-between"><div><div class="font-bold">${i.name}</div><div class="text-xs">Total: ${fmt(i.total)}</div></div><div class="text-right font-bold text-red-600">${fmt(i.parcel)}<button onclick="delItem('debts',${x})" class="ml-2 text-slate-300 hover:text-red-500">x</button></div></div>`);
@@ -635,32 +639,13 @@
             // MAIN DOUGHNUT CHART
             const ctx = document.getElementById('chart-main').getContext('2d');
             if(chartInstance) chartInstance.destroy();
-            chartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: ['Fixas','Variáveis','Passivos','Ativos','Livre'], datasets: [{ data: [sFix,sVar,sDebt,sGoal,Math.max(0,bal)], backgroundColor: ['#64748b','#f97316','#ef4444','#10b981','#cbd5e1'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right' } } } });
+            chartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: ['Fixas','Variáveis','Passivos','Ativos','Livre'], datasets: [{ data: [fix,vari,debt,goal,Math.max(0,bal)], backgroundColor: ['#64748b','#f97316','#ef4444','#10b981','#cbd5e1'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right' } } } });
 
             // HISTORY LINE CHART
             const ctxHist = document.getElementById('chart-history').getContext('2d');
             if(historyChartInstance) historyChartInstance.destroy();
-            
             const historyData = appData.history || [];
-            historyChartInstance = new Chart(ctxHist, {
-                type: 'line',
-                data: {
-                    labels: historyData.map(h => h.label),
-                    datasets: [{
-                        label: 'Saldo Livre',
-                        data: historyData.map(h => h.balance),
-                        borderColor: '#059669',
-                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: false } }
-                }
-            });
+            historyChartInstance = new Chart(ctxHist, { type: 'line', data: { labels: historyData.map(h => h.label), datasets: [{ label: 'Saldo Livre', data: historyData.map(h => h.balance), borderColor: '#059669', backgroundColor: 'rgba(5, 150, 105, 0.1)', fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: false } } } });
         }
 
         window.nav = (id) => {
@@ -673,40 +658,30 @@
             document.getElementById('nav-d-'+id)?.classList.add('active');
             document.getElementById('mob-'+id)?.classList.add('active');
             if(id === 'dashboard') render();
-            
-            // Trigger Quote Rotation
-            updateQuote(id);
+            updateQuote(id); // Frase
         };
 
-        // --- 6. AI ---
-        window.closeAI = () => {
-            document.getElementById('ai-modal').style.display = 'none';
-            document.getElementById('ai-modal').classList.add('hidden');
-        };
+        function updateQuote(tabId) {
+            const list = quotes[tabId]; if(!list) return;
+            const randomQuote = list[Math.floor(Math.random() * list.length)];
+            const el = document.getElementById(`quote-${tabId}`);
+            if(el) { el.parentElement.style.opacity = '0'; setTimeout(() => { el.innerText = `"${randomQuote}"`; el.parentElement.style.opacity = '1'; }, 200); }
+        }
 
+        window.closeAI = () => { document.getElementById('ai-modal').style.display='none'; document.getElementById('ai-modal').classList.add('hidden'); };
         window.askAI = async (ctx) => {
             const modal = document.getElementById('ai-modal');
-            modal.classList.remove('hidden');
-            modal.style.display = 'flex';
-            const content = document.getElementById('ai-content');
-            content.innerHTML = '<div class="text-center"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-emerald-600"></i><p class="mt-2 text-slate-500">Consultando o Pai Rico...</p></div>';
-            
+            modal.classList.remove('hidden'); modal.style.display='flex';
+            document.getElementById('ai-content').innerHTML = '<div class="text-center"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-emerald-600"></i><p>Pensando...</p></div>';
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
                     method: 'POST', headers: {'Content-Type':'application/json'},
                     body: JSON.stringify({contents:[{parts:[{text:`Analise como Robert Kiyosaki. Dados: ${JSON.stringify(appData)}. Foco: ${ctx}. Use Markdown.`}]}]})
                 });
-                
-                if(!res.ok) {
-                    const err = await res.json();
-                    throw new Error(err.error?.message || "Erro desconhecido");
-                }
-
+                if(!res.ok) throw new Error((await res.json()).error.message);
                 const d = await res.json();
                 document.getElementById('ai-content').innerHTML = marked.parse(d.candidates[0].content.parts[0].text);
-            } catch(e) { 
-                content.innerHTML = `<p class="text-red-500 text-center font-bold">Erro IA: ${e.message}</p>`; 
-            }
+            } catch(e) { document.getElementById('ai-content').innerHTML = `<p class="text-red-500 font-bold">Erro IA: ${e.message}</p>`; }
         };
 
         document.getElementById('var-date').valueAsDate = new Date();
