@@ -138,32 +138,22 @@
     <!-- LOGIN -->
     <div id="auth-screen" class="fixed inset-0 flex items-center justify-center p-4 transition-all duration-500">
         <div class="glass-panel w-full max-w-md p-8 rounded-2xl relative text-center">
-            
-            <!-- Logo Icon with Gradient Background -->
             <div class="mb-4 inline-block p-4 rounded-full text-white text-4xl shadow-lg" style="background: linear-gradient(135deg, #21e9ca 0%, #8b5ae4 100%);">
                 <i class="fa-solid fa-chart-line"></i>
             </div>
-            
-            <!-- Logo Text Gradient -->
             <h1 class="text-3xl font-black mb-2 text-gradient">FYCASH Pro</h1>
-            
-            <!-- Slogan Animado -->
             <p class="text-slate-500 text-sm mb-8 dark:text-slate-400 font-medium h-6">
                 <span id="dynamic-text" class="text-brand-purple font-bold transition-opacity duration-300">Facility</span> Your life
             </p>
-
             <div id="status-badge" class="hidden mt-2 inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full font-bold">Offline</div>
-            
             <div id="view-login">
                 <form id="form-login" class="space-y-4">
                     <input type="email" id="log-email" class="w-full p-3 border rounded-xl outline-none" placeholder="E-mail" required>
                     <input type="password" id="log-pass" class="w-full p-3 border rounded-xl outline-none" placeholder="Senha" required>
-                    <!-- Botão Marca: Cyan -->
                     <button type="submit" id="btn-login" class="w-full bg-brand-cyan text-slate-900 font-bold py-3 rounded-xl hover:opacity-90 shadow-lg transition">ACESSAR PAINEL</button>
                 </form>
                 <div class="mt-4 text-sm text-slate-500 dark:text-slate-400">Novo? <button onclick="toggleAuth('register')" class="text-brand-purple font-bold hover:underline dark:text-brand-cyan">Criar conta</button></div>
             </div>
-
             <div id="view-register" class="hidden">
                 <form id="form-register" class="space-y-4">
                     <input type="email" id="reg-email" class="w-full p-3 border rounded-xl" placeholder="E-mail" required>
@@ -173,7 +163,6 @@
                 </form>
                 <div class="mt-4 text-center text-sm text-slate-500 dark:text-slate-400">Já tem conta? <button onclick="toggleAuth('login')" class="text-brand-purple font-bold hover:underline dark:text-brand-cyan">Login</button></div>
             </div>
-
             <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
                 <button onclick="forceOfflineMode()" class="text-xs text-slate-400 font-bold hover:text-brand-purple uppercase tracking-wide w-full dark:text-slate-500 dark:hover:text-brand-cyan">
                     <i class="fa-solid fa-wifi-slash"></i> Modo Offline (Demo)
@@ -190,24 +179,18 @@
                 <div class="flex justify-between items-center mb-2">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-chart-pie text-brand-cyan text-xl"></i>
-                        <!-- Header Logo Gradient -->
                         <span class="font-bold text-lg text-gradient">FYCASH</span>
                         <span id="mode-badge" class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-bold ml-1 dark:bg-slate-800 dark:text-slate-400">...</span>
                         <span id="save-indicator" class="hidden text-[10px] text-brand-cyan font-bold flex items-center gap-1"><i class="fa-solid fa-cloud-arrow-up"></i> Salvo</span>
                     </div>
-                    
                     <div class="flex items-center gap-4">
-                        <!-- AI WHATSAPP BUTTON -->
                         <button onclick="openWhatsAppModal()" class="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full shadow-lg transition animate-pulse" title="Lançar via Áudio">
                             <i class="fa-solid fa-microphone"></i> <span class="text-xs font-bold hidden sm:inline">IA Voice</span>
                         </button>
-
                         <button onclick="toggleTheme()" class="text-slate-400 hover:text-yellow-500 text-lg transition" title="Mudar Tema"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
-                        
                         <button onclick="openFeedback()" class="flex items-center gap-2 text-slate-500 hover:text-brand-purple transition px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="Dar Sugestão">
                             <i class="fa-solid fa-lightbulb"></i> <span class="text-xs font-bold hidden sm:inline">Melhorias?</span>
                         </button>
-
                         <button onclick="openAdmin()" id="btn-admin" class="hidden text-slate-800 hover:text-brand-purple relative dark:text-white"><i class="fa-solid fa-lock"></i> ADM <span id="admin-badge" class="absolute -top-2 -right-2 bg-red-500 w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-white hidden">0</span></button>
                         <div class="h-4 w-px bg-slate-300 dark:bg-slate-700"></div>
                         <span id="user-label" class="text-xs text-slate-400 hidden sm:block">...</span>
@@ -215,8 +198,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- TABS -->
             <div class="bg-slate-50 border-t border-slate-200 dark:bg-slate-900 dark:border-slate-800">
                 <nav class="max-w-7xl mx-auto px-4 flex space-x-6 overflow-x-auto justify-center">
                     <button onclick="nav('dashboard')" class="nav-item active py-3 text-xs uppercase tracking-widest" id="nav-d-dashboard">Geral</button>
@@ -235,8 +216,6 @@
 
                 <!-- 1. GERAL (DASHBOARD) -->
                 <div id="page-dashboard" class="space-y-6 animate-fade-in">
-                    
-                    <!-- SCORE & SAÚDE -->
                     <div class="card p-6 border-t-4 border-t-brand-cyan shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
                         <div class="flex-grow">
                             <div class="flex justify-between items-center">
@@ -248,20 +227,22 @@
                                     <i class="fa-solid fa-chart-pie mr-1"></i> Análise ARCA
                                 </button>
                             </div>
+                            <!-- ALERT BOX RESTORED HERE -->
+                            <div id="score-alert-box" class="hidden bg-red-50 border border-red-200 rounded-lg p-3 mt-3 dark:bg-red-900/20 dark:border-red-800">
+                                <h4 class="text-red-700 font-bold text-sm mb-1"><i class="fa-solid fa-triangle-exclamation"></i> Atenção: Score Baixo!</h4>
+                                <p class="text-xs text-red-600" id="score-action-plan">...</p>
+                            </div>
                         </div>
                         <div class="score-circle" id="score-circle" style="--score-color: #21e9ca; --score-deg: 0deg;">
                             <span class="score-value text-slate-700 dark:text-white" id="score-val">--</span>
                         </div>
                     </div>
-
-                    <!-- Resumo Rápido -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="card p-4 border border-slate-100 shadow-sm"><p class="text-[10px] text-slate-400 font-bold uppercase">Receita (Mês)</p><p id="dash-income" class="text-xl font-bold text-brand-purple">R$ 0</p></div>
                         <div class="card p-4 border border-slate-100 shadow-sm"><p class="text-[10px] text-slate-400 font-bold uppercase">Despesas (Mês)</p><p id="dash-expense" class="text-xl font-bold text-red-600">R$ 0</p></div>
                         <div class="card p-4 border border-slate-100 shadow-sm"><p class="text-[10px] text-slate-400 font-bold uppercase">Investido (Total)</p><p id="dash-invest" class="text-xl font-bold text-brand-cyan dark:text-brand-cyan">R$ 0</p></div>
                         <div class="card p-4 bg-slate-800 text-white border-none dark:bg-slate-700"><p class="text-[10px] text-slate-400 font-bold uppercase">Saldo Acumulado</p><p id="dash-balance" class="text-xl font-bold text-brand-cyan">R$ 0</p></div>
                     </div>
-
                     <!-- Meta em Foco -->
                     <div class="card p-4 relative bg-white">
                         <div class="flex justify-between items-center mb-2">
@@ -282,17 +263,12 @@
                             <p class="text-xs text-brand-purple font-bold mt-1 dark:text-brand-cyan" id="dash-goal-monthly">Aporte Necessário: R$ 0/mês</p>
                         </div>
                     </div>
-
                     <!-- Gráficos Grid -->
                     <div class="grid md:grid-cols-2 gap-6">
-                        
-                        <!-- Categorias (Pizza) -->
                         <div class="card p-5 h-80 relative">
                             <h3 class="font-bold text-slate-700 mb-4 text-xs uppercase flex justify-between dark:text-slate-300"><span>🍕 Onde gasto mais?</span></h3>
                             <div class="relative h-60 w-full"><canvas id="chart-pie-expenses"></canvas></div>
                         </div>
-
-                        <!-- GARGALOS INTELIGENTES -->
                         <div class="card p-5 h-80 relative flex flex-col">
                             <h3 class="font-bold text-slate-700 mb-4 text-xs uppercase flex justify-between dark:text-slate-300"><span>⚠️ Atenção (Acima da Meta)</span> <i class="fa-solid fa-triangle-exclamation text-orange-500"></i></h3>
                             <div id="bottleneck-chart-container" class="hidden relative h-60 w-full"><canvas id="chart-bottlenecks"></canvas></div>
@@ -302,20 +278,14 @@
                                 <p class="text-xs text-slate-500">Você está economizando em todas as categorias!</p>
                             </div>
                         </div>
-
-                        <!-- Receitas -->
                         <div class="card p-5 h-80 relative">
                             <h3 class="font-bold text-slate-700 mb-4 text-xs uppercase flex justify-between dark:text-slate-300"><span>📈 Entradas</span> <span class="text-brand-cyan"><i class="fa-solid fa-arrow-trend-up"></i></span></h3>
                             <div class="relative h-60 w-full"><canvas id="chart-revenue"></canvas></div>
                         </div>
-                        
-                        <!-- Despesas (Fixas vs Variáveis) -->
                         <div class="card p-5 h-80 relative">
                             <h3 class="font-bold text-slate-700 mb-4 text-xs uppercase flex justify-between dark:text-slate-300"><span>📉 Fixas vs Variáveis</span> <span class="text-red-500"><i class="fa-solid fa-arrow-trend-down"></i></span></h3>
                             <div class="relative h-60 w-full"><canvas id="chart-expenses"></canvas></div>
                         </div>
-                        
-                        <!-- Saldo -->
                         <div class="card p-5 h-80 relative md:col-span-2">
                             <h3 class="font-bold text-slate-700 mb-4 text-xs uppercase flex justify-between dark:text-slate-300"><span>💰 Evolução Patrimonial</span> <i class="fa-solid fa-scale-balanced text-blue-500"></i></h3>
                             <div class="relative h-60 w-full"><canvas id="chart-balance"></canvas></div>
@@ -323,8 +293,8 @@
                     </div>
                 </div>
 
-                 <!-- 2. NOVO: DRE -->
-                 <div id="page-dre" class="hidden space-y-6 animate-fade-in">
+                <!-- 2. DRE -->
+                <div id="page-dre" class="hidden space-y-6 animate-fade-in">
                     <div class="card p-6 border-l-4 border-l-brand-purple">
                         <div class="flex justify-between items-center mb-4">
                             <div>
@@ -333,47 +303,25 @@
                             </div>
                             <span class="text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1 rounded dark:bg-slate-800 dark:text-slate-400">Mês Atual</span>
                         </div>
-                        
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm">
                                 <thead class="bg-slate-50 text-slate-500 dark:bg-slate-800 dark:text-slate-400 text-[10px] uppercase font-bold text-left">
-                                    <tr>
-                                        <th class="p-3 pl-4">Conta</th>
-                                        <th class="p-3 text-right">Valor</th>
-                                        <th class="p-3 text-right w-20">%</th>
-                                    </tr>
+                                    <tr><th class="p-3 pl-4">Conta</th><th class="p-3 text-right">Valor</th><th class="p-3 text-right w-20">%</th></tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100 dark:divide-slate-700 font-medium" id="dre-body">
-                                    <!-- Populated by JS -->
-                                </tbody>
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-700 font-medium" id="dre-body"></tbody>
                             </table>
                         </div>
-
-                        <!-- Footer Summary -->
                         <div class="bg-slate-900 text-white p-4 mt-4 rounded-xl flex justify-between items-center dark:bg-slate-950">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-brand-cyan text-slate-900 flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-wallet"></i></div>
-                                <div>
-                                    <p class="text-[10px] text-brand-cyan uppercase font-bold">Resultado Líquido</p>
-                                    <p class="text-xl font-bold" id="dre-net-profit">R$ 0,00</p>
-                                </div>
+                                <div><p class="text-[10px] text-brand-cyan uppercase font-bold">Resultado Líquido</p><p class="text-xl font-bold" id="dre-net-profit">R$ 0,00</p></div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-[10px] text-slate-400 uppercase font-bold">Margem</p>
-                                <p class="text-lg font-bold text-brand-purple" id="dre-net-margin">0%</p>
-                            </div>
+                            <div class="text-right"><p class="text-[10px] text-slate-400 uppercase font-bold">Margem</p><p class="text-lg font-bold text-brand-purple" id="dre-net-margin">0%</p></div>
                         </div>
                     </div>
-
                     <div class="grid md:grid-cols-2 gap-6">
-                        <div class="card p-4">
-                            <h4 class="text-xs font-bold text-slate-500 uppercase mb-4 dark:text-slate-400">Composição de Gastos</h4>
-                            <div class="relative h-48 w-full"><canvas id="chart-dre-comp"></canvas></div>
-                        </div>
-                        <div class="card p-4">
-                            <h4 class="text-xs font-bold text-slate-500 uppercase mb-4 dark:text-slate-400">Tendência de Lucro</h4>
-                            <div class="relative h-48 w-full"><canvas id="chart-dre-trend"></canvas></div>
-                        </div>
+                        <div class="card p-4"><h4 class="text-xs font-bold text-slate-500 uppercase mb-4 dark:text-slate-400">Composição</h4><div class="relative h-48 w-full"><canvas id="chart-dre-comp"></canvas></div></div>
+                        <div class="card p-4"><h4 class="text-xs font-bold text-slate-500 uppercase mb-4 dark:text-slate-400">Tendência</h4><div class="relative h-48 w-full"><canvas id="chart-dre-trend"></canvas></div></div>
                     </div>
                 </div>
 
@@ -381,15 +329,9 @@
                 <div id="page-budget" class="hidden space-y-6 animate-fade-in">
                     <div class="bg-purple-50 p-6 rounded-2xl border border-purple-100 mb-6 dark:bg-purple-900/20 dark:border-purple-800">
                         <div class="flex justify-between items-center mb-4">
-                            <div>
-                                <h2 class="text-xl font-bold text-brand-purple dark:text-brand-purple">Planejamento</h2>
-                                <p class="text-sm text-slate-500 dark:text-slate-400">Defina o teto de gastos ou use um modelo pronto.</p>
-                            </div>
-                            <!-- NEW: Metodologias Button -->
+                            <div><h2 class="text-xl font-bold text-brand-purple dark:text-brand-purple">Planejamento</h2><p class="text-sm text-slate-500 dark:text-slate-400">Defina o teto de gastos ou use um modelo pronto.</p></div>
                             <div class="relative group">
-                                <button class="bg-brand-purple text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:opacity-90">
-                                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Metodologias
-                                </button>
+                                <button class="bg-brand-purple text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:opacity-90"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Metodologias</button>
                                 <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 hidden group-hover:block z-20 dark:bg-slate-800 dark:border-slate-700">
                                     <button onclick="applyBudgetMethod('PADRAO')" class="block w-full text-left px-4 py-2 text-xs font-bold text-brand-cyan bg-slate-50 hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-700 dark:text-brand-cyan">Recomendado (50/30/20)</button>
                                     <button onclick="applyBudgetMethod('EKER')" class="block w-full text-left px-4 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-slate-300">Harv Eker (6 Potes)</button>
@@ -398,6 +340,14 @@
                             </div>
                         </div>
                         <div id="budget-list" class="grid md:grid-cols-2 gap-4"></div>
+                    </div>
+                    
+                    <!-- Manage Categories -->
+                    <div class="card p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-slate-800 dark:text-white">Gerenciar Categorias</h2>
+                            <button onclick="document.getElementById('category-modal').classList.remove('hidden'); renderCategoryList();" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1 rounded-full font-bold dark:bg-slate-800 dark:text-slate-300"><i class="fa-solid fa-gear mr-1"></i> Editar</button>
+                        </div>
                     </div>
                 </div>
 
@@ -408,26 +358,19 @@
                             <button onclick="setLaunchMode('expense')" id="btn-mode-exp" class="tab-btn active-exp flex-1 py-2 rounded-lg font-bold text-sm text-center">Despesa</button>
                             <button onclick="setLaunchMode('income')" id="btn-mode-inc" class="tab-btn flex-1 py-2 rounded-lg font-bold text-sm text-center text-slate-400 hover:text-slate-600">Receita</button>
                         </div>
-
                         <form id="form-expense" onsubmit="addVar(event)" class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <input id="var-desc" placeholder="Título (Ex: Uber)" class="p-3 border rounded outline-none w-full dark:bg-slate-900" required>
-                                <select id="var-cat" onchange="handleCatChange(this)" class="p-3 border rounded outline-none w-full dark:bg-slate-900">
-                                    <!-- Options generated by JS -->
-                                </select>
+                                <select id="var-cat" onchange="handleCatChange(this)" class="p-3 border rounded outline-none w-full dark:bg-slate-900"></select>
                                 <input id="var-sub" placeholder="Subcategoria (Opcional)" class="p-3 border rounded outline-none w-full dark:bg-slate-900">
                             </div>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
                                 <input id="var-val" type="number" placeholder="Valor (R$)" class="p-3 border rounded outline-none w-full font-bold text-red-600 dark:bg-slate-900" step="0.01" required>
                                 <input id="var-date" type="date" class="p-3 border rounded outline-none w-full dark:bg-slate-900" required>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs font-bold text-slate-500">Parcelas:</span>
-                                    <input id="var-parc" type="number" value="1" min="1" max="60" class="p-3 border rounded outline-none w-20 text-center dark:bg-slate-900">
-                                </div>
+                                <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-500">Parcelas:</span><input id="var-parc" type="number" value="1" min="1" max="60" class="p-3 border rounded outline-none w-20 text-center dark:bg-slate-900"></div>
                                 <button id="btn-save-exp" class="bg-red-600 text-white font-bold p-3 rounded hover:bg-red-700 w-full shadow-lg flex items-center justify-center gap-2">LANÇAR SAÍDA</button>
                             </div>
                         </form>
-
                         <form id="form-income" onsubmit="addIncome(event)" class="space-y-4 hidden">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <input id="inc-desc" type="text" placeholder="Descrição" class="p-3 border rounded text-sm outline-none dark:bg-slate-900" required>
@@ -437,20 +380,14 @@
                                 <input id="inc-val" type="number" placeholder="Valor (R$)" class="p-3 border rounded text-sm outline-none font-bold text-brand-cyan dark:bg-slate-900" step="0.01" required>
                                 <input id="inc-date" type="date" class="p-3 border rounded text-sm outline-none dark:bg-slate-900" required>
                             </div>
-                            <!-- Botão Entradas com cor da marca -->
                             <button id="btn-save-inc" class="bg-brand-cyan text-slate-900 font-bold p-3 rounded w-full hover:opacity-90 shadow-lg flex items-center justify-center gap-2">LANÇAR ENTRADA</button>
                         </form>
                     </div>
-
                     <div class="card p-6">
                         <div class="flex justify-between items-center mb-4 border-b pb-2 dark:border-slate-700">
                             <h3 class="font-bold text-slate-600 text-sm uppercase dark:text-slate-300">Histórico Geral</h3>
-                            <label class="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition border border-slate-200 shadow-sm dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700">
-                                <i class="fa-solid fa-file-csv text-brand-cyan"></i> Importar Extrato (CSV)
-                                <input type="file" class="hidden" accept=".csv" onchange="importCSV(this)">
-                            </label>
+                            <label class="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition border border-slate-200 shadow-sm dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"><i class="fa-solid fa-file-csv text-brand-cyan"></i> Importar Extrato (CSV)<input type="file" class="hidden" accept=".csv" onchange="importCSV(this)"></label>
                         </div>
-                        
                         <div id="pending-section" class="hidden mb-6 bg-yellow-50 p-4 rounded-xl border border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800"><h3 class="font-bold text-yellow-700 mb-2 flex items-center text-sm uppercase"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Pendentes</h3><ul id="list-pending" class="divide-y divide-yellow-200 bg-white rounded border border-yellow-100 mb-4 dark:bg-slate-800 dark:border-slate-700 dark:divide-slate-700"></ul></div>
                         <div class="overflow-y-auto max-h-96"><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-slate-500 sticky top-0 dark:bg-slate-800 dark:text-slate-400"><tr><th class="p-2">Data</th><th class="p-2">Tipo</th><th class="p-2">Descrição</th><th class="p-2 text-right">Valor</th><th class="w-8"></th></tr></thead><tbody id="list-all-transactions" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody></table></div>
                     </div>
@@ -463,8 +400,6 @@
                             <h2 class="text-lg font-bold text-slate-800">Financiamentos & Dívidas</h2>
                             <button onclick="askAI('debts')" class="text-xs bg-purple-100 text-brand-purple px-2 py-1 rounded font-bold">Análise IA</button>
                         </div>
-                        
-                        <!-- NEW: Strategies Area -->
                         <div class="bg-red-50 p-4 rounded-xl border border-red-100 mb-6 dark:bg-red-900/20 dark:border-red-800">
                             <p class="text-xs font-bold text-red-700 mb-2 uppercase">Estratégia de Quitação</p>
                             <div class="flex gap-2">
@@ -472,7 +407,6 @@
                                 <button onclick="simulateDebtStrategy('avalanche')" class="bg-white text-slate-700 border border-slate-200 px-3 py-1.5 rounded text-xs font-bold hover:bg-slate-50 shadow-sm flex items-center gap-2"><i class="fa-solid fa-mountain"></i> Avalanche (Matemático)</button>
                             </div>
                         </div>
-
                         <form onsubmit="addDebt(event)" class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6"><input id="debt-name" placeholder="Título (Ex: Carro)" class="p-3 border rounded md:col-span-2" required><input id="debt-tot" type="number" placeholder="Total" class="p-3 border rounded" step="0.01" required><input id="debt-rate" type="number" placeholder="Juros %" class="p-3 border rounded" step="0.01"><input id="debt-inst" type="number" placeholder="Nº Parc" class="p-3 border rounded" required><button class="bg-red-600 text-white font-bold p-3 rounded hover:bg-red-700 md:col-span-5 mt-2">Registrar</button></form>
                         <div id="list-debts" class="grid gap-3"></div>
                     </div>
@@ -480,14 +414,12 @@
 
                 <!-- 6. FIXAS -->
                 <div id="page-fixed" class="hidden space-y-6 animate-fade-in">
-                    <div class="card p-6"><h2 class="text-lg font-bold text-slate-800 mb-4">Custos Fixos Mensais</h2><form onsubmit="addFixed(event)" class="flex gap-3 mb-6"><input id="fix-name" placeholder="Nome" class="flex-grow p-3 border rounded outline-none" required><input id="fix-val" type="number" placeholder="Valor" class="w-32 p-3 border rounded outline-none" step="0.01" required><button class="bg-blue-600 text-white px-6 rounded font-bold hover:bg-blue-700">+</button></form><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-slate-500 dark:bg-slate-800"><tr><th class="p-3">Item</th><th class="p-3 text-right">Valor</th><th class="w-10"></th></tr></thead><tbody id="list-fixed" class="divide-y dark:divide-slate-700"></tbody></table></div>
+                    <div class="card p-6"><h2 class="text-lg font-bold text-slate-800 mb-4">Custos Fixos Mensais</h2><form onsubmit="addFixed(event)" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6"><input id="fix-name" placeholder="Nome (Ex: Aluguel)" class="p-3 border rounded outline-none" required><select id="fix-cat" class="p-3 border rounded outline-none dark:bg-slate-900"></select><input id="fix-val" type="number" placeholder="Valor" class="w-32 p-3 border rounded outline-none" step="0.01" required><button class="bg-blue-600 text-white px-6 rounded font-bold hover:bg-blue-700 md:col-span-3">Adicionar Fixo</button></form><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-slate-500 dark:bg-slate-800"><tr><th class="p-3">Item</th><th class="p-3">Categoria</th><th class="p-3 text-right">Valor</th><th class="w-10"></th></tr></thead><tbody id="list-fixed" class="divide-y dark:divide-slate-700"></tbody></table></div>
                 </div>
 
                 <!-- 7. METAS -->
                 <div id="page-goals" class="hidden space-y-6 animate-fade-in">
                     <div class="card p-6 border-l-4 border-l-brand-cyan mb-6"><div class="flex justify-between mb-4"><h2 class="font-bold text-slate-800 text-lg dark:text-white">Metas & Conquistas</h2><button onclick="askAI('goals')" class="text-xs bg-brand-cyan/20 text-brand-purple px-2 py-1 rounded font-bold">Conselho</button></div><form onsubmit="addGoal(event)" class="flex gap-3 mb-6"><input id="goal-name" placeholder="Objetivo" class="flex-grow p-3 border rounded outline-none dark:bg-slate-900" required><input id="goal-val" type="number" placeholder="Total (R$)" class="w-32 p-3 border rounded outline-none dark:bg-slate-900" step="0.01" required><input id="goal-date" type="date" class="p-3 border rounded outline-none dark:bg-slate-900" required><button class="bg-brand-cyan text-slate-900 px-5 rounded font-bold hover:opacity-90">Criar</button></form><div id="list-goals-full" class="grid md:grid-cols-2 gap-4"></div></div>
-
-                    <!-- NEW: Compound Interest Calculator -->
                     <div class="card p-6 border-l-4 border-l-brand-purple">
                         <h2 class="font-bold text-slate-800 text-lg mb-4 dark:text-white">Calculadora de Juros Compostos</h2>
                         <div class="grid md:grid-cols-4 gap-4 mb-4">
@@ -497,21 +429,11 @@
                             <input id="comp-years" type="number" placeholder="Anos" class="p-3 border rounded outline-none w-full dark:bg-slate-900">
                         </div>
                         <button onclick="simulateCompoundInterest()" class="w-full bg-brand-purple text-white font-bold py-3 rounded hover:opacity-90 transition mb-6">Simular Crescimento</button>
-
                         <div id="comp-result-area" class="hidden">
                             <div class="grid md:grid-cols-3 gap-4 mb-6 text-center">
-                                <div class="bg-slate-50 p-4 rounded border border-slate-200 dark:bg-slate-900 dark:border-slate-700">
-                                    <p class="text-xs text-slate-500 uppercase font-bold">Total Acumulado</p>
-                                    <p class="text-xl font-bold text-brand-cyan" id="comp-result-total">R$ 0,00</p>
-                                </div>
-                                <div class="bg-slate-50 p-4 rounded border border-slate-200 dark:bg-slate-900 dark:border-slate-700">
-                                    <p class="text-xs text-slate-500 uppercase font-bold">Valor Investido</p>
-                                    <p class="text-lg font-bold text-slate-700 dark:text-slate-300" id="comp-result-invested">R$ 0,00</p>
-                                </div>
-                                <div class="bg-slate-50 p-4 rounded border border-slate-200 dark:bg-slate-900 dark:border-slate-700">
-                                    <p class="text-xs text-slate-500 uppercase font-bold">Juros Ganhos</p>
-                                    <p class="text-lg font-bold text-brand-purple" id="comp-result-interest">R$ 0,00</p>
-                                </div>
+                                <div class="bg-slate-50 p-4 rounded border border-slate-200 dark:bg-slate-900 dark:border-slate-700"><p class="text-xs text-slate-500 uppercase font-bold">Total Acumulado</p><p class="text-xl font-bold text-brand-cyan" id="comp-result-total">R$ 0,00</p></div>
+                                <div class="bg-slate-50 p-4 rounded border border-slate-200 dark:bg-slate-900 dark:border-slate-700"><p class="text-xs text-slate-500 uppercase font-bold">Valor Investido</p><p class="text-lg font-bold text-slate-700 dark:text-slate-300" id="comp-result-invested">R$ 0,00</p></div>
+                                <div class="bg-slate-50 p-4 rounded border border-slate-200 dark:bg-slate-900 dark:border-slate-700"><p class="text-xs text-slate-500 uppercase font-bold">Juros Ganhos</p><p class="text-lg font-bold text-brand-purple" id="comp-result-interest">R$ 0,00</p></div>
                             </div>
                             <div class="relative h-64 w-full"><canvas id="chart-compound"></canvas></div>
                         </div>
@@ -532,103 +454,32 @@
     <!-- WHATSAPP AI MODAL -->
     <div id="whatsapp-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4 z-50 bg-black/50 backdrop-blur-sm">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative border border-slate-200 dark:bg-slate-800 dark:border-slate-700">
-            <!-- Header -->
             <div class="bg-[#075e54] p-4 flex items-center justify-between text-white">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-teal-700 text-xl">
-                        <i class="fa-solid fa-robot"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold">FYCASH AI Assistant</h3>
-                        <p class="text-[10px] opacity-80 flex items-center gap-1"><span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Online</p>
-                    </div>
-                </div>
+                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-teal-700 text-xl"><i class="fa-solid fa-robot"></i></div><div><h3 class="font-bold">FYCASH AI Assistant</h3><p class="text-[10px] opacity-80 flex items-center gap-1"><span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Online</p></div></div>
                 <button onclick="closeWhatsAppModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-times text-xl"></i></button>
             </div>
-            
-            <!-- Body (Chat) -->
-            <div class="bg-[#e5ddd5] p-4 h-80 overflow-y-auto flex flex-col gap-3" id="whatsapp-chat-area">
-                <div class="text-center my-2"><span class="bg-[#e1f3fb] text-slate-600 text-[10px] px-2 py-1 rounded shadow-sm">Hoje</span></div>
-                
-                <!-- Bot Intro -->
-                <div class="whatsapp-bubble self-start">
-                    Olá! 👋 Sou a IA da FYCASH.
-                    <br><br>
-                    Mande um áudio ou texto dizendo o que gastou ou recebeu. Ex: 
-                    <br><i>"Gastei 50 reais no posto"</i> ou <i>"Recebi 2000 do cliente"</i>.
-                    <br><br>
-                    Eu atualizo o seu DRE automaticamente! 🚀
-                    <span class="text-[9px] text-slate-400 block text-right mt-1">10:00</span>
-                </div>
-            </div>
-
-            <!-- Input Area -->
-            <div class="p-3 bg-white border-t border-slate-200 flex gap-2 items-center dark:bg-slate-800 dark:border-slate-700">
-                <div class="flex-grow relative">
-                    <input type="text" id="ai-input-text" placeholder="Digite ou simule o áudio..." class="w-full bg-slate-100 rounded-full py-2 px-4 text-sm outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan dark:bg-slate-900 dark:text-white" onkeypress="if(event.key === 'Enter') sendAIMessage()">
-                </div>
-                <button onclick="sendAIMessage()" class="w-10 h-10 rounded-full bg-[#075e54] text-white flex items-center justify-center hover:bg-[#064e46] transition shadow-lg">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
+            <div class="bg-[#e5ddd5] p-4 h-80 overflow-y-auto flex flex-col gap-3" id="whatsapp-chat-area"><div class="text-center my-2"><span class="bg-[#e1f3fb] text-slate-600 text-[10px] px-2 py-1 rounded shadow-sm">Hoje</span></div><div class="whatsapp-bubble self-start">Olá! 👋 Sou a IA da FYCASH.<br><br>Mande um áudio ou texto dizendo o que gastou ou recebeu. Ex: <br><i>"Gastei 50 reais no posto"</i> ou <i>"Recebi 2000 do cliente"</i>.<br><br>Eu atualizo o seu DRE automaticamente! 🚀<span class="text-[9px] text-slate-400 block text-right mt-1">10:00</span></div></div>
+            <div class="p-3 bg-white border-t border-slate-200 flex gap-2 items-center dark:bg-slate-800 dark:border-slate-700"><div class="flex-grow relative"><input type="text" id="ai-input-text" placeholder="Digite ou simule o áudio..." class="w-full bg-slate-100 rounded-full py-2 px-4 text-sm outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan dark:bg-slate-900 dark:text-white" onkeypress="if(event.key === 'Enter') sendAIMessage()"></div><button onclick="sendAIMessage()" class="w-10 h-10 rounded-full bg-[#075e54] text-white flex items-center justify-center hover:bg-[#064e46] transition shadow-lg"><i class="fa-solid fa-paper-plane"></i></button></div>
         </div>
     </div>
 
-     <!-- ARCA MODAL -->
+    <!-- ARCA MODAL -->
     <div id="arca-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 dark:bg-slate-800 relative">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-2">
-                     <span class="bg-brand-purple/20 text-brand-purple w-8 h-8 flex items-center justify-center rounded-lg"><i class="fa-solid fa-chart-pie"></i></span>
-                     <h3 class="font-bold text-lg text-slate-800 dark:text-white">Metodologia ARCA</h3>
-                </div>
-                <button onclick="document.getElementById('arca-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-times"></i></button>
-            </div>
-            
-            <div class="relative h-64 w-full mb-6">
-                <canvas id="chart-arca"></canvas>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 text-xs">
-                <div class="bg-slate-50 p-2 rounded dark:bg-slate-900">
-                    <span class="block font-bold text-slate-700 dark:text-slate-300">Ações (25%)</span>
-                    <span class="text-slate-500">Fundos de Ações, Stocks</span>
-                </div>
-                <div class="bg-slate-50 p-2 rounded dark:bg-slate-900">
-                    <span class="block font-bold text-slate-700 dark:text-slate-300">Real Estate (25%)</span>
-                    <span class="text-slate-500">FIIs, Imóveis Físicos</span>
-                </div>
-                <div class="bg-slate-50 p-2 rounded dark:bg-slate-900">
-                    <span class="block font-bold text-slate-700 dark:text-slate-300">Caixa (25%)</span>
-                    <span class="text-slate-500">Renda Fixa, Tesouro</span>
-                </div>
-                <div class="bg-slate-50 p-2 rounded dark:bg-slate-900">
-                    <span class="block font-bold text-slate-700 dark:text-slate-300">Ativos Int. (25%)</span>
-                    <span class="text-slate-500">Dólar, REITs</span>
-                </div>
-            </div>
-             <p class="text-[10px] text-center text-slate-400 mt-4">*Simulação baseada na metodologia do Primo Rico.</p>
+            <div class="flex justify-between items-center mb-6"><div class="flex items-center gap-2"><span class="bg-brand-purple/20 text-brand-purple w-8 h-8 flex items-center justify-center rounded-lg"><i class="fa-solid fa-chart-pie"></i></span><h3 class="font-bold text-lg text-slate-800 dark:text-white">Metodologia ARCA</h3></div><button onclick="document.getElementById('arca-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-times"></i></button></div>
+            <div class="relative h-64 w-full mb-6"><canvas id="chart-arca"></canvas></div>
+            <div class="grid grid-cols-2 gap-4 text-xs"><div class="bg-slate-50 p-2 rounded dark:bg-slate-900"><span class="block font-bold text-slate-700 dark:text-slate-300">Ações (25%)</span><span class="text-slate-500">Fundos de Ações, Stocks</span></div><div class="bg-slate-50 p-2 rounded dark:bg-slate-900"><span class="block font-bold text-slate-700 dark:text-slate-300">Real Estate (25%)</span><span class="text-slate-500">FIIs, Imóveis Físicos</span></div><div class="bg-slate-50 p-2 rounded dark:bg-slate-900"><span class="block font-bold text-slate-700 dark:text-slate-300">Caixa (25%)</span><span class="text-slate-500">Renda Fixa, Tesouro</span></div><div class="bg-slate-50 p-2 rounded dark:bg-slate-900"><span class="block font-bold text-slate-700 dark:text-slate-300">Ativos Int. (25%)</span><span class="text-slate-500">Dólar, REITs</span></div></div><p class="text-[10px] text-center text-slate-400 mt-4">*Simulação baseada na metodologia do Primo Rico.</p>
         </div>
     </div>
-
 
     <!-- OTHER MODALS -->
     <div id="feedback-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 dark:bg-slate-800 relative">
             <h3 class="font-bold text-lg mb-4 text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-lightbulb text-yellow-500"></i> Central de Melhorias</h3>
-            <div class="space-y-3">
-                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Tipo</label>
-                <select id="feedback-type" class="w-full p-2 border rounded bg-slate-50 dark:bg-slate-900 dark:border-slate-700 text-sm"><option value="Melhoria">🚀 Ideia de Melhoria</option><option value="Bug">🐛 Reportar Erro/Bug</option><option value="Elogio">❤️ Elogio</option></select>
-                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Sua Mensagem</label>
-                <textarea id="feedback-text" class="w-full p-3 border rounded h-32 bg-slate-50 dark:bg-slate-900 dark:border-slate-700 text-sm outline-none focus:border-brand-cyan" placeholder="Descreva sua ideia em detalhes..."></textarea>
-            </div>
-            <div class="flex justify-end gap-2 mt-6">
-                <button onclick="document.getElementById('feedback-modal').classList.add('hidden')" class="px-4 py-2 text-slate-500 hover:text-slate-700 dark:text-slate-400">Cancelar</button>
-                <button onclick="sendFeedback()" class="bg-brand-cyan hover:opacity-90 text-slate-900 px-6 py-2 rounded-lg font-bold shadow-lg transition transform hover:scale-105">Enviar</button>
-            </div>
+            <div class="space-y-3"><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Tipo</label><select id="feedback-type" class="w-full p-2 border rounded bg-slate-50 dark:bg-slate-900 dark:border-slate-700 text-sm"><option value="Melhoria">🚀 Ideia de Melhoria</option><option value="Bug">🐛 Reportar Erro/Bug</option><option value="Elogio">❤️ Elogio</option></select><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Sua Mensagem</label><textarea id="feedback-text" class="w-full p-3 border rounded h-32 bg-slate-50 dark:bg-slate-900 dark:border-slate-700 text-sm outline-none focus:border-brand-cyan" placeholder="Descreva sua ideia em detalhes..."></textarea></div>
+            <div class="flex justify-end gap-2 mt-6"><button onclick="document.getElementById('feedback-modal').classList.add('hidden')" class="px-4 py-2 text-slate-500 hover:text-slate-700 dark:text-slate-400">Cancelar</button><button onclick="sendFeedback()" class="bg-brand-cyan hover:opacity-90 text-slate-900 px-6 py-2 rounded-lg font-bold shadow-lg transition transform hover:scale-105">Enviar</button></div>
         </div>
     </div>
-    
     <div id="admin-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4"><div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] dark:bg-slate-900 overflow-hidden"><div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800"><h3 class="font-bold text-lg text-slate-800 dark:text-white">Painel ADM</h3><div class="flex gap-2"><button onclick="switchAdminTab('pending')" id="adm-tab-pending" class="px-3 py-1 bg-white border rounded text-xs font-bold shadow-sm active-adm-tab">Pendentes</button><button onclick="switchAdminTab('done')" id="adm-tab-done" class="px-3 py-1 bg-slate-100 border rounded text-xs font-bold text-slate-500">Concluídos</button><button onclick="document.getElementById('admin-modal').classList.add('hidden')" class="ml-4 text-slate-400 hover:text-red-500">x</button></div></div><div class="p-4 overflow-y-auto flex-grow bg-slate-100 dark:bg-slate-950" id="admin-list"></div><div class="p-3 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-right"><button onclick="loadAdminMessages()" class="text-xs text-blue-500 hover:underline flex items-center justify-end gap-1 ml-auto"><i class="fa-solid fa-rotate"></i> Atualizar</button></div></div></div>
     <div id="ai-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4"><div class="bg-white w-full max-w-lg rounded shadow-2xl flex flex-col max-h-[80vh] dark:bg-slate-800"><div class="p-4 border-b flex justify-between"><span class="font-bold text-brand-purple">Consultor IA</span><button onclick="document.getElementById('ai-modal').classList.add('hidden')">x</button></div><div id="ai-content" class="p-6 overflow-y-auto prose text-sm dark:prose-invert"></div></div></div>
     <div id="aporte-modal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4"><div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 dark:bg-slate-800"><h3 class="font-bold text-lg mb-4 text-brand-cyan dark:text-brand-cyan">Novo Aporte</h3><input type="number" id="aporte-val" class="w-full p-3 border rounded mb-4 text-xl font-bold dark:bg-slate-900" placeholder="R$ 0,00" step="0.01"><div class="flex justify-end gap-2"><button onclick="document.getElementById('aporte-modal').classList.add('hidden')" class="px-4 py-2 text-slate-500">Cancelar</button><button onclick="confirmAporte()" class="px-4 py-2 bg-brand-cyan text-slate-900 rounded font-bold">Confirmar</button></div></div></div>
@@ -639,35 +490,27 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, getDocs, orderBy, query, updateDoc, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- 1. CONSTANTS & CONFIG ---
+        // 1. CONSTANTS & CONFIG
         const ADMIN_EMAIL = "ohebertgustavo@gmail.com";
         const firebaseConfig = { apiKey: "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU", authDomain: "fluxocash-b81f6.firebaseapp.com", projectId: "fluxocash-b81f6", storageBucket: "fluxocash-b81f6.firebasestorage.app", messagingSenderId: "1021395240266", appId: "1:1021395240266:web:e44282819a1ab0c2feadb3" };
         const geminiApiKey = "AIzaSyCzz0ntyKDngm6Yae0OIbD0fXHakEXm4Ck";
         
         const DEFAULT_CATEGORIES = [
-            'Moradia', 
-            'Alimentação', 
-            'Transporte', 
-            'Saúde e Cuidados', 
-            'Educação e Assinaturas', 
-            'Lazer e Extras', 
-            'Investimentos/Financeiro'
+            'Moradia', 'Alimentação', 'Transporte', 'Saúde e Cuidados', 'Educação e Assinaturas', 'Lazer e Extras', 'Investimentos/Financeiro'
         ];
 
-        // --- 2. STATE ---
         let app, auth, db, currentUser = null;
         let unsubscribeUser = null;
-        let appData = { incomes: [], incomeOrigins: ['Salário', 'Freelance', 'Investimentos'], fixed: [], variable: [], debts: [], goals: [], budgets: [], categories: [] }; 
+        let appData = { incomes: [], incomeOrigins: ['Salário', 'Freelance', 'Investimentos'], fixed: [], variable: [], debts: [], goals: [], budgets: [], categories: [], categoryRules: {} }; 
         let isOffline = false;
-        let chartRev=null, chartExp=null, chartInv=null, chartBal=null, chartBottle=null, chartPie=null;
-        let chartDREComp=null, chartDRETrend=null, chartARCA=null, compoundChart=null;
+        let chartRev=null, chartExp=null, chartInv=null, chartBal=null, chartBottle=null, chartPie=null, chartDREComp=null, chartDRETrend=null, chartARCA=null, compoundChart=null;
         let currentGoalId = null, currentGoalIndex = 0;
         let currentAdminTab = 'pending';
+        let recognition = null; // Voice Recognition
 
         try { app = initializeApp(firebaseConfig); auth = getAuth(app); db = getFirestore(app); } catch(e) { console.error(e); }
 
-        // --- 3. HELPER FUNCTIONS (DEFINED BEFORE GLOBAL ACTIONS) ---
-
+        // 2. LOGIC FUNCTIONS (DEFINED FIRST FOR HOISTING)
         function fmt(n) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(n); }
 
         function checkMigration() { 
@@ -679,7 +522,7 @@
             if(!appData.debts) appData.debts = []; 
             if(!appData.goals) appData.goals = []; 
             if(!appData.budgets) appData.budgets = [];
-            // Reset categories to new standard if needed, or append
+            if(!appData.categoryRules) appData.categoryRules = {};
             if(!appData.categories || appData.categories.length === 0 || appData.categories.includes('MORADIA')) {
                  appData.categories = [...DEFAULT_CATEGORIES];
             }
@@ -687,19 +530,13 @@
 
         async function saveData() { 
             const el = document.getElementById('save-indicator');
-            if(el) {
-                el.classList.remove('hidden');
-                setTimeout(() => el.classList.add('hidden'), 2000);
-            }
-            if(isOffline){
-                localStorage.setItem('fluxocash_local',JSON.stringify(appData));
-                return;
-            } 
+            if(el) { el.classList.remove('hidden'); setTimeout(() => el.classList.add('hidden'), 2000); }
+            if(isOffline){ localStorage.setItem('fluxocash_local',JSON.stringify(appData)); return; } 
             if(currentUser) await setDoc(doc(db,'artifacts','fluxocash-app','users',currentUser.uid,'app_data','main'),appData); 
         }
 
         function updateCategorySelects() {
-            const selects = ['var-cat', 'edit-cat'];
+            const selects = ['var-cat', 'edit-cat', 'fix-cat'];
             selects.forEach(id => {
                 const el = document.getElementById(id);
                 if(!el) return;
@@ -716,103 +553,100 @@
         function getMonthlyData() {
             const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
             const currentYear = new Date().getFullYear();
-            const data = months.map(m => ({ month: m, revenue: 0, expenses: 0, balance: 0, accumulated: 0 }));
-            if (appData.incomes) { 
-                appData.incomes.forEach(inc => { 
-                    const parts = inc.date.split('-'); 
-                    const year = parseInt(parts[0]);
-                    const month = parseInt(parts[1]) - 1;
-                    if (year === currentYear) { data[month].revenue += inc.value; } 
-                }); 
-            }
-            const yearlyFixed = appData.fixed.reduce((a,b)=>a+b.value,0);
-            data.forEach(d => d.expenses += yearlyFixed);
-            appData.variable.forEach(v => { 
-                const parts = v.date.split('-'); 
-                const year = parseInt(parts[0]);
-                const month = parseInt(parts[1]) - 1;
-                if (year === currentYear) { data[month].expenses += v.value; } 
+            const data = Array(12).fill(0).map((_, i) => ({ month: i, revenue: 0, expenses: 0, balance: 0, accumulated: 0 }));
+            
+            appData.incomes.forEach(inc => { 
+                const d = new Date(inc.date + 'T00:00:00'); if(d.getFullYear()===currentYear) data[d.getMonth()].revenue += inc.value; 
             });
-            const debtMonthly = appData.debts.reduce((a,b)=>a+b.installmentValue,0);
-            data.forEach(d => d.expenses += debtMonthly);
-            let accum = 0; data.forEach(d => { d.balance = d.revenue - d.expenses; accum += d.balance; d.accumulated = accum; });
+            const fixedTotal = appData.fixed.reduce((a,b)=>a+b.value,0);
+            data.forEach(d => d.expenses += fixedTotal);
+            appData.variable.forEach(v => { 
+                 const d = new Date(v.date + 'T00:00:00'); if(d.getFullYear()===currentYear) data[d.getMonth()].expenses += v.value; 
+            });
+            // Accumulate
+            let acc = 0; data.forEach(d => { d.balance = d.revenue - d.expenses; acc += d.balance; d.accumulated = acc; });
             return data;
         }
 
-        // --- 4. RENDER FUNCTIONS (HOISTED) ---
-
         function calculateScore() {
-            let score = 500;
-            const today = new Date();
-            const currentData = getMonthlyData()[today.getMonth()];
+            let score = 500; // Base
+            let action = "Continue assim!";
+            const mData = getMonthlyData();
+            const curr = mData[new Date().getMonth()];
             
-            if (currentData.revenue > 0) {
-                const savingRatio = (currentData.revenue - currentData.expenses) / currentData.revenue;
-                if(savingRatio >= 0.20) score += 200; 
-                else if(savingRatio > 0) score += (savingRatio * 1000); 
-                else score -= 100; 
-            } else if (currentData.expenses > 0) {
-                 score -= 100; 
+            // 1. Saldo Positivo (Max +300)
+            if (curr.balance > 0) score += 300;
+            else { score -= 100; action = "Urgente: Você está gastando mais do que ganha. Corte gastos supérfluos."; }
+
+            // 2. Investimentos (Max +200)
+            const invested = appData.variable.filter(v => v.category === 'Investimentos/Financeiro').reduce((a,b)=>a+b.value,0);
+            if(invested > 0) score += 200;
+            else { score -= 50; action = "Comece a investir qualquer valor para subir seu score."; }
+
+            // 3. Dívidas Ativas (-50 cada)
+            if(appData.debts.length > 0) {
+                 score -= (appData.debts.length * 50);
+                 if(score < 400) action = "Foque 100% em quitar suas dívidas. Use a estratégia Bola de Neve.";
             }
 
-            let budgetPenalty = 0;
-            const currentMonthExpenses = appData.variable.filter(v => {
-                const parts = v.date.split('-');
-                return parseInt(parts[1]) - 1 === today.getMonth() && parseInt(parts[0]) === today.getFullYear();
-            });
-            
-            appData.categories.forEach(cat => { 
-                const limit = (appData.budgets.find(b=>b.cat===cat)?.lim || 0); 
-                if (limit > 0) { 
-                    const spent = currentMonthExpenses.filter(v => v.category === cat).reduce((a,b)=>a+b.value,0); 
-                    if (spent > limit) budgetPenalty += 50; 
-                } 
-            });
-            score -= budgetPenalty;
+            // 4. Reserva
+            if(curr.accumulated > 2000) score += 50;
 
-            const invested = currentMonthExpenses.filter(v => v.category === 'Investimentos/Financeiro').reduce((a,b)=>a+b.value,0);
-            if(invested > 0) score += 100;
-            
-            if(currentData.accumulated > 0) score += 50;
-
-            return Math.max(0, Math.min(1000, Math.round(score)));
+            score = Math.max(0, Math.min(1000, Math.round(score)));
+            let color = score > 700 ? '#21e9ca' : (score > 400 ? '#f59e0b' : '#ef4444');
+            return { value: score, action: action, color: color };
         }
 
-        function updateScoreUI(score) {
+        function updateScoreUI(data) {
             const el = document.getElementById('score-val');
             const circle = document.getElementById('score-circle');
             const msg = document.getElementById('score-msg');
-            if (el && circle && msg) {
-                el.innerText = score;
-                let color = '#ef4444'; let text = "Cuidado! Risco Alto.";
-                if (score > 400) { color = '#f59e0b'; text = "Atenção. Pode melhorar."; }
-                if (score > 700) { color = '#21e9ca'; text = "Excelente! Saúde Financeira em dia."; }
-                const deg = (score / 1000) * 360;
-                circle.style.setProperty('--score-color', color);
+            const alertBox = document.getElementById('score-alert-box');
+            
+            if(el) {
+                el.innerText = data.value;
+                circle.style.setProperty('--score-color', data.color);
+                const deg = (data.value / 1000) * 360;
                 circle.style.setProperty('--score-deg', `${deg}deg`);
-                msg.innerText = text; msg.style.color = color;
+                
+                if(data.value < 400 && alertBox) {
+                    msg.innerText = "Saúde Financeira Crítica";
+                    msg.style.color = '#ef4444';
+                    alertBox.classList.remove('hidden');
+                    document.getElementById('score-action-plan').innerText = data.action;
+                } else if(alertBox) {
+                    msg.innerText = "Saúde Financeira Estável";
+                    msg.style.color = data.color;
+                    alertBox.classList.add('hidden');
+                }
             }
         }
 
         function renderGoalCarousel() {
-            const area = document.getElementById('goal-display-area');
-            const goals = appData.goals;
-            if(!goals || goals.length === 0) { document.getElementById('dash-goal-name').innerText = "Sem Metas"; return; }
-            if(currentGoalIndex >= goals.length) currentGoalIndex = 0; if(currentGoalIndex < 0) currentGoalIndex = goals.length - 1;
-            const g = goals[currentGoalIndex];
-            const pct = g.totalValue > 0 ? (g.saved / g.totalValue) * 100 : 0;
-            const remaining = g.totalValue - g.saved;
-
+            const g = appData.goals[currentGoalIndex];
+            if(!g) { document.getElementById('dash-goal-name').innerText = "Sem Metas"; return; }
+            
+            const remaining = g.totalValue - (g.saved || 0);
+            const months = Math.max(1, (new Date(g.deadline) - new Date()) / (1000 * 60 * 60 * 24 * 30));
+            const monthlyNeed = remaining / months;
+            
             document.getElementById('dash-goal-name').innerText = g.name;
             document.getElementById('dash-goal-missing').innerText = fmt(remaining);
-            document.getElementById('dash-goal-bar').style.width = `${Math.min(pct,100)}%`;
-            document.getElementById('dash-goal-pct').innerText = `${pct.toFixed(0)}% Concluído`;
-            document.getElementById('goal-counter').innerText = `${currentGoalIndex+1}/${goals.length}`;
-            const monthlyEl = document.getElementById('dash-goal-monthly');
-            if(!monthlyEl) { const p = document.createElement('p'); p.id = 'dash-goal-monthly'; p.className = 'text-xs text-brand-purple mt-1 font-bold'; document.getElementById('goal-display-area').appendChild(p); }
-            document.getElementById('dash-goal-monthly').innerText = remaining <= 0 ? "Meta Batida! 🎉" : `Necessário: ${fmt(0)}/mês`;
+            document.getElementById('dash-goal-monthly').innerText = remaining <= 0 ? "Concluído!" : `Aporte Ideal: ${fmt(monthlyNeed)}/mês`;
+             const pct = ((g.saved||0)/g.totalValue)*100;
+             document.getElementById('dash-goal-bar').style.width = Math.min(pct, 100) + '%';
+             document.getElementById('dash-goal-pct').innerText = pct.toFixed(0) + '%';
         }
 
+        function renderCategoryList() {
+            const list = document.getElementById('category-list-manage');
+            if(!list) return;
+            list.innerHTML = '';
+            appData.categories.forEach((c, idx) => {
+                list.innerHTML += `<li class="flex justify-between items-center bg-slate-50 p-2 rounded border"><span class="text-sm font-bold text-slate-700">${c}</span> <button onclick="removeCategory(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></li>`;
+            });
+        }
+        
         function renderDRE() {
             const currentMonthIdx = new Date().getMonth();
             const currentYear = new Date().getFullYear();
@@ -913,7 +747,7 @@
                  });
             }
         }
-
+        
         function renderArcaChart() {
             const userCurrent = [15, 50, 25, 10]; 
 
@@ -947,7 +781,6 @@
         
         async function checkAdminNotifications(){ try{ const q=query(collection(db,'artifacts','fluxocash-app','global_feedback'),where('status','==','pending')); const s=await getDocs(q); const b=document.getElementById('admin-badge'); if(s.size>0){b.innerText=s.size;b.classList.remove('hidden');}else b.classList.add('hidden'); }catch(e){} }
 
-        // --- RENDER FUNCTION ---
         function render() {
             const monthlyData = getMonthlyData();
             const currentMonthIdx = new Date().getMonth();
@@ -1091,7 +924,8 @@
                     if(hasOver) {
                         successContainer.classList.add('hidden');
                         bottleneckContainer.classList.remove('hidden');
-                        // Redraw logic for bottle bar if needed
+                        if(window.chartBottleBar) window.chartBottleBar.destroy();
+                        window.chartBottleBar = new Chart(ctxBot.getContext('2d'), { type: 'bar', data: { labels: Object.keys(overBudget), datasets: [{ label: 'Excesso (R$)', data: Object.values(overBudget), backgroundColor: '#ef4444' }] }, options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' } });
                     } else {
                         bottleneckContainer.classList.add('hidden');
                         successContainer.classList.remove('hidden');
@@ -1100,7 +934,7 @@
             }
         }
 
-        // --- GLOBAL WINDOW ASSIGNMENTS (LAST STEP) ---
+        // --- 5. WINDOW GLOBAL ASSIGNMENTS (LAST STEP) ---
 
         window.openWhatsAppModal = () => document.getElementById('whatsapp-modal').classList.remove('hidden');
         window.closeWhatsAppModal = () => document.getElementById('whatsapp-modal').classList.add('hidden');
@@ -1305,6 +1139,7 @@
         window.prevGoal = () => { currentGoalIndex--; renderGoalCarousel(); };
         window.closeAI = () => document.getElementById('ai-modal').classList.add('hidden');
         window.askAI = async (ctx) => { document.getElementById('ai-modal').classList.remove('hidden'); document.getElementById('ai-content').innerText = "Pensando..."; try { const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({contents:[{parts:[{text:`Analise como Robert Kiyosaki. Dados: ${JSON.stringify(appData)}. Foco: ${ctx}. Markdown.`}]}]}) }); const d = await res.json(); document.getElementById('ai-content').innerHTML = marked.parse(d.candidates[0].content.parts[0].text); } catch(e) { document.getElementById('ai-content').innerText = "Erro IA"; } };
+        
         window.simulateCompoundInterest = () => {
             const initial = parseFloat(document.getElementById('comp-initial').value);
             const monthly = parseFloat(document.getElementById('comp-monthly').value);
@@ -1370,6 +1205,7 @@
 
             document.getElementById('comp-result-area').classList.remove('hidden');
         };
+
         window.simulateDebtStrategy = (strategy) => {
             if (!appData.debts || appData.debts.length === 0) {
                 alert("Nenhuma dívida cadastrada para simular!");
@@ -1395,7 +1231,77 @@
             alert(resultText); 
         };
 
-        // --- AUTH INIT ---
+        window.applyBudgetMethod = (method) => {
+            const totalIncome = appData.incomes.reduce((a, b) => a + b.value, 0);
+            
+            if (totalIncome === 0) {
+                alert("Adicione receitas primeiro para calcular o orçamento!");
+                return;
+            }
+
+            let newBudgets = [];
+            let desc = "";
+
+            if (method === 'PADRAO') {
+                desc = "Padrão FYCASH (50/30/20)";
+                newBudgets = [
+                    {cat: 'Moradia', lim: totalIncome * 0.25},
+                    {cat: 'Alimentação', lim: totalIncome * 0.15},
+                    {cat: 'Transporte', lim: totalIncome * 0.05},
+                    {cat: 'Saúde e Cuidados', lim: totalIncome * 0.05},
+                    {cat: 'Lazer e Extras', lim: totalIncome * 0.20},
+                    {cat: 'Educação e Assinaturas', lim: totalIncome * 0.10},
+                    {cat: 'Investimentos/Financeiro', lim: totalIncome * 0.20}
+                ];
+            } else if (method === 'EKER') {
+                desc = "Harv Eker (6 Potes)";
+                newBudgets = [
+                    {cat: 'Moradia', lim: totalIncome * 0.30}, 
+                    {cat: 'Alimentação', lim: totalIncome * 0.15},
+                    {cat: 'Lazer e Extras', lim: totalIncome * 0.10}, 
+                    {cat: 'Educação e Assinaturas', lim: totalIncome * 0.10}, 
+                    {cat: 'Investimentos/Financeiro', lim: totalIncome * 0.10}, 
+                    {cat: 'Lazer e Extras', lim: totalIncome * 0.05}, 
+                    {cat: 'Investimentos/Financeiro', lim: totalIncome * 0.10} 
+                ];
+            } else if (method === 'WAR') {
+                desc = "Modo Guerra (Primo Pobre)";
+                newBudgets = [
+                    {cat: 'Moradia', lim: totalIncome * 0.30},
+                    {cat: 'Alimentação', lim: totalIncome * 0.20},
+                    {cat: 'Transporte', lim: totalIncome * 0.10},
+                    {cat: 'Investimentos/Financeiro', lim: totalIncome * 0.30}
+                ];
+            }
+
+            if(confirm(`Aplicar método ${desc}? Isso substituirá seus orçamentos atuais.`)) {
+                appData.budgets = newBudgets;
+                saveData();
+                render();
+            }
+        };
+
+        window.addNewCategory = () => {
+            const val = document.getElementById('new-cat-input').value;
+            if(val && !appData.categories.includes(val)) {
+                appData.categories.push(val);
+                saveData();
+                renderCategoryList();
+                document.getElementById('new-cat-input').value = '';
+            }
+        };
+
+        window.removeCategory = (idx) => {
+            if(confirm("Remover esta categoria?")) {
+                appData.categories.splice(idx, 1);
+                saveData();
+                renderCategoryList();
+            }
+        };
+
+        window.renderCategoryList = renderCategoryList; 
+
+        // --- 4. INIT ---
         if(auth) { 
             onAuthStateChanged(auth, (user) => { 
                 if (user) { 
@@ -1434,8 +1340,8 @@
         document.getElementById('var-date').valueAsDate = new Date();
         document.getElementById('goal-date').valueAsDate = new Date();
         
-        document.getElementById('form-login').onsubmit = async (e) => { e.preventDefault(); ui.setBtn('btn-login', true); try { await signInWithEmailAndPassword(auth, document.getElementById('log-email').value, document.getElementById('log-pass').value); } catch(err) { handleAuthError(err, 'btn-login'); } };
-        document.getElementById('form-register').onsubmit = async (e) => { e.preventDefault(); if(document.getElementById('reg-pass').value!==document.getElementById('reg-confirm').value){ui.msg.innerText="Senhas diferem";ui.msg.classList.remove('hidden');return;} ui.setBtn('btn-reg', true); try { await createUserWithEmailAndPassword(auth, document.getElementById('reg-email').value, document.getElementById('reg-pass').value); } catch(err) { handleAuthError(err, 'btn-reg'); } };
+        document.getElementById('form-login').onsubmit = async (e) => { e.preventDefault(); try { await signInWithEmailAndPassword(auth, document.getElementById('log-email').value, document.getElementById('log-pass').value); } catch(err) { alert(err.code); } };
+        document.getElementById('form-register').onsubmit = async (e) => { e.preventDefault(); if(document.getElementById('reg-pass').value!==document.getElementById('reg-confirm').value){alert("Senhas diferem");return;} try { await createUserWithEmailAndPassword(auth, document.getElementById('reg-email').value, document.getElementById('reg-pass').value); } catch(err) { alert(err.code); } };
 
         setInterval(() => {
             const el = document.getElementById('dynamic-text');
