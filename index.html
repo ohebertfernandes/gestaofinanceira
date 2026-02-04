@@ -28,8 +28,8 @@
                 extend: {
                     colors: {
                         slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
-                        primary: { DEFAULT: '#8D5AE4', light: '#a78bfa', dark: '#7c3aed' }, 
-                        secondary: { DEFAULT: '#21E9CA', light: '#5eead4', dark: '#0d9488' },
+                        primary: { DEFAULT: '#8D5AE4', light: '#a78bfa', dark: '#7c3aed' }, // Roxo
+                        secondary: { DEFAULT: '#21E9CA', light: '#5eead4', dark: '#0d9488' }, // Ciano
                         brand: {
                             cyan: '#21E9CA',
                             purple: '#8D5AE4',
@@ -118,12 +118,14 @@
         
         <div class="glass w-full max-w-md p-8 rounded-3xl relative shadow-2xl mx-4 page-enter">
             <div class="text-center mb-8">
+                <!-- NOVA LOGO -->
                 <img src="https://trello.com/1/cards/69839337e9ae9fb5e25dcf21/attachments/69839e6ada37711734777002/download/fycash_logo.png" alt="Fycash Logo" class="h-32 w-auto mx-auto mb-2 animate-float object-contain drop-shadow-lg">
                 <h1 class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight hidden">Fycash.</h1>
                 <p class="text-slate-500 dark:text-slate-400 font-medium">Controle financeiro inteligente.</p>
             </div>
 
             <div id="view-login" class="space-y-6">
+                <!-- Formulário de Login -->
                 <div class="space-y-4">
                     <div class="relative group">
                         <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-purple transition-colors"></i>
@@ -134,17 +136,20 @@
                         <input type="password" id="log-pass" class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-purple/50 dark:bg-slate-800 dark:border-slate-700 dark:text-white" placeholder="Senha" required>
                     </div>
                 </div>
+                <!-- Botão de Login (Purple) -->
                 <button id="login-visible-btn" onclick="document.getElementById('form-login-btn').click()" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 transition shadow-lg dark:bg-brand-purple dark:hover:bg-purple-700 active:scale-95 disabled:opacity-50 disabled:cursor-wait">
                     Entrar na Conta
                 </button>
                 <button id="form-login-btn" class="hidden" onclick="handleLogin()"></button>
 
+                <!-- Separador -->
                 <div class="relative flex py-2 items-center">
                     <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
                     <span class="flex-shrink-0 mx-4 text-slate-400 text-xs font-medium">OU</span>
                     <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
                 </div>
 
+                <!-- Botão Acessar sem Conta -->
                 <button onclick="forceOfflineMode()" class="w-full bg-white border border-slate-200 text-slate-600 font-bold py-3.5 rounded-xl hover:bg-slate-50 transition active:scale-95 flex items-center justify-center gap-2 dark:bg-slate-800 dark:border-slate-700 dark:text-white hover:border-brand-cyan/30">
                     <i class="fa-solid fa-user-secret"></i> Acessar sem Conta
                 </button>
@@ -164,6 +169,7 @@
         <!-- SIDEBAR (Desktop) -->
         <aside class="hidden md:flex flex-col w-72 bg-white border-r border-slate-200 h-full z-20 dark:bg-slate-900 dark:border-slate-800">
             <div class="p-6 flex items-center justify-center">
+                <!-- Logo Sidebar -->
                 <img src="https://trello.com/1/cards/69839337e9ae9fb5e25dcf21/attachments/69839e6ada37711734777002/download/fycash_logo.png" alt="Fycash Logo" class="h-16 w-auto object-contain animate-float">
             </div>
 
@@ -475,20 +481,51 @@
                     
                     <!-- PERFIL -->
                     <div id="page-profile" class="hidden space-y-6">
-                        <!-- ... (Same as previous) ... -->
-                         <div class="grid md:grid-cols-2 gap-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Informações Pessoais -->
                             <div class="card p-6 page-enter">
                                 <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Informações Pessoais</h2>
                                 <div class="flex flex-col items-center mb-6">
-                                    <div class="relative w-24 h-24 rounded-full overflow-hidden border-4 border-brand-purple/20 cursor-pointer profile-img-container" onclick="document.getElementById('profile-file-input').click()"><img id="profile-img-preview" src="https://ui-avatars.com/api/?name=User&background=8D5AE4&color=fff" class="w-full h-full object-cover"><div class="absolute inset-0 flex items-center justify-center profile-upload-overlay"><i class="fa-solid fa-camera text-white text-xl"></i></div></div>
+                                    <div class="relative w-24 h-24 rounded-full overflow-hidden border-4 border-brand-purple/20 cursor-pointer profile-img-container" onclick="document.getElementById('profile-file-input').click()">
+                                        <img id="profile-img-preview" src="https://ui-avatars.com/api/?name=User&background=8D5AE4&color=fff" class="w-full h-full object-cover">
+                                        <div class="absolute inset-0 flex items-center justify-center profile-upload-overlay">
+                                            <i class="fa-solid fa-camera text-white text-xl"></i>
+                                        </div>
+                                    </div>
                                     <input type="file" id="profile-file-input" class="hidden" accept="image/*" onchange="handlePhotoFile(this)">
                                     <p class="text-xs text-slate-400 mt-2">Clique na foto para alterar</p>
                                 </div>
-                                <form onsubmit="saveProfile(event)" class="space-y-4"><div><label class="text-[10px] font-bold text-slate-400 uppercase">Nome de Exibição</label><input id="profile-name" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-purple/50 dark:bg-slate-900 dark:border-slate-700 dark:text-white" required></div><div><label class="text-[10px] font-bold text-slate-400 uppercase">E-mail</label><input id="profile-email" class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-sm text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:border-slate-700" readonly></div><button class="w-full bg-brand-purple text-white font-bold py-3 rounded-xl hover:bg-purple-700 transition shadow-lg">Salvar Alterações</button></form>
+                                <form onsubmit="saveProfile(event)" class="space-y-4">
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-400 uppercase">Nome de Exibição</label>
+                                        <input id="profile-name" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-purple/50 dark:bg-slate-900 dark:border-slate-700 dark:text-white" required>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-400 uppercase">E-mail</label>
+                                        <input id="profile-email" class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-sm text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:border-slate-700" readonly>
+                                    </div>
+                                    <button class="w-full bg-brand-purple text-white font-bold py-3 rounded-xl hover:bg-purple-700 transition shadow-lg flex items-center justify-center gap-2" id="btn-save-profile">
+                                        Salvar Alterações
+                                    </button>
+                                </form>
                             </div>
+
+                            <!-- Segurança -->
                             <div class="card p-6 page-enter delay-100">
                                 <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Segurança</h2>
-                                <form onsubmit="changeUserPassword(event)" class="space-y-4"><div><label class="text-[10px] font-bold text-slate-400 uppercase">Nova Senha</label><input type="password" id="new-password" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-purple/50 dark:bg-slate-900 dark:border-slate-700 dark:text-white" required minlength="6"></div><div><label class="text-[10px] font-bold text-slate-400 uppercase">Confirmar Nova Senha</label><input type="password" id="confirm-new-password" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-purple/50 dark:bg-slate-900 dark:border-slate-700 dark:text-white" required minlength="6"></div><button class="w-full border border-red-200 text-red-500 font-bold py-3 rounded-xl hover:bg-red-50 transition dark:border-red-900 dark:hover:bg-red-900/20">Alterar Senha</button></form>
+                                <form onsubmit="changeUserPassword(event)" class="space-y-4">
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-400 uppercase">Nova Senha</label>
+                                        <input type="password" id="new-password" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-purple/50 dark:bg-slate-900 dark:border-slate-700 dark:text-white" required minlength="6">
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-400 uppercase">Confirmar Nova Senha</label>
+                                        <input type="password" id="confirm-new-password" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-purple/50 dark:bg-slate-900 dark:border-slate-700 dark:text-white" required minlength="6">
+                                    </div>
+                                    <button class="w-full border border-red-200 text-red-500 font-bold py-3 rounded-xl hover:bg-red-50 transition dark:border-red-900 dark:hover:bg-red-900/20 flex items-center justify-center gap-2" id="btn-change-pass">
+                                        Alterar Senha
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -508,7 +545,7 @@
     </div>
 
     <!-- MODALS (Mantidos) -->
-    <!-- ... WhatsApp, Edit, Aporte, Arca, Feedback, Admin, AI Modals ... -->
+    <!-- ... Same modals ... -->
     <div id="whatsapp-modal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"><div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden dark:bg-slate-800 border border-slate-200 dark:border-slate-700 animate-enter"><div class="bg-[#075e54] p-4 text-white flex justify-between items-center"><div class="flex items-center gap-3"><div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-teal-800"><i class="fa-solid fa-robot"></i></div><div><span class="font-bold block text-sm">Fycash AI</span><span class="text-[10px] opacity-80">Online</span></div></div><button onclick="closeWhatsAppModal()"><i class="fa-solid fa-times"></i></button></div><div class="h-80 bg-[#efe7dd] p-4 overflow-y-auto flex flex-col gap-2" id="whatsapp-chat-area"><div class="self-start bg-white p-2 rounded-lg rounded-tl-none shadow-sm text-sm max-w-[80%]">Olá! Sou sua IA financeira. 🤖<br>Diga algo como: <i>"Gastei 50 no almoço"</i>.</div></div><div class="p-2 bg-white dark:bg-slate-800 flex gap-2"><input id="ai-input-text" class="flex-1 bg-slate-100 dark:bg-slate-900 rounded-full px-4 py-2 text-sm outline-none border border-transparent focus:border-teal-500" placeholder="Digite..." onkeypress="if(event.key==='Enter') sendAIMessage()"><button onclick="sendAIMessage()" class="w-10 h-10 rounded-full bg-[#075e54] text-white flex items-center justify-center hover:scale-105 transition"><i class="fa-solid fa-paper-plane"></i></button></div></div></div>
     <div id="edit-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"><div class="bg-white w-full max-w-sm rounded-2xl p-6 dark:bg-slate-800 shadow-2xl animate-enter"><h3 class="font-bold mb-4 dark:text-white text-lg">Classificar Gasto</h3><input type="hidden" id="edit-index"><input id="edit-name" class="w-full p-3 bg-slate-50 rounded-xl mb-3 text-slate-500 text-sm border border-slate-100" readonly><select id="edit-cat" class="w-full p-3 border rounded-xl mb-6 dark:bg-slate-900 dark:border-slate-700 outline-none focus:ring-2 focus:ring-brand-purple"></select><div class="flex justify-end gap-2"><button onclick="document.getElementById('edit-modal').classList.add('hidden')" class="px-4 py-2 text-slate-500 hover:bg-slate-100 rounded-lg transition">Cancelar</button><button onclick="confirmEditCat()" class="bg-brand-purple text-white px-6 py-2 rounded-lg font-bold hover:bg-purple-700 transition shadow-lg shadow-purple-500/30">Salvar</button></div></div></div>
     <div id="aporte-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"><div class="bg-white w-full max-w-sm rounded-2xl p-6 dark:bg-slate-800 shadow-2xl animate-enter"><h3 class="font-bold mb-4 dark:text-white text-lg">Realizar Aporte</h3><input id="aporte-val" type="number" class="w-full p-4 text-2xl font-bold text-center border rounded-xl mb-6 dark:bg-slate-900 dark:border-slate-700 outline-none focus:border-brand-purple text-brand-purple" placeholder="R$ 0,00"><div class="flex justify-end gap-2"><button onclick="document.getElementById('aporte-modal').classList.add('hidden')" class="px-4 py-2 text-slate-500 hover:bg-slate-100 rounded-lg">Cancelar</button><button onclick="confirmAporte()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:bg-green-700">Confirmar</button></div></div></div>
@@ -545,7 +582,7 @@
 
         let currentUser = null;
         let unsubscribeUser = null;
-        let appData = { incomes: [], incomeOrigins: [], fixed: [], variable: [], debts: [], goals: [], budgets: [], categories: [], profile: {}, investments: [] };
+        let appData = { incomes: [], incomeOrigins: [], fixed: [], variable: [], debts: [], goals: [], budgets: [], categories: [], profile: {}, investments: [], categoryRules: {} };
         let isOffline = false;
         let chartRev, chartExp, chartBal, chartPie, chartDREComp, chartDRETrend, chartARCA, chartARCAInvest, compoundChart, chartBottle;
         let currentGoalIndex = 0;
@@ -565,6 +602,7 @@
             if(!appData.categories || appData.categories.length === 0) appData.categories = [...DEFAULT_CATEGORIES];
             if(!appData.profile) appData.profile = {};
             if(!appData.investments) appData.investments = [];
+            if(!appData.categoryRules) appData.categoryRules = {};
         }
 
         async function saveData() { 
@@ -587,6 +625,25 @@
         }
 
         function setText(id, val) { const el = document.getElementById(id); if(el) el.innerText = val; }
+
+        // --- NEW AUTO-CATEGORIZATION LOGIC ---
+        const normalizeKey = (str) => str.trim().toUpperCase();
+
+        function learnAndApply(name, category) {
+            if(!name || !category) return;
+            const key = normalizeKey(name);
+            appData.categoryRules[key] = category;
+            
+            // Retroactive Update
+            let count = 0;
+            appData.variable.forEach(v => {
+                if(normalizeKey(v.name) === key && v.category === 'Sem Categoria') {
+                    v.category = category;
+                    count++;
+                }
+            });
+            return count;
+        }
 
         function render() {
             const mData = getMonthlyData();
@@ -800,7 +857,16 @@
             
             await saveData();
             render();
-            alert("Perfil atualizado com sucesso!");
+            // SHOW LOADING STATE
+            const btn = document.getElementById('btn-save-profile');
+            if (btn) {
+                const originalText = btn.innerText;
+                btn.innerText = "Salvando...";
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    alert("Perfil atualizado com sucesso!");
+                }, 500);
+            }
         };
 
         window.handlePhotoFile = (input) => {
@@ -825,15 +891,25 @@
             if(p1 !== p2) return alert("As senhas não coincidem.");
             if(isOffline || !currentUser) return alert("Esta função requer login online.");
 
-            try {
-                await updatePassword(currentUser, p1);
-                alert("Senha alterada com sucesso!");
-                e.target.reset();
-            } catch(err) {
-                if(err.code === 'auth/requires-recent-login') {
-                    alert("Por segurança, faça logout e login novamente antes de trocar a senha.");
-                } else {
-                    alert("Erro: " + err.message);
+            const btn = document.getElementById('btn-change-pass');
+            if (btn) {
+                const originalText = btn.innerText;
+                btn.innerText = "Atualizando...";
+                btn.disabled = true;
+                
+                try {
+                    await updatePassword(currentUser, p1);
+                    alert("Senha alterada com sucesso!");
+                    e.target.reset();
+                } catch(err) {
+                    if(err.code === 'auth/requires-recent-login') {
+                        alert("Por segurança, faça logout e login novamente antes de trocar a senha.");
+                    } else {
+                        alert("Erro: " + err.message);
+                    }
+                } finally {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                 }
             }
         };
@@ -841,7 +917,10 @@
         window.setLaunchMode = (m) => { document.getElementById('form-expense').classList.toggle('hidden', m !== 'expense'); document.getElementById('form-income').classList.toggle('hidden', m !== 'income'); document.getElementById('btn-mode-exp').className = m === 'expense' ? 'flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-white text-slate-800 shadow-sm border border-slate-200 transform scale-105 border-brand-purple' : 'flex-1 py-2 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50'; document.getElementById('btn-mode-inc').className = m === 'income' ? 'flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-white text-slate-800 shadow-sm border border-slate-200 transform scale-105 border-brand-purple' : 'flex-1 py-2 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-50'; };
         
         // ... (window functions addVar, addIncome, etc. remain the same) ...
-        window.addVar=async(e)=>{e.preventDefault();const desc=document.getElementById('var-desc').value;const val=parseFloat(document.getElementById('var-val').value);const cat=document.getElementById('var-cat').value;const date=document.getElementById('var-date').value;const parc=parseInt(document.getElementById('var-parc').value)||1;if(desc&&val){const valPerMonth=val/parc;const dObj=new Date(date);for(let i=0;i<parc;i++){const newD=new Date(dObj.getFullYear(),dObj.getMonth()+i,dObj.getDate()+1).toISOString().split('T')[0];appData.variable.push({name:desc+(parc>1?` (${i+1}/${parc})`:''),value:valPerMonth,category:cat,date:newD});}await saveData();e.target.reset();document.getElementById('var-date').valueAsDate=new Date();render();alert('Lançamento salvo!');}};
+        window.addVar=async(e)=>{e.preventDefault();const desc=document.getElementById('var-desc').value;const val=parseFloat(document.getElementById('var-val').value);const cat=document.getElementById('var-cat').value;const date=document.getElementById('var-date').value;const parc=parseInt(document.getElementById('var-parc').value)||1;if(desc&&val){const valPerMonth=val/parc;const dObj=new Date(date);for(let i=0;i<parc;i++){const newD=new Date(dObj.getFullYear(),dObj.getMonth()+i,dObj.getDate()+1).toISOString().split('T')[0];appData.variable.push({name:desc+(parc>1?` (${i+1}/${parc})`:''),value:valPerMonth,category:cat,date:newD});}await saveData();e.target.reset();document.getElementById('var-date').valueAsDate=new Date();render();alert('Lançamento salvo!');} // NEW: Auto-learn
+        // Add auto-learn logic to existing addVar call
+        if(desc && val) { learnAndApply(desc, cat); } 
+        };
         window.addIncome=async(e)=>{e.preventDefault();const desc=document.getElementById('inc-desc').value;const val=parseFloat(document.getElementById('inc-val').value);const date=document.getElementById('inc-date').value;const origin=document.getElementById('inc-origin').value;if(desc&&val){appData.incomes.push({description:desc,value:val,date:date,origin:origin});if(origin&&!appData.incomeOrigins.includes(origin))appData.incomeOrigins.push(origin);await saveData();e.target.reset();render();alert('Entrada salva!');}};
         window.addFixed=async(e)=>{e.preventDefault();const name=document.getElementById('fix-name').value;const val=parseFloat(document.getElementById('fix-val').value);if(name&&val){appData.fixed.push({name,value:val});await saveData();e.target.reset();render();}};
         window.addGoal=async(e)=>{e.preventDefault();const name=document.getElementById('goal-name').value;const val=parseFloat(document.getElementById('goal-val').value);const date=document.getElementById('goal-date').value;if(name&&val){appData.goals.push({id:Date.now(),name,totalValue:val,deadline:date,saved:0});await saveData();e.target.reset();render();}};
@@ -894,12 +973,22 @@
         window.closeWhatsAppModal = () => document.getElementById('whatsapp-modal').classList.add('hidden');
         window.sendAIMessage = async () => { const input = document.getElementById('ai-input-text'); const text = input.value.trim(); if (!text) return; const chatArea = document.getElementById('whatsapp-chat-area'); chatArea.innerHTML += `<div class="self-end bg-[#dcf8c6] p-2 rounded-lg rounded-tr-none shadow-sm text-sm max-w-[80%] mb-2">${text}<span class="text-[9px] text-slate-500 block text-right mt-1">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div>`; input.value = ''; chatArea.scrollTop = chatArea.scrollHeight; const lower = text.toLowerCase(); let responseText = "Desculpe, não entendi. Tente 'Gastei 50 em mercado' ou 'Recebi 1000'."; const spendMatch = lower.match(/(?:gastei|comprei|paguei)\s+(?:r\$)?\s*(\d+(?:[.,]\d{1,2})?)\s*(?:em|no|na|com)\s+(.+)/i); const incomeMatch = lower.match(/(?:recebi|ganhei)\s+(?:r\$)?\s*(\d+(?:[.,]\d{1,2})?)/i); if (spendMatch) { const val = parseFloat(spendMatch[1].replace(',', '.')); const desc = spendMatch[2].trim(); if (!isNaN(val)) { appData.variable.push({ name: desc, value: val, date: new Date().toISOString().split('T')[0], category: 'Sem Categoria', originalId: Date.now() }); await saveData(); render(); responseText = `✅ Anotado: R$ ${fmt(val)} em "${desc}".`; } } else if (incomeMatch) { const val = parseFloat(incomeMatch[1].replace(',', '.')); if (!isNaN(val)) { appData.incomes.push({ description: 'Nova Entrada', value: val, date: new Date().toISOString().split('T')[0], origin: 'Outros', id: Date.now() }); await saveData(); render(); responseText = `💰 Boa! Adicionei uma receita de R$ ${fmt(val)}.`; } } setTimeout(() => { chatArea.innerHTML += `<div class="self-start bg-white p-2 rounded-lg rounded-tl-none shadow-sm text-sm max-w-[80%] mb-2">${responseText}<span class="text-[9px] text-slate-400 block text-right mt-1">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div>`; chatArea.scrollTop = chatArea.scrollHeight; }, 600); };
         window.openEditCat = (idx) => { document.getElementById('edit-index').value = idx; document.getElementById('edit-name').value = appData.variable[idx].name; updateSelects(); document.getElementById('edit-cat').value = appData.variable[idx].category; document.getElementById('edit-modal').classList.remove('hidden'); };
-        window.confirmEditCat = () => { const idx = document.getElementById('edit-index').value; appData.variable[idx].category = document.getElementById('edit-cat').value; saveData(); render(); document.getElementById('edit-modal').classList.add('hidden'); };
+        window.confirmEditCat = () => { 
+            const idx = document.getElementById('edit-index').value; 
+            const newCat = document.getElementById('edit-cat').value;
+            appData.variable[idx].category = newCat; 
+            
+            // LEARN & APPLY
+            const count = learnAndApply(appData.variable[idx].name, newCat);
+            if(count > 0) alert(`${count} outros itens atualizados automaticamente.`);
+
+            saveData(); render(); document.getElementById('edit-modal').classList.add('hidden'); 
+        };
         window.prevGoal = () => { currentGoalIndex = Math.max(0, currentGoalIndex - 1); render(); };
         window.nextGoal = () => { currentGoalIndex = Math.min(appData.goals.length - 1, currentGoalIndex + 1); render(); };
         window.openAporte = (id) => { currentGoalId = id; document.getElementById('aporte-modal').classList.remove('hidden'); };
         window.confirmAporte = () => { const val = parseFloat(document.getElementById('aporte-val').value); if(currentGoalId && val) { const g = appData.goals.find(x => x.id === currentGoalId); if(g) { g.saved = (g.saved || 0) + val; saveData(); render(); } } document.getElementById('aporte-modal').classList.add('hidden'); };
-        window.openArcaModal = () => { document.getElementById('arca-modal').classList.remove('hidden'); renderArcaChart('chart-arca'); };
+        window.openArcaModal = () => { document.getElementById('arca-modal').classList.remove('hidden'); if(chartARCA) chartARCA.destroy(); const ctx = document.getElementById('chart-arca').getContext('2d'); chartARCA = new Chart(ctx, { type: 'bar', data: { labels: ['Ações','FIIs','Caixa','Ext'], datasets: [{label: 'Ideal', data:[25,25,25,25], borderColor:'#0ea5e9', type:'line'}, {label: 'Você', data:[10,40,40,10], backgroundColor:'#6366f1'}] } }); };
         window.applyBudgetMethod = (type) => { const total = appData.incomes.reduce((a,b)=>a+b.value,0); if(total===0) return alert("Adicione receitas primeiro."); let budgets = []; if(type === 'PADRAO') { budgets = [ {cat:'Moradia', lim:total*0.3}, {cat:'Alimentação', lim:total*0.2}, {cat:'Lazer', lim:total*0.1}, {cat:'Investimentos', lim:total*0.3} ]; } else if(type === 'WAR') { budgets = [ {cat:'Moradia', lim:total*0.2}, {cat:'Alimentação', lim:total*0.1}, {cat:'Investimentos', lim:total*0.5} ]; } if(confirm("Aplicar orçamento?")) { budgets.forEach(b => { const idx = appData.budgets.findIndex(x=>x.cat===b.cat); if(idx>-1) appData.budgets[idx].lim = b.lim; else appData.budgets.push(b); }); saveData(); render(); } };
         window.simulateCompoundInterest = () => { const init = parseFloat(document.getElementById('comp-initial').value); const month = parseFloat(document.getElementById('comp-monthly').value); const rate = parseFloat(document.getElementById('comp-rate').value); const years = parseFloat(document.getElementById('comp-years').value); if(init && month && rate && years) { let total = init, invested = init; const months = years * 12; const mRate = rate / 100 / 12; const data = [], labels = []; for(let i=1; i<=months; i++) { total = (total + month) * (1 + mRate); invested += month; if(i%12===0) { labels.push(i/12); data.push(total); } } document.getElementById('comp-result-area').classList.remove('hidden'); document.getElementById('comp-result-total').innerText = fmt(total); document.getElementById('comp-result-invested').innerText = fmt(invested); document.getElementById('comp-result-interest').innerText = fmt(total-invested); if(compoundChart) compoundChart.destroy(); compoundChart = new Chart(document.getElementById('chart-compound'), { type: 'line', data: { labels, datasets: [{label: 'Evolução', data, borderColor: '#8b5ae4', fill: true}] } }); } };
         window.simulateDebtStrategy = (type) => { if(appData.debts.length === 0) return alert("Sem dívidas."); let debts = [...appData.debts]; if(type === 'snowball') debts.sort((a,b) => a.totalValue - b.totalValue); else debts.sort((a,b) => b.totalValue - a.totalValue); let msg = type === 'snowball' ? "❄️ Bola de Neve (Pague as menores primeiro):\n" : "🏔️ Avalanche (Pague as maiores primeiro):\n"; debts.forEach((d,i) => msg += `${i+1}. ${d.name} (${fmt(d.totalValue)})\n`); alert(msg); };
@@ -910,8 +999,17 @@
         async function loadAdmin() { const el = document.getElementById('admin-list'); el.innerHTML = 'Carregando...'; const q = query(collection(db,'artifacts',appId,'global_feedback'), orderBy('date','desc')); const s = await getDocs(q); el.innerHTML = ''; s.forEach(doc => { const d = doc.data(); if(currentAdminTab === 'pending' && d.status === 'done') return; if(currentAdminTab === 'done' && d.status !== 'done') return; el.innerHTML += `<div class="bg-white p-3 mb-2 rounded border shadow-sm dark:bg-slate-700"><div><span class="font-bold text-xs uppercase bg-slate-200 px-2 py-1 rounded mr-2">${d.type}</span> <span class="font-bold">${d.user}</span></div><p class="text-sm mt-2">${d.text}</p>${d.status!=='done'?`<button onclick="solveFeedback('${doc.id}')" class="text-xs text-green-600 mt-2 font-bold">Resolver</button>`:''}</div>`; }); }
         window.solveFeedback = async (id) => { await updateDoc(doc(db,'artifacts',appId,'global_feedback',id), {status: 'done'}); loadAdmin(); };
         window.askAI = async (ctx) => { document.getElementById('ai-modal').classList.remove('hidden'); document.getElementById('ai-content').innerText = "Pensando..."; try { const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({contents:[{parts:[{text:`Analise dados financeiros (JSON): ${JSON.stringify(appData)}. Contexto: ${ctx}. Responda como consultor financeiro.`}]}]}) }); const d = await res.json(); document.getElementById('ai-content').innerHTML = marked.parse(d.candidates[0].content.parts[0].text); } catch(e) { document.getElementById('ai-content').innerText = "Erro na IA."; } };
-        window.importCSV = (input) => { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { const lines = e.target.result.split('\n'); let count = 0; lines.forEach(l => { const c = l.split(','); if(c.length >= 3) { const val = parseFloat(c[2]); if(!isNaN(val)) { appData.variable.push({ name: c[1] || 'Importado', value: Math.abs(val), date: c[0], category: 'Sem Categoria' }); count++; } } }); saveData(); render(); alert(`${count} itens importados.`); }; reader.readAsText(file); };
+        window.importCSV = (input) => { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { const lines = e.target.result.split('\n'); let count = 0; lines.forEach(l => { const c = l.split(','); if(c.length >= 3) { const val = parseFloat(c[2]); const name = c[1] || 'Importado'; let cat = 'Sem Categoria'; if(appData.categoryRules && appData.categoryRules[normalizeKey(name)]) { cat = appData.categoryRules[normalizeKey(name)]; } if(!isNaN(val)) { appData.variable.push({ name: name, value: Math.abs(val), date: c[0], category: cat }); count++; } } }); saveData(); render(); alert(`${count} itens importados.`); }; reader.readAsText(file); };
         window.renderDRE = () => { const mData = getMonthlyData(); const curr = mData[new Date().getMonth()]; const gross = curr.revenue; const currMonth = new Date().getMonth(); const varCosts = appData.variable.filter(v => v.category !== 'Investimentos' && new Date(v.date).getMonth() === currMonth).reduce((a,b)=>a+b.value,0); const contrib = gross - varCosts; const fixed = appData.fixed.reduce((a,b)=>a+b.value,0); const ebit = contrib - fixed; const invest = appData.variable.filter(v => v.category === 'Investimentos' && new Date(v.date).getMonth() === currMonth).reduce((a,b)=>a+b.value,0); const net = ebit - invest; const el = document.getElementById('dre-body'); if(el) { el.innerHTML = `<tr><td class="p-4 font-bold text-slate-700 dark:text-white">Receita Bruta</td><td class="p-4 text-right text-green-500 font-bold">+ ${fmt(gross)}</td><td class="p-4 text-right text-xs text-slate-400">100%</td></tr><tr><td class="p-4 pl-8 text-slate-500">(-) Despesas Variáveis</td><td class="p-4 text-right text-red-400">- ${fmt(varCosts)}</td><td class="p-4 text-right text-xs text-slate-400">${((varCosts/gross)*100).toFixed(1)}%</td></tr><tr class="bg-slate-50 font-bold dark:bg-slate-800"><td class="p-4 text-slate-800 dark:text-white">(=) Margem Contribuição</td><td class="p-4 text-right text-slate-700 dark:text-white">${fmt(contrib)}</td><td class="p-4 text-right text-xs">--</td></tr><tr><td class="p-4 pl-8 text-slate-500">(-) Custos Fixos</td><td class="p-4 text-right text-red-400">- ${fmt(fixed)}</td><td class="p-4 text-right text-xs text-slate-400">--</td></tr><tr class="bg-slate-50 font-bold dark:bg-slate-800"><td class="p-4 text-slate-800 dark:text-white">(=) EBIT (Operacional)</td><td class="p-4 text-right text-slate-700 dark:text-white">${fmt(ebit)}</td><td class="p-4 text-right text-xs">--</td></tr><tr><td class="p-4 pl-8 text-slate-500">(-) Investimentos</td><td class="p-4 text-right text-purple-400">- ${fmt(invest)}</td><td class="p-4 text-right text-xs text-slate-400">--</td></tr><tr class="bg-slate-900 text-white font-bold"><td class="p-4">(=) Lucro Líquido</td><td class="p-4 text-right">${fmt(net)}</td><td class="p-4 text-right text-xs">--</td></tr>`; document.getElementById('dre-net-profit').innerText = fmt(net); if(chartDREComp) chartDREComp.destroy(); chartDREComp = new Chart(document.getElementById('chart-dre-comp'), { type: 'pie', data: { labels:['Var','Fixo','Invest','Lucro'], datasets:[{data:[varCosts,fixed,invest,Math.max(0,net)], backgroundColor:['#ef4444','#f59e0b','#6366f1','#10b981']}] }, options: {maintainAspectRatio:false} }); if(chartDRETrend) chartDRETrend.destroy(); const trends = mData.map(m => m.revenue - m.expenses); chartDRETrend = new Chart(document.getElementById('chart-dre-trend'), { type: 'line', data: { labels:mData.map(m=>m.month), datasets:[{label:'Lucro', data:trends, borderColor:'#10b981', backgroundColor:'rgba(16,185,129,0.1)', fill:true}] }, options: {maintainAspectRatio:false} }); } };
+        
+        // Auto-Learn Input Listener
+        document.getElementById('var-desc').addEventListener('input', (e) => {
+            const val = e.target.value;
+            const key = normalizeKey(val);
+            if(appData.categoryRules && appData.categoryRules[key]) {
+                document.getElementById('var-cat').value = appData.categoryRules[key];
+            }
+        });
 
         if(auth) {
             onAuthStateChanged(auth, (user) => {
