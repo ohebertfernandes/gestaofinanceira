@@ -694,8 +694,22 @@
 
         // CONFIG
         const ADMIN_EMAIL = "ohebertgustavo@gmail.com";
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "API_KEY_MISSING" };
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fluxocash-app'; 
+        
+        // Check if we are in the Canvas environment
+        const isCanvasEnv = typeof __firebase_config !== 'undefined';
+        
+        const firebaseConfig = isCanvasEnv 
+            ? JSON.parse(__firebase_config) 
+            : {
+              apiKey: "AIzaSyCL6XpBIm322dq2hW7z-Y5Nskxdn-T9OzU",
+              authDomain: "fluxocash-b81f6.firebaseapp.com",
+              projectId: "fluxocash-b81f6",
+              storageBucket: "fluxocash-b81f6.firebasestorage.app",
+              messagingSenderId: "1021395240266",
+              appId: "1:1021395240266:web:e44282819a1ab0c2feadb3"
+            };
+            
+        const appId = isCanvasEnv && typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.appId;
         const apiKey = ""; 
 
         const app = initializeApp(firebaseConfig);
