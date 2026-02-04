@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FYCASH | App</title>
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://trello.com/1/cards/69839337e9ae9fb5e25dcf21/attachments/6983933d731d0a970bd7b9e1/download/WhatsApp_Image_2026-02-04_at_15.40.37-removebg-preview.png">
+    <link rel="icon" type="image/png" href="https://trello.com/1/cards/69839337e9ae9fb5e25dcf21/attachments/69839e6ada37711734777002/download/fycash_logo.png">
     
     <!-- Bibliotecas -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -28,7 +28,6 @@
                 extend: {
                     colors: {
                         slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
-                        // Cores atualizadas conforme solicitação
                         primary: { DEFAULT: '#8D5AE4', light: '#a78bfa', dark: '#7c3aed' }, // Roxo
                         secondary: { DEFAULT: '#21E9CA', light: '#5eead4', dark: '#0d9488' }, // Ciano
                         brand: {
@@ -85,7 +84,6 @@
         .nav-link { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 12px; }
         .nav-link:hover { background-color: #f1f5f9; color: #0f172a; transform: translateX(4px); }
         .dark .nav-link:hover { background-color: #334155; color: #fff; }
-        /* Active link now uses the new Primary Purple */
         .nav-link.active { background-color: #8D5AE4; color: white; box-shadow: 0 4px 12px rgba(141, 90, 228, 0.3); transform: translateX(4px); }
         .dark .nav-link.active { background-color: #8D5AE4; color: white; }
         .nav-link.active i { color: white; }
@@ -96,7 +94,6 @@
 
         button:active { transform: scale(0.95); }
         input, select { transition: all 0.3s ease; }
-        /* Input focus ring uses new Cyan */
         input:focus, select:focus { ring: 2px; ring-color: #21E9CA; border-color: transparent; transform: translateY(-1px); }
 
         .mob-nav-item.active { color: #8D5AE4; transform: scale(1.1); }
@@ -111,7 +108,6 @@
     <!-- AUTH SCREEN -->
     <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-all duration-700">
         <div class="absolute inset-0 overflow-hidden">
-            <!-- Background Blobs updated to Purple/Cyan -->
             <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-brand-purple/20 blur-[100px] animate-blob"></div>
             <div class="absolute top-[40%] -right-[10%] w-[40%] h-[40%] rounded-full bg-brand-cyan/20 blur-[100px] animate-blob animation-delay-2000"></div>
             <div class="absolute -bottom-[20%] left-[20%] w-[30%] h-[30%] rounded-full bg-purple-400/20 blur-[100px] animate-blob animation-delay-4000"></div>
@@ -120,8 +116,7 @@
         <div class="glass w-full max-w-md p-8 rounded-3xl relative shadow-2xl mx-4 page-enter">
             <div class="text-center mb-8">
                 <!-- NOVA LOGO -->
-                <img src="https://trello.com/1/cards/69839337e9ae9fb5e25dcf21/attachments/6983933d731d0a970bd7b9e1/download/WhatsApp_Image_2026-02-04_at_15.40.37-removebg-preview.png" alt="Fycash Logo" class="h-32 w-auto mx-auto mb-2 animate-float object-contain drop-shadow-lg">
-                
+                <img src="https://trello.com/1/cards/69839337e9ae9fb5e25dcf21/attachments/69839e6ada37711734777002/download/fycash_logo.png" alt="Fycash Logo" class="h-32 w-auto mx-auto mb-2 animate-float object-contain drop-shadow-lg">
                 <h1 class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight hidden">Fycash.</h1>
                 <p class="text-slate-500 dark:text-slate-400 font-medium">Controle financeiro inteligente.</p>
             </div>
@@ -172,7 +167,7 @@
         <aside class="hidden md:flex flex-col w-72 bg-white border-r border-slate-200 h-full z-20 dark:bg-slate-900 dark:border-slate-800">
             <div class="p-6 flex items-center justify-center">
                 <!-- Logo Sidebar -->
-                <img src="https://trello.com/1/cards/69839337e9ae9fb5e25dcf21/attachments/6983933d731d0a970bd7b9e1/download/WhatsApp_Image_2026-02-04_at_15.40.37-removebg-preview.png" alt="Fycash Logo" class="h-16 w-auto object-contain animate-float">
+                <img src="https://trello.com/1/cards/69839337e9ae9fb5e25dcf21/attachments/69839e6ada37711734777002/download/fycash_logo.png" alt="Fycash Logo" class="h-16 w-auto object-contain animate-float">
             </div>
 
             <div class="px-4 py-2">
@@ -233,7 +228,7 @@
             <header class="md:hidden bg-white/80 backdrop-blur-md border-b border-slate-200 p-4 flex justify-between items-center z-20 dark:bg-slate-900/80 dark:border-slate-800">
                 <div class="flex items-center gap-2">
                     <!-- Logo Mobile -->
-                    <img src="https://trello.com/1/cards/69839337e9ae9fb5e25dcf21/attachments/6983933d731d0a970bd7b9e1/download/WhatsApp_Image_2026-02-04_at_15.40.37-removebg-preview.png" alt="Fycash Logo" class="h-8 w-auto object-contain">
+                    <img src="https://trello.com/1/cards/69839337e9ae9fb5e25dcf21/attachments/69839e6ada37711734777002/download/fycash_logo.png" alt="Fycash Logo" class="h-8 w-auto object-contain">
                 </div>
                 <div class="flex items-center gap-3">
                     <button onclick="openWhatsAppModal()" class="w-9 h-9 rounded-full bg-green-500 text-white shadow-lg shadow-green-500/30 flex items-center justify-center active:scale-95 transition"><i class="fa-solid fa-microphone"></i></button>
